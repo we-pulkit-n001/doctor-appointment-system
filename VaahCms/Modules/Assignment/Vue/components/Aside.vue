@@ -33,6 +33,16 @@ const items = ref([
                 icon: 'fa-regular fa-chart-bar',
                 route: "/patients"
             },
+            {
+                label: 'Doctor',
+                icon: 'fa-regular fa-chart-bar',
+                route: "/doctors"
+            },
+            {
+                label: 'Appointment',
+                icon: 'fa-regular fa-chart-bar',
+                route: "/appointments"
+            },
         ]
     },
 ]);
