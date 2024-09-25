@@ -41,6 +41,56 @@ const useVaah = vaah();
 
             </Column>
 
+             <!--adding specialization field-->
+
+             <Column field="specialization" header="Specialization"
+                     class="overflow-wrap-anywhere"
+                     :sortable="true">
+
+                 <template #body="prop">
+                     <Badge v-if="prop.data.deleted_at"
+                            value="Trashed"
+                            severity="danger"></Badge>
+                     {{prop.data.specialization}}
+                 </template>
+
+             </Column>
+
+             <!--adding specialization field-->
+
+             <!--adding email field-->
+
+             <Column field="email" header="Email"
+                     class="overflow-wrap-anywhere"
+                     :sortable="true">
+
+                 <template #body="prop">
+                     <Badge v-if="prop.data.deleted_at"
+                            value="Trashed"
+                            severity="danger"></Badge>
+                     {{prop.data.email}}
+                 </template>
+
+             </Column>
+
+             <!--adding email field-->
+
+             <!--adding phone field-->
+
+             <Column field="phone" header="Phone"
+                     class="overflow-wrap-anywhere"
+                     :sortable="true">
+
+                 <template #body="prop">
+                     <Badge v-if="prop.data.deleted_at"
+                            value="Trashed"
+                            severity="danger"></Badge>
+                     {{prop.data.phone}}
+                 </template>
+
+             </Column>
+
+             <!--adding phone field-->
 
                 <Column field="updated_at" header="Updated"
                         v-if="store.isViewLarge()"

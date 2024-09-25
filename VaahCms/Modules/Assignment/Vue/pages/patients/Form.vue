@@ -147,6 +147,36 @@ const toggleFormMenu = (event) => {
                     </div>
                 </VhField>
 
+                <!--adding email field-->
+
+                <VhField label="Email">
+                    <div class="p-inputgroup">
+                        <InputText class="w-full"
+                                   placeholder="Enter the email"
+                                   email="patients-email"
+                                   data-testid="patients-email"
+                                   v-model="store.item.email" required/>
+                        <div class="required-field hidden"></div>
+                    </div>
+                </VhField>
+
+                <!--adding email field-->
+
+                <!--adding phone field-->
+
+                <VhField label="Phone">
+                    <div class="p-inputgroup">
+                        <InputText class="w-full"
+                                   placeholder="Enter the phone"
+                                   phone="patients-phone"
+                                   data-testid="patients-phone"
+                                   v-model="store.item.phone" required/>
+                        <div class="required-field hidden"></div>
+                    </div>
+                </VhField>
+
+                <!--adding phone field-->
+
                 <VhField label="Slug">
                     <div class="p-inputgroup">
                         <InputText class="w-full"

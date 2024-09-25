@@ -28,6 +28,7 @@ class Patient extends VaahModel
     protected $fillable = [
         'uuid',
         'name',
+        'email',
         'slug',
         'is_active',
         'created_by',

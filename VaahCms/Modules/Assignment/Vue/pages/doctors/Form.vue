@@ -147,6 +147,51 @@ const toggleFormMenu = (event) => {
                     </div>
                 </VhField>
 
+                <!--adding specialization field-->
+
+                <VhField label="Specialization">
+                    <div class="p-inputgroup">
+                        <InputText class="w-full"
+                                   placeholder="Enter the specialization"
+                                   specialization="doctors-specialization"
+                                   data-testid="doctors-specialization"
+                                   v-model="store.item.specialization" required/>
+                        <div class="required-field hidden"></div>
+                    </div>
+                </VhField>
+
+                <!--adding specialization field-->
+
+                <!--adding email field-->
+
+                <VhField label="Email">
+                    <div class="p-inputgroup">
+                        <InputText class="w-full"
+                                   placeholder="Enter the email"
+                                   email="doctors-email"
+                                   data-testid="doctors-email"
+                                   v-model="store.item.email" required/>
+                        <div class="required-field hidden"></div>
+                    </div>
+                </VhField>
+
+                <!--adding email field-->
+
+                <!--adding phone field-->
+
+                <VhField label="Phone">
+                    <div class="p-inputgroup">
+                        <InputText class="w-full"
+                                   placeholder="Enter the phone"
+                                   phone="doctors-phone"
+                                   data-testid="doctors-phone"
+                                   v-model="store.item.phone" required/>
+                        <div class="required-field hidden"></div>
+                    </div>
+                </VhField>
+
+                <!--adding phone field-->
+
                 <VhField label="Slug">
                     <div class="p-inputgroup">
                         <InputText class="w-full"
