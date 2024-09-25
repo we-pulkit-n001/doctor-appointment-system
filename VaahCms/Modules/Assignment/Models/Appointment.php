@@ -28,6 +28,9 @@ class Appointment extends VaahModel
     protected $fillable = [
         'uuid',
         'name',
+        'date',
+        'time',
+        'status',
         'slug',
         'is_active',
         'created_by',

@@ -92,6 +92,40 @@ const useVaah = vaah();
 
              <!--adding phone field-->
 
+             <!--adding working_hours_start field-->
+
+             <Column field="working_hours_start" header="Start Time"
+                     class="overflow-wrap-anywhere"
+                     :sortable="true">
+
+                 <template #body="prop">
+                     <Badge v-if="prop.data.deleted_at"
+                            value="Trashed"
+                            severity="danger"></Badge>
+                     {{prop.data.working_hours_start}}
+                 </template>
+
+             </Column>
+
+             <!--adding working_hours_start field-->
+
+             <!--adding working_hours_end field-->
+
+             <Column field="working_hours_end" header="End Time"
+                     class="overflow-wrap-anywhere"
+                     :sortable="true">
+
+                 <template #body="prop">
+                     <Badge v-if="prop.data.deleted_at"
+                            value="Trashed"
+                            severity="danger"></Badge>
+                     {{prop.data.working_hours_end}}
+                 </template>
+
+             </Column>
+
+             <!--adding working_hours_end field-->
+
                 <Column field="updated_at" header="Updated"
                         v-if="store.isViewLarge()"
                         style="width:150px;"

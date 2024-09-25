@@ -29,6 +29,7 @@ class Patient extends VaahModel
         'uuid',
         'name',
         'email',
+        'phone',
         'slug',
         'is_active',
         'created_by',

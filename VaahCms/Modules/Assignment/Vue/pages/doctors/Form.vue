@@ -192,6 +192,36 @@ const toggleFormMenu = (event) => {
 
                 <!--adding phone field-->
 
+                <!--adding working_hours_start field-->
+
+                <VhField label="Start Time">
+                    <div class="p-inputgroup">
+                        <InputText class="w-full"
+                                   placeholder="Enter the starting hour of work"
+                                   working_hours_start="doctors-working_hours_start"
+                                   data-testid="doctors-working_hours_start"
+                                   v-model="store.item.working_hours_start" required/>
+                        <div class="required-field hidden"></div>
+                    </div>
+                </VhField>
+
+                <!--adding working_hours_start field-->
+
+                <!--adding working_hours_end field-->
+
+                <VhField label="End Time">
+                    <div class="p-inputgroup">
+                        <InputText class="w-full"
+                                   placeholder="Enter the starting hour of work"
+                                   working_hours_end="doctors-working_hours_end"
+                                   data-testid="doctors-working_hours_end"
+                                   v-model="store.item.working_hours_end" required/>
+                        <div class="required-field hidden"></div>
+                    </div>
+                </VhField>
+
+                <!--adding working_hours_end field-->
+
                 <VhField label="Slug">
                     <div class="p-inputgroup">
                         <InputText class="w-full"

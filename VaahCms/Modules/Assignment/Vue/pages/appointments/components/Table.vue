@@ -41,6 +41,56 @@ const useVaah = vaah();
 
             </Column>
 
+             <!--adding date field-->
+
+             <Column field="date" header="Date"
+                     class="overflow-wrap-anywhere"
+                     :sortable="true">
+
+                 <template #body="prop">
+                     <Badge v-if="prop.data.deleted_at"
+                            value="Trashed"
+                            severity="danger"></Badge>
+                     {{prop.data.date}}
+                 </template>
+
+             </Column>
+
+             <!--adding date field-->
+
+             <!--adding time field-->
+
+             <Column field="time" header="Time"
+                     class="overflow-wrap-anywhere"
+                     :sortable="true">
+
+                 <template #body="prop">
+                     <Badge v-if="prop.data.deleted_at"
+                            value="Trashed"
+                            severity="danger"></Badge>
+                     {{prop.data.time}}
+                 </template>
+
+             </Column>
+
+             <!--adding time field-->
+
+             <!--adding status field-->
+
+             <Column field="status" header="Status"
+                     class="overflow-wrap-anywhere"
+                     :sortable="true">
+
+                 <template #body="prop">
+                     <Badge v-if="prop.data.deleted_at"
+                            value="Trashed"
+                            severity="danger"></Badge>
+                     {{prop.data.status}}
+                 </template>
+
+             </Column>
+
+             <!--adding status field-->
 
                 <Column field="updated_at" header="Updated"
                         v-if="store.isViewLarge()"

@@ -147,6 +147,51 @@ const toggleFormMenu = (event) => {
                     </div>
                 </VhField>
 
+                <!--adding date field-->
+
+                <VhField label="Date">
+                    <div class="p-inputgroup">
+                        <InputText class="w-full"
+                                   placeholder="Enter the date"
+                                   date="appointments-date"
+                                   data-testid="appointments-date"
+                                   v-model="store.item.date" required/>
+                        <div class="required-field hidden"></div>
+                    </div>
+                </VhField>
+
+                <!--adding date field-->
+
+                <!--adding time field-->
+
+                <VhField label="Time">
+                    <div class="p-inputgroup">
+                        <InputText class="w-full"
+                                   placeholder="Enter the time"
+                                   time="appointments-time"
+                                   data-testid="appointments-time"
+                                   v-model="store.item.time" required/>
+                        <div class="required-field hidden"></div>
+                    </div>
+                </VhField>
+
+                <!--adding time field-->
+
+                <!--adding status field-->
+
+                <VhField label="Status">
+                    <div class="p-inputgroup">
+                        <InputText class="w-full"
+                                   placeholder="Enter the status"
+                                   status="appointments-status"
+                                   data-testid="appointments-status"
+                                   v-model="store.item.status" required/>
+                        <div class="required-field hidden"></div>
+                    </div>
+                </VhField>
+
+                <!--adding status field-->
+
                 <VhField label="Slug">
                     <div class="p-inputgroup">
                         <InputText class="w-full"

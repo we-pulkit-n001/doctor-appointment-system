@@ -28,6 +28,11 @@ class Doctor extends VaahModel
     protected $fillable = [
         'uuid',
         'name',
+        'specialization',
+        'email',
+        'phone',
+        'working_hours_start',
+        'working_hours_end',
         'slug',
         'is_active',
         'created_by',
