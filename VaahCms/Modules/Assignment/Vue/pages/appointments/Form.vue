@@ -192,16 +192,16 @@ const toggleFormMenu = (event) => {
 
                 <!--adding status field-->
 
-                <VhField label="Slug">
-                    <div class="p-inputgroup">
-                        <InputText class="w-full"
-                                   placeholder="Enter the slug"
-                                   name="appointments-slug"
-                                   data-testid="appointments-slug"
-                                   v-model="store.item.slug" required/>
-                        <div class="required-field hidden"></div>
-                    </div>
-                </VhField>
+<!--                <VhField label="Slug">-->
+<!--                    <div class="p-inputgroup">-->
+<!--                        <InputText class="w-full"-->
+<!--                                   placeholder="Enter the slug"-->
+<!--                                   name="appointments-slug"-->
+<!--                                   data-testid="appointments-slug"-->
+<!--                                   v-model="store.item.slug" required/>-->
+<!--                        <div class="required-field hidden"></div>-->
+<!--                    </div>-->
+<!--                </VhField>-->
 
                 <VhField label="Is Active">
                     <InputSwitch v-bind:false-value="0"

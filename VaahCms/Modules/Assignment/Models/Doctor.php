@@ -569,6 +569,9 @@ class Doctor extends VaahModel
 
         $rules = array(
             'name' => 'required|max:150',
+            'specialization' => 'required|max:150',
+            'email' => 'required|email',
+            'phone' => 'required|digits:10',
             'slug' => 'required|max:150',
         );
 

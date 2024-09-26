@@ -5,7 +5,6 @@ import { useDoctorStore } from '../../stores/store-doctors'
 import VhField from './../../vaahvue/vue-three/primeflex/VhField.vue'
 import {useRoute} from 'vue-router';
 
-
 const store = useDoctorStore();
 const route = useRoute();
 
@@ -28,6 +27,8 @@ const toggleFormMenu = (event) => {
     form_menu.value.toggle(event);
 };
 //--------/form_menu
+
+const isValidTime = (date) => date instanceof Date && !isNaN(date.getTime());
 
 </script>
 <template>
@@ -194,44 +195,57 @@ const toggleFormMenu = (event) => {
 
                 <!--adding working_hours_start field-->
 
-                <VhField label="Start Time">
+                <VhField label="Working Hour starts at">{{store.item.working_hours_start}}
                     <div class="p-inputgroup">
-                        <InputText class="w-full"
-                                   placeholder="Enter the starting hour of work"
-                                   working_hours_start="doctors-working_hours_start"
-                                   data-testid="doctors-working_hours_start"
-                                   v-model="store.item.working_hours_start" required/>
-                        <div class="required-field hidden"></div>
+                        <Calendar v-model="store.item.working_hours_start" timeOnly hourFormat="24" showIcon
+                                  placeholder="Select time" name="working_hours_start"
+                                  :minDate="isValidTime(store.item.slot_start_time) ? store.item.slot_start_time : null"
+                                  @change="formatTimeForDatabase">
+                            <template #inputicon="{ clickCallback }">
+                                <i class="pi pi-clock cursor-pointer" @click="clickCallback"></i>
+                            </template>
+                        </Calendar>
                     </div>
                 </VhField>
+
+
 
                 <!--adding working_hours_start field-->
 
                 <!--adding working_hours_end field-->
-
                 <VhField label="End Time">
                     <div class="p-inputgroup">
-                        <InputText class="w-full"
-                                   placeholder="Enter the starting hour of work"
-                                   working_hours_end="doctors-working_hours_end"
-                                   data-testid="doctors-working_hours_end"
-                                   v-model="store.item.working_hours_end" required/>
+                        <Calendar class="w-full"
+                                  placeholder="Select end time"
+                                  working_hours_end="doctors-working_hours_end"
+                                  data-testid="doctors-working_hours_end"
+                                  v-model="store.item.working_hours_end"
+                                  timeOnly="true"
+                                  hourFormat="24"
+                                  required
+                                  showIcon />
                         <div class="required-field hidden"></div>
                     </div>
                 </VhField>
+
+
+
+
+
+
 
                 <!--adding working_hours_end field-->
 
-                <VhField label="Slug">
-                    <div class="p-inputgroup">
-                        <InputText class="w-full"
-                                   placeholder="Enter the slug"
-                                   name="doctors-slug"
-                                   data-testid="doctors-slug"
-                                   v-model="store.item.slug" required/>
-                        <div class="required-field hidden"></div>
-                    </div>
-                </VhField>
+<!--                <VhField label="Slug">-->
+<!--                    <div class="p-inputgroup">-->
+<!--                        <InputText class="w-full"-->
+<!--                                   placeholder="Enter the slug"-->
+<!--                                   name="doctors-slug"-->
+<!--                                   data-testid="doctors-slug"-->
+<!--                                   v-model="store.item.slug" required/>-->
+<!--                        <div class="required-field hidden"></div>-->
+<!--                    </div>-->
+<!--                </VhField>-->
 
                 <VhField label="Is Active">
                     <InputSwitch v-bind:false-value="0"
