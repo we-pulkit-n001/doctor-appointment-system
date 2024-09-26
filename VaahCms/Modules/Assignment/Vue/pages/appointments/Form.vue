@@ -151,14 +151,17 @@ const toggleFormMenu = (event) => {
 
                 <VhField label="Date">
                     <div class="p-inputgroup">
-                        <InputText class="w-full"
-                                   placeholder="Enter the date"
-                                   date="appointments-date"
-                                   data-testid="appointments-date"
-                                   v-model="store.item.date" required/>
+                        <Calendar class="w-full"
+                                  v-model="store.item.date"
+                                  placeholder="Select date"
+                                  data-testid="appointments-date"
+                                  required
+                                  :showIcon="true"
+                                  dateFormat="mm/dd/yy" />
                         <div class="required-field hidden"></div>
                     </div>
                 </VhField>
+
 
                 <!--adding date field-->
 
@@ -166,14 +169,26 @@ const toggleFormMenu = (event) => {
 
                 <VhField label="Time">
                     <div class="p-inputgroup">
-                        <InputText class="w-full"
-                                   placeholder="Enter the time"
-                                   time="appointments-time"
-                                   data-testid="appointments-time"
-                                   v-model="store.item.time" required/>
+                        <Calendar class="w-full"
+                                  v-model="store.item.time"
+                                  timeOnly
+                                  hourFormat="24"
+                                  showIcon
+                                  placeholder="Select time"
+                                  name="appointments-time"
+                                  data-testid="appointments-time"
+                                  @change="formatTimeForDatabase">
+                            <template #inputicon="{ clickCallback }">
+                                <i class="pi pi-clock cursor-pointer" @click="clickCallback"></i>
+                            </template>
+                        </Calendar>
+                        <span class="p-inputgroup-addon">
+                            <i class="pi pi-clock"></i> <!-- PrimeIcons clock icon -->
+                        </span>
                         <div class="required-field hidden"></div>
                     </div>
                 </VhField>
+
 
                 <!--adding time field-->
 
@@ -181,14 +196,21 @@ const toggleFormMenu = (event) => {
 
                 <VhField label="Status">
                     <div class="p-inputgroup">
-                        <InputText class="w-full"
-                                   placeholder="Enter the status"
-                                   status="appointments-status"
-                                   data-testid="appointments-status"
-                                   v-model="store.item.status" required/>
+                        <select
+                            v-model="store.item.status"
+                            data-testid="appointments-status"
+                            required
+                            style="width: 300px; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 16px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);"
+                        >
+                            <option disabled value="">Select status</option>
+                            <option value="booked">Booked</option>
+                            <option value="cancelled">Cancelled</option>
+                        </select>
                         <div class="required-field hidden"></div>
                     </div>
                 </VhField>
+
+
 
                 <!--adding status field-->
 

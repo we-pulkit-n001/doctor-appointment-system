@@ -28,7 +28,7 @@ const toggleFormMenu = (event) => {
 };
 //--------/form_menu
 
-const isValidTime = (date) => date instanceof Date && !isNaN(date.getTime());
+// const isValidTime = (date) => date instanceof Date && !isNaN(date.getTime());
 
 </script>
 <template>
@@ -195,43 +195,52 @@ const isValidTime = (date) => date instanceof Date && !isNaN(date.getTime());
 
                 <!--adding working_hours_start field-->
 
-                <VhField label="Working Hour starts at">{{store.item.working_hours_start}}
+                <VhField label="Start Time">
                     <div class="p-inputgroup">
-                        <Calendar v-model="store.item.working_hours_start" timeOnly hourFormat="24" showIcon
-                                  placeholder="Select time" name="working_hours_start"
-                                  :minDate="isValidTime(store.item.slot_start_time) ? store.item.slot_start_time : null"
+                        <Calendar class="w-full"
+                                  v-model="store.item.working_hours_start"
+                                  timeOnly
+                                  hourFormat="24"
+                                  showIcon
+                                  placeholder="Select start time"
+                                  data-testid="doctors-working_hours_start"
                                   @change="formatTimeForDatabase">
                             <template #inputicon="{ clickCallback }">
                                 <i class="pi pi-clock cursor-pointer" @click="clickCallback"></i>
                             </template>
                         </Calendar>
-                    </div>
-                </VhField>
-
-
-
-                <!--adding working_hours_start field-->
-
-                <!--adding working_hours_end field-->
-                <VhField label="End Time">
-                    <div class="p-inputgroup">
-                        <Calendar class="w-full"
-                                  placeholder="Select end time"
-                                  working_hours_end="doctors-working_hours_end"
-                                  data-testid="doctors-working_hours_end"
-                                  v-model="store.item.working_hours_end"
-                                  timeOnly="true"
-                                  hourFormat="24"
-                                  required
-                                  showIcon />
+                        <span class="p-inputgroup-addon">
+            <i class="pi pi-clock"></i> <!-- PrimeIcons clock icon -->
+        </span>
                         <div class="required-field hidden"></div>
                     </div>
                 </VhField>
 
 
+                <!--adding working_hours_start field-->
 
+                <!--adding working_hours_end field-->
 
-
+                <VhField label="End Time">
+                    <div class="p-inputgroup">
+                        <Calendar class="w-full"
+                                  v-model="store.item.working_hours_end"
+                                  timeOnly
+                                  hourFormat="24"
+                                  showIcon
+                                  placeholder="Select end time"
+                                  data-testid="doctors-working_hours_end"
+                                  @change="formatTimeForDatabase">
+                            <template #inputicon="{ clickCallback }">
+                                <i class="pi pi-clock cursor-pointer" @click="clickCallback"></i>
+                            </template>
+                        </Calendar>
+                        <span class="p-inputgroup-addon">
+            <i class="pi pi-clock"></i> <!-- PrimeIcons clock icon -->
+        </span>
+                        <div class="required-field hidden"></div>
+                    </div>
+                </VhField>
 
 
                 <!--adding working_hours_end field-->
