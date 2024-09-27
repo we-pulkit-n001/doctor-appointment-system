@@ -141,7 +141,6 @@ const toggleFormMenu = (event) => {
                                    placeholder="Enter the patient's name"
                                    name="appointments-name"
                                    data-testid="appointments-name"
-                                   @update:modelValue="store.watchItem"
                                    v-model="store.item.name" required/>
                         <div class="required-field hidden"></div>
                     </div>
@@ -153,7 +152,6 @@ const toggleFormMenu = (event) => {
                                    placeholder="Enter the doctor's name"
                                    name="appointments-doctor-name"
                                    data-testid="appointments-doctor-name"
-                                   @update:modelValue="store.watchItem"
                                    v-model="store.item.doctorName" required/>
                         <div class="required-field hidden"></div>
                     </div>
@@ -195,7 +193,7 @@ const toggleFormMenu = (event) => {
                             </template>
                         </Calendar>
                         <span class="p-inputgroup-addon">
-                            <i class="pi pi-clock"></i> <!-- PrimeIcons clock icon -->
+                            <i class="pi pi-clock"></i>
                         </span>
                         <div class="required-field hidden"></div>
                     </div>

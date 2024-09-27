@@ -153,31 +153,33 @@ class Appointment extends VaahModel
 
         $inputs = $request->all();
 
-        $validation = self::validation($inputs);
-        if (!$validation['success']) {
-            return $validation;
-        }
-
-
-        // check if name exist
-        $item = self::where('name', $inputs['name'])->withTrashed()->first();
-
-        if ($item) {
-            $error_message = "This name is already exist".($item->deleted_at?' in trash.':'.');
-            $response['success'] = false;
-            $response['messages'][] = $error_message;
-            return $response;
-        }
+//        $validation = self::validation($inputs);
+//        if (!$validation['success']) {
+//            return $validation;
+//        }
+//
+//
+//        // check if name exist
+//        $item = self::where('name', $inputs['name'])->withTrashed()->first();
+//
+//        if ($item) {
+//            $error_message = "This name is already exist".($item->deleted_at?' in trash.':'.');
+//            $response['success'] = false;
+//            $response['messages'][] = $error_message;
+//            return $response;
+//        }
 
         // check if slug exist
-        $item = self::where('slug', $inputs['slug'])->withTrashed()->first();
+//        $item = self::where('slug', $inputs['slug'])->withTrashed()->first();
 
-        if ($item) {
-            $error_message = "This slug is already exist".($item->deleted_at?' in trash.':'.');
-            $response['success'] = false;
-            $response['messages'][] = $error_message;
-            return $response;
-        }
+//        if ($item) {
+//            $error_message = "This slug is already exist".($item->deleted_at?' in trash.':'.');
+//            $response['success'] = false;
+//            $response['messages'][] = $error_message;
+//            return $response;
+//        }
+
+        $inputs['status'] = "confirmed";
 
         $item = new self();
         $item->fill($inputs);
@@ -279,6 +281,7 @@ class Appointment extends VaahModel
         $list->isActiveFilter($request->filter);
         $list->trashedFilter($request->filter);
         $list->searchFilter($request->filter);
+        $list->with(['doctor', 'patient']);
 
         $rows = config('vaahcms.per_page');
 
@@ -566,8 +569,8 @@ class Appointment extends VaahModel
     {
 
         $rules = array(
-            'name' => 'required|max:150',
-            'slug' => 'required|max:150',
+//            'name' => 'required|max:150',
+//            'slug' => 'required|max:150',
         );
 
         $validator = \Validator::make($inputs, $rules);
@@ -643,9 +646,19 @@ class Appointment extends VaahModel
         return $response;
     }
 
-    //-------------------------------------------------
-    //-------------------------------------------------
-    //-------------------------------------------------
+    //  Relationship with Doctor
+//    public function doctor()
+//    {
+//        return $this->belongsTo(Doctor::class, 'doctor_id', 'id');
+//    }
+    //  Relationship with Patient
+//    public function patient()
+//    {
+//        return $this->belongsTo(Patient::class, 'patient_id', 'id');
+//    }
 
+    //-------------------------------------------------
+    //-------------------------------------------------
+    //-------------------------------------------------
 
 }
