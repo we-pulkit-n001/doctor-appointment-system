@@ -27,11 +27,12 @@ class Appointment extends VaahModel
     //-------------------------------------------------
     protected $fillable = [
         'uuid',
-        'name',
         'date',
         'time',
         'status',
         'slug',
+        'doctor_id',
+        'patient_id',
         'is_active',
         'created_by',
         'updated_by',
@@ -152,6 +153,7 @@ class Appointment extends VaahModel
     {
 
         $inputs = $request->all();
+
 
 //        $validation = self::validation($inputs);
 //        if (!$validation['success']) {
@@ -646,16 +648,15 @@ class Appointment extends VaahModel
         return $response;
     }
 
-    //  Relationship with Doctor
-//    public function doctor()
-//    {
-//        return $this->belongsTo(Doctor::class, 'doctor_id', 'id');
-//    }
-    //  Relationship with Patient
-//    public function patient()
-//    {
-//        return $this->belongsTo(Patient::class, 'patient_id', 'id');
-//    }
+    public function doctor()
+    {
+        return $this->belongsTo(Doctor::class, 'doctor_id', 'id');
+    }
+
+    public function patient()
+    {
+        return $this->belongsTo(Patient::class, 'patient_id', 'id');
+    }
 
     //-------------------------------------------------
     //-------------------------------------------------

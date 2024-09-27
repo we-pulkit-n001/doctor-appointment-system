@@ -28,15 +28,23 @@ const useVaah = vaah();
             <Column field="id" header="ID" :style="{width: '80px'}" :sortable="true">
             </Column>
 
-            <Column field="name" header="Name"
+             <Column field="patient_name" header="Patient's Name"
+                     class="overflow-wrap-anywhere"
+                     :sortable="true">
+
+                 <template #body="prop">
+                    {{prop.data.patient?.name}}
+                 </template>
+
+             </Column>
+
+            <Column field="doctor_name" header="Doctor's Name"
                     class="overflow-wrap-anywhere"
                     :sortable="true">
 
                 <template #body="prop">
-                    <Badge v-if="prop.data.deleted_at"
-                           value="Trashed"
-                           severity="danger"></Badge>
-                    {{prop.data.name}}
+
+                    {{prop.data.doctor?.name}}
                 </template>
 
             </Column>

@@ -137,22 +137,28 @@ const toggleFormMenu = (event) => {
 
                 <VhField label="Patient's Name">
                     <div class="p-inputgroup">
-                        <InputText class="w-full"
-                                   placeholder="Enter the patient's name"
-                                   name="appointments-name"
-                                   data-testid="appointments-name"
-                                   v-model="store.item.name" required/>
+                        <Dropdown  v-model="store.item.patient_id"
+                                   :options="store.assets.patient"
+                                   placeholder="Select Patient Name"
+                                   option-label="name"
+                                   option-value="id"
+                                   name="patient-name"
+                                   data-testid="patient-name"
+                                   required/>
                         <div class="required-field hidden"></div>
                     </div>
                 </VhField>
 
                 <VhField label="Doctor's Name">
                     <div class="p-inputgroup">
-                        <InputText class="w-full"
-                                   placeholder="Enter the doctor's name"
-                                   name="appointments-doctor-name"
-                                   data-testid="appointments-doctor-name"
-                                   v-model="store.item.doctorName" required/>
+                        <Dropdown  v-model="store.item.doctor_id"
+                                   :options="store.assets.doctor"
+                                   placeholder="Select Doctor Name"
+                                   option-label="name"
+                                   option-value="id"
+                                   name="doctor-name"
+                                   data-testid="doctor-name"
+                                   required/>
                         <div class="required-field hidden"></div>
                     </div>
                 </VhField>
@@ -167,11 +173,11 @@ const toggleFormMenu = (event) => {
                                   data-testid="appointments-date"
                                   required
                                   :showIcon="true"
-                                  dateFormat="mm/dd/yy" />
+                                  dateFormat="mm/dd/yy"
+                                  :minDate="new Date()" />
                         <div class="required-field hidden"></div>
                     </div>
                 </VhField>
-
 
                 <!--adding date field-->
 
