@@ -236,8 +236,8 @@ const toggleFormMenu = (event) => {
                             </template>
                         </Calendar>
                         <span class="p-inputgroup-addon">
-            <i class="pi pi-clock"></i> <!-- PrimeIcons clock icon -->
-        </span>
+                        <i class="pi pi-clock"></i> <!-- PrimeIcons clock icon -->
+                        </span>
                         <div class="required-field hidden"></div>
                     </div>
                 </VhField>

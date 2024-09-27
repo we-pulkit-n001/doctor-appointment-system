@@ -135,14 +135,26 @@ const toggleFormMenu = (event) => {
                 </Message>
 
 
-                <VhField label="Name">
+                <VhField label="Patient's Name">
                     <div class="p-inputgroup">
                         <InputText class="w-full"
-                                   placeholder="Enter the name"
+                                   placeholder="Enter the patient's name"
                                    name="appointments-name"
                                    data-testid="appointments-name"
                                    @update:modelValue="store.watchItem"
                                    v-model="store.item.name" required/>
+                        <div class="required-field hidden"></div>
+                    </div>
+                </VhField>
+
+                <VhField label="Doctor's Name">
+                    <div class="p-inputgroup">
+                        <InputText class="w-full"
+                                   placeholder="Enter the doctor's name"
+                                   name="appointments-doctor-name"
+                                   data-testid="appointments-doctor-name"
+                                   @update:modelValue="store.watchItem"
+                                   v-model="store.item.doctorName" required/>
                         <div class="required-field hidden"></div>
                     </div>
                 </VhField>
@@ -196,21 +208,19 @@ const toggleFormMenu = (event) => {
 
                 <VhField label="Status">
                     <div class="p-inputgroup">
-                        <select
+                        <Dropdown
                             v-model="store.item.status"
+                            :options="statusOptions"
+                            optionLabel="label"
+                            placeholder="Select a status"
+                            name="appointments-status"
                             data-testid="appointments-status"
                             required
-                            style="width: 300px; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 16px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);"
-                        >
-                            <option disabled value="">Select status</option>
-                            <option value="booked">Booked</option>
-                            <option value="cancelled">Cancelled</option>
-                        </select>
+                            showClear
+                        />
                         <div class="required-field hidden"></div>
                     </div>
                 </VhField>
-
-
 
                 <!--adding status field-->
 

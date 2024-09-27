@@ -9,6 +9,7 @@ use WebReinvent\VaahCms\Models\VaahModel;
 use WebReinvent\VaahCms\Traits\CrudWithUuidObservantTrait;
 use WebReinvent\VaahCms\Models\User;
 use WebReinvent\VaahCms\Libraries\VaahSeeder;
+use Carbon\Carbon;
 
 class Doctor extends VaahModel
 {
@@ -160,6 +161,8 @@ class Doctor extends VaahModel
             return $validation;
         }
 
+        $inputs['working_hours_start'] = Carbon::parse($inputs['working_hours_start'])->setTimezone('Asia/Kolkata')->format('H:i:s');
+        $inputs['working_hours_end'] = Carbon::parse($inputs['working_hours_end'])->setTimezone('Asia/Kolkata')->format('H:i:s');
 
         // check if name exist
         $item = self::where('name', $inputs['name'])->withTrashed()->first();
