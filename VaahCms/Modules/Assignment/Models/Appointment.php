@@ -5,6 +5,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Faker\Factory;
+use WebReinvent\VaahCms\Libraries\VaahMail;
 use WebReinvent\VaahCms\Models\VaahModel;
 use WebReinvent\VaahCms\Traits\CrudWithUuidObservantTrait;
 use WebReinvent\VaahCms\Models\User;
@@ -154,7 +155,6 @@ class Appointment extends VaahModel
 
         $inputs = $request->all();
 
-
 //        $validation = self::validation($inputs);
 //        if (!$validation['success']) {
 //            return $validation;
@@ -186,6 +186,9 @@ class Appointment extends VaahModel
         $item = new self();
         $item->fill($inputs);
         $item->save();
+
+        $subject = 'Appintment Booked';
+        self::appointmentBookedMail($subject, $inputs);
 
         $response = self::getItem($item->id);
         $response['messages'][] = trans("vaahcms-general.saved_successfully");
@@ -657,6 +660,36 @@ class Appointment extends VaahModel
     {
         return $this->belongsTo(Patient::class, 'patient_id', 'id');
     }
+
+    public static function appointmentBookedMail($subject, $inputs)
+    {
+        $doctor = Doctor::find($inputs['doctor_id']);
+        $patient = Patient::find($inputs['patient_id']);
+
+        $appointmentDateTime = sprintf('%s at %s', $inputs['date'], $inputs['time']);
+
+        $date_time = [
+            'date' => $inputs['date'],
+            'time' =>  $inputs['time'],
+        ];
+
+        $email_content_for_patient = sprintf(
+            "Hi %s,\n\nYour appointment with Dr. %s has been successfully booked.\nThe details of your appointment are as follows:\n\nAppointment Date & Time: %s\n\nPlease make sure to arrive 10 minutes before the scheduled time.\n\nRegards,\nWebReinvent Technologies Pvt. Ltd. ",
+            $patient->name,
+            $doctor->name,
+            $appointmentDateTime
+        );
+        $email_content_for_doctor = sprintf(
+            "Hi Dr. %s,\n\nYou have a new appointment scheduled with %s.\nThe details are as follows:\n\nAppointment Date & Time: %s\n\nPlease be on time for the appointment.\n\nRegards,\nWebReinvent Technologies Pvt. Ltd.",
+            $doctor->name,
+            $patient->name,
+            $appointmentDateTime
+        );
+        VaahMail::dispatchGenericMail($subject, $email_content_for_doctor, $doctor->email);
+        VaahMail::dispatchGenericMail($subject, $email_content_for_patient, $patient->email);
+    }
+
+
 
     //-------------------------------------------------
     //-------------------------------------------------

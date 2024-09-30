@@ -27,6 +27,12 @@ const form_menu = ref();
 const toggleFormMenu = (event) => {
     form_menu.value.toggle(event);
 };
+
+const statusOptions = [
+    { label: 'Booked', value: 'booked' },
+    { label: 'Cancelled', value: 'cancelled' },
+];
+
 //--------/form_menu
 
 </script>
@@ -167,17 +173,20 @@ const toggleFormMenu = (event) => {
 
                 <VhField label="Date">
                     <div class="p-inputgroup">
-                        <Calendar class="w-full"
-                                  v-model="store.item.date"
-                                  placeholder="Select date"
-                                  data-testid="appointments-date"
-                                  required
-                                  :showIcon="true"
-                                  dateFormat="mm/dd/yy"
-                                  :minDate="new Date()" />
+                        <Calendar
+                            class="w-full"
+                            v-model="store.item.date"
+                            placeholder="Select date"
+                            data-testid="appointments-date"
+                            required
+                            :showIcon="true"
+                            dateFormat="mm/dd/yy"
+                            :minDate="new Date()"
+                        />
                         <div class="required-field hidden"></div>
                     </div>
                 </VhField>
+
 
                 <!--adding date field-->
 
@@ -215,16 +224,17 @@ const toggleFormMenu = (event) => {
                         <Dropdown
                             v-model="store.item.status"
                             :options="statusOptions"
-                            optionLabel="label"
-                            placeholder="Select a status"
-                            name="appointments-status"
-                            data-testid="appointments-status"
+                            placeholder="Select Status"
+                            option-label="label"
+                            option-value="value"
+                            name="appointment-status"
+                            data-testid="appointment-status"
                             required
-                            showClear
                         />
                         <div class="required-field hidden"></div>
                     </div>
                 </VhField>
+
 
                 <!--adding status field-->
 

@@ -149,14 +149,12 @@ class Patient extends VaahModel
     //-------------------------------------------------
     public static function createItem($request)
     {
-
         $inputs = $request->all();
 
         $validation = self::validation($inputs);
         if (!$validation['success']) {
             return $validation;
         }
-
 
         // check if name exist
         $item = self::where('name', $inputs['name'])->withTrashed()->first();
