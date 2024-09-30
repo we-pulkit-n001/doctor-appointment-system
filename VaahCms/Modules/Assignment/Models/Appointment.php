@@ -187,8 +187,7 @@ class Appointment extends VaahModel
         $item->fill($inputs);
         $item->save();
 
-        $subject = 'Appintment Booked';
-        self::appointmentBookedMail($subject, $inputs);
+        self::appointmentBookedMail($inputs);
 
         $response = self::getItem($item->id);
         $response['messages'][] = trans("vaahcms-general.saved_successfully");
@@ -661,8 +660,9 @@ class Appointment extends VaahModel
         return $this->belongsTo(Patient::class, 'patient_id', 'id');
     }
 
-    public static function appointmentBookedMail($subject, $inputs)
+    public static function appointmentBookedMail($inputs)
     {
+        $subject = 'Appintment Booked';
         $doctor = Doctor::find($inputs['doctor_id']);
         $patient = Patient::find($inputs['patient_id']);
 
@@ -674,13 +674,25 @@ class Appointment extends VaahModel
         ];
 
         $email_content_for_patient = sprintf(
-            "Hi %s,\n\nYour appointment with Dr. %s has been successfully booked.\nThe details of your appointment are as follows:\n\nAppointment Date & Time: %s\n\nPlease make sure to arrive 10 minutes before the scheduled time.\n\nRegards,\nWebReinvent Technologies Pvt. Ltd. ",
+            "Hi, %s\n\n
+                    Your appointment with Dr. %s has been successfully booked.\n
+                    The details of your appointment are as follows:\n\n
+                    Appointment Date & Time: %s\n\n
+                    Please make sure to arrive 10 minutes before the scheduled time.\n\n
+                    Regards,\n
+                    WebReinvent Technologies Pvt. Ltd.",
             $patient->name,
             $doctor->name,
             $appointmentDateTime
         );
         $email_content_for_doctor = sprintf(
-            "Hi Dr. %s,\n\nYou have a new appointment scheduled with %s.\nThe details are as follows:\n\nAppointment Date & Time: %s\n\nPlease be on time for the appointment.\n\nRegards,\nWebReinvent Technologies Pvt. Ltd.",
+            "Hi, Dr. %s\n\n
+                    You have a new appointment scheduled with %s.\n
+                    The details are as follows:\n\n
+                    Appointment Date & Time: %s\n\n
+                    Please be on time for the appointment.\n\n
+                    Regards,\n
+                    WebReinvent Technologies Pvt. Ltd.",
             $doctor->name,
             $patient->name,
             $appointmentDateTime
