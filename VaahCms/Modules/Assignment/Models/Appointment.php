@@ -5,11 +5,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Faker\Factory;
-use WebReinvent\VaahCms\Libraries\VaahMail;
 use WebReinvent\VaahCms\Models\VaahModel;
 use WebReinvent\VaahCms\Traits\CrudWithUuidObservantTrait;
 use WebReinvent\VaahCms\Models\User;
 use WebReinvent\VaahCms\Libraries\VaahSeeder;
+use WebReinvent\VaahCms\Libraries\VaahMail;
 
 class Appointment extends VaahModel
 {
@@ -662,16 +662,11 @@ class Appointment extends VaahModel
 
     public static function appointmentBookedMail($inputs)
     {
-        $subject = 'Appintment Booked';
+        $subject = 'Appointment Booked';
         $doctor = Doctor::find($inputs['doctor_id']);
         $patient = Patient::find($inputs['patient_id']);
 
         $appointmentDateTime = sprintf('%s at %s', $inputs['date'], $inputs['time']);
-
-        $date_time = [
-            'date' => $inputs['date'],
-            'time' =>  $inputs['time'],
-        ];
 
         $email_content_for_patient = sprintf(
             "Hi, %s\n\n
