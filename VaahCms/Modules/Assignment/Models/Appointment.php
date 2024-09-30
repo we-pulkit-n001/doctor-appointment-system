@@ -181,8 +181,6 @@ class Appointment extends VaahModel
 //            return $response;
 //        }
 
-        $inputs['status'] = "confirmed";
-
         $item = new self();
         $item->fill($inputs);
         $item->save();
@@ -490,32 +488,41 @@ class Appointment extends VaahModel
         }
 
         // check if name exist
-        $item = self::where('id', '!=', $id)
-            ->withTrashed()
-            ->where('name', $inputs['name'])->first();
-
-         if ($item) {
-             $error_message = "This name is already exist".($item->deleted_at?' in trash.':'.');
-             $response['success'] = false;
-             $response['errors'][] = $error_message;
-             return $response;
-         }
+//        $item = self::where('id', '!=', $id)
+//            ->withTrashed()
+//            ->where('name', $inputs['name'])->first();
+//
+//         if ($item) {
+//             $error_message = "This name is already exist".($item->deleted_at?' in trash.':'.');
+//             $response['success'] = false;
+//             $response['errors'][] = $error_message;
+//             return $response;
+//         }
 
          // check if slug exist
-         $item = self::where('id', '!=', $id)
-             ->withTrashed()
-             ->where('slug', $inputs['slug'])->first();
-
-         if ($item) {
-             $error_message = "This slug is already exist".($item->deleted_at?' in trash.':'.');
-             $response['success'] = false;
-             $response['errors'][] = $error_message;
-             return $response;
-         }
+//         $item = self::where('id', '!=', $id)
+//             ->withTrashed()
+//             ->where('slug', $inputs['slug'])->first();
+//
+//         if ($item) {
+//             $error_message = "This slug is already exist".($item->deleted_at?' in trash.':'.');
+//             $response['success'] = false;
+//             $response['errors'][] = $error_message;
+//             return $response;
+//         }
 
         $item = self::where('id', $id)->withTrashed()->first();
         $item->fill($inputs);
         $item->save();
+
+        $status_value = Appointment::where("id", $inputs['id'])->value('status');
+
+        if($status_value == "Cancelled"){
+            self::appointmentCancelledMail($inputs);
+        }
+        else{
+            self::appointmentBookedMail($inputs);
+        }
 
         $response = self::getItem($item->id);
         $response['messages'][] = trans("vaahcms-general.saved_successfully");
@@ -696,7 +703,41 @@ class Appointment extends VaahModel
         VaahMail::dispatchGenericMail($subject, $email_content_for_patient, $patient->email);
     }
 
+    public static function appointmentCancelledMail($inputs)
+    {
+        $subject = 'Appointment Cancelled';
+        $doctor = Doctor::find($inputs['doctor_id']);
+        $patient = Patient::find($inputs['patient_id']);
 
+        $appointmentDateTime = sprintf('%s at %s', $inputs['date'], $inputs['time']);
+
+        $email_content_for_patient = sprintf(
+            "Hi, %s\n\n
+                    We regret to inform you that your appointment with Dr. %s has been canceled.\n
+                    The details of your appointment were as follows:\n\n
+                    Appointment Date & Time: %s\n\n
+                    If you have any questions or would like to reschedule, please contact us.\n\n
+                    Regards,\n
+                    WebReinvent Technologies Pvt. Ltd.",
+            $patient->name,
+            $doctor->name,
+            $appointmentDateTime
+        );
+        $email_content_for_doctor = sprintf(
+            "Hi, Dr. %s\n\n
+                    We regret to inform you that the appointment with %s has been cancelled.\n
+                    The details of the cancelled appointment were as follows:\n\n
+                    Appointment Date & Time: %s\n\n
+                    If you have any questions or need to reschedule, please let us know.\n\n
+                    Regards,\n
+                    WebReinvent Technologies Pvt. Ltd.",
+            $doctor->name,
+            $patient->name,
+            $appointmentDateTime
+        );
+        VaahMail::dispatchGenericMail($subject, $email_content_for_doctor, $doctor->email);
+        VaahMail::dispatchGenericMail($subject, $email_content_for_patient, $patient->email);
+    }
 
     //-------------------------------------------------
     //-------------------------------------------------

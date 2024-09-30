@@ -29,8 +29,8 @@ const toggleFormMenu = (event) => {
 };
 
 const statusOptions = [
-    { label: 'Booked', value: 'booked' },
-    { label: 'Cancelled', value: 'cancelled' },
+    { label: 'Book Appointment', value: 'booked' },
+    { label: 'Cancel Appointment', value: 'cancelled' },
 ];
 
 //--------/form_menu
@@ -201,8 +201,7 @@ const statusOptions = [
                                   showIcon
                                   placeholder="Select time"
                                   name="appointments-time"
-                                  data-testid="appointments-time"
-                                  @change="formatTimeForDatabase">
+                                  data-testid="appointments-time">
                             <template #inputicon="{ clickCallback }">
                                 <i class="pi pi-clock cursor-pointer" @click="clickCallback"></i>
                             </template>
