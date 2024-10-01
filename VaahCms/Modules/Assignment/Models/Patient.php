@@ -564,9 +564,8 @@ class Patient extends VaahModel
 
         $rules = array(
             'name' => 'required|max:150',
-            'email' => 'required|email',
-            'phone' => 'required|digits:10',
-            'slug' => 'required|max:150',
+            'email' => 'required|email|unique:vh_assignments,email',
+            'phone' => 'required|digits:10'
         );
 
         $validator = \Validator::make($inputs, $rules);

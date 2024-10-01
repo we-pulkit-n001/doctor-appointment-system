@@ -200,11 +200,10 @@ const toggleFormMenu = (event) => {
                         <Calendar class="w-full"
                                   v-model="store.item.working_hours_start"
                                   timeOnly
-                                  hourFormat="24"
+                                  hourFormat="12"
                                   showIcon
                                   placeholder="Select start time"
-                                  data-testid="doctors-working_hours_start"
-                                  @change="formatTimeForDatabase">
+                                  data-testid="doctors-working_hours_start">
                             <template #inputicon="{ clickCallback }">
                                 <i class="pi pi-clock cursor-pointer" @click="clickCallback"></i>
                             </template>
@@ -226,11 +225,10 @@ const toggleFormMenu = (event) => {
                         <Calendar class="w-full"
                                   v-model="store.item.working_hours_end"
                                   timeOnly
-                                  hourFormat="24"
+                                  hourFormat="12"
                                   showIcon
                                   placeholder="Select end time"
-                                  data-testid="doctors-working_hours_end"
-                                  @change="formatTimeForDatabase">
+                                  data-testid="doctors-working_hours_end">
                             <template #inputicon="{ clickCallback }">
                                 <i class="pi pi-clock cursor-pointer" @click="clickCallback"></i>
                             </template>

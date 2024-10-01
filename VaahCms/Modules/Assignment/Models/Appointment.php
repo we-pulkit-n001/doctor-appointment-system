@@ -155,12 +155,15 @@ class Appointment extends VaahModel
 
         $inputs = $request->all();
 
-//        $validation = self::validation($inputs);
-//        if (!$validation['success']) {
-//            return $validation;
-//        }
+        $validation = self::validation($inputs);
+        if (!$validation['success']) {
+            return $validation;
+        }
 //
+//        $inputs['date']= Carbon::parse($inputs['date'])->toDateString();
 //
+//        $inputs['time'] = Carbon::parse($inputs['time'])->format('H:i:00');
+
 //        // check if name exist
 //        $item = self::where('name', $inputs['name'])->withTrashed()->first();
 //
@@ -178,6 +181,19 @@ class Appointment extends VaahModel
 //            $error_message = "This slug is already exist".($item->deleted_at?' in trash.':'.');
 //            $response['success'] = false;
 //            $response['messages'][] = $error_message;
+//            return $response;
+//        }
+
+//        $input_appointment_date = Carbon::parse($inputs['date'])->toDateString();
+//        $input_appointment_time = Carbon::parse($inputs['time'])->toTimeString();
+//
+//        $doctor = Doctor::find($inputs['doctor_id']);
+//        $appointment_exists = self::where('date', $input_appointment_date)
+//            ->where('time', $input_appointment_time)
+//            ->where('doctor_id', $inputs['doctor_id'])
+//            ->first();
+//        if ($appointment_exists) {
+//            $response['messages'][] = trans('Requested time slot is not available with '.$doctor->name.' at the moment! Please choose any other slot.');
 //            return $response;
 //        }
 
@@ -580,8 +596,11 @@ class Appointment extends VaahModel
     {
 
         $rules = array(
-//            'name' => 'required|max:150',
-//            'slug' => 'required|max:150',
+//            'doctor_id' => 'required',
+//            'patient_id' => 'required',
+            'date' => 'required',
+            'time' => 'required',
+            'status' => 'required'
         );
 
         $validator = \Validator::make($inputs, $rules);
@@ -673,7 +692,7 @@ class Appointment extends VaahModel
         $doctor = Doctor::find($inputs['doctor_id']);
         $patient = Patient::find($inputs['patient_id']);
 
-        $appointmentDateTime = sprintf('%s at %s', $inputs['date'], $inputs['time']);
+        $appointment_date_time = sprintf('%s at %s', $inputs['date'], $inputs['time']);
 
         $email_content_for_patient = sprintf(
             "Hi, %s\n\n
@@ -685,7 +704,7 @@ class Appointment extends VaahModel
                     WebReinvent Technologies Pvt. Ltd.",
             $patient->name,
             $doctor->name,
-            $appointmentDateTime
+            $appointment_date_time
         );
         $email_content_for_doctor = sprintf(
             "Hi, Dr. %s\n\n
@@ -697,7 +716,7 @@ class Appointment extends VaahModel
                     WebReinvent Technologies Pvt. Ltd.",
             $doctor->name,
             $patient->name,
-            $appointmentDateTime
+            $appointment_date_time
         );
         VaahMail::dispatchGenericMail($subject, $email_content_for_doctor, $doctor->email);
         VaahMail::dispatchGenericMail($subject, $email_content_for_patient, $patient->email);
@@ -705,11 +724,12 @@ class Appointment extends VaahModel
 
     public static function appointmentCancelledMail($inputs)
     {
+
         $subject = 'Appointment Cancelled';
         $doctor = Doctor::find($inputs['doctor_id']);
         $patient = Patient::find($inputs['patient_id']);
 
-        $appointmentDateTime = sprintf('%s at %s', $inputs['date'], $inputs['time']);
+        $appointment_date_time = sprintf('%s at %s', $inputs['date'], $inputs['time']);
 
         $email_content_for_patient = sprintf(
             "Hi, %s\n\n
@@ -721,7 +741,7 @@ class Appointment extends VaahModel
                     WebReinvent Technologies Pvt. Ltd.",
             $patient->name,
             $doctor->name,
-            $appointmentDateTime
+            $appointment_date_time
         );
         $email_content_for_doctor = sprintf(
             "Hi, Dr. %s\n\n
@@ -733,7 +753,7 @@ class Appointment extends VaahModel
                     WebReinvent Technologies Pvt. Ltd.",
             $doctor->name,
             $patient->name,
-            $appointmentDateTime
+            $appointment_date_time
         );
         VaahMail::dispatchGenericMail($subject, $email_content_for_doctor, $doctor->email);
         VaahMail::dispatchGenericMail($subject, $email_content_for_patient, $patient->email);

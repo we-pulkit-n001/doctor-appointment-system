@@ -1,5 +1,5 @@
 <script setup>
-import {onMounted, ref, watch} from "vue";
+import {onMounted, ref, watch, computed} from "vue";
 import { useAppointmentStore } from '../../stores/store-appointments'
 
 import VhField from './../../vaahvue/vue-three/primeflex/VhField.vue'
@@ -28,10 +28,29 @@ const toggleFormMenu = (event) => {
     form_menu.value.toggle(event);
 };
 
+// const statusOptions = [
+//     { label: 'Book Appointment', value: 'booked' },
+//     { label: 'Cancel Appointment', value: 'cancelled' },
+// ];
+
+const appointment_time= ref(null);
+
+const status = ref('');
+
 const statusOptions = [
     { label: 'Book Appointment', value: 'booked' },
     { label: 'Cancel Appointment', value: 'cancelled' },
 ];
+
+const filteredStatusOptions = computed(() => {
+    if (status.value === 'booked') {
+        return statusOptions.filter(option => option.value === 'cancelled');
+    } else if (status.value === 'cancelled') {
+        return statusOptions.filter(option => option.value === 'booked');
+    }
+
+    return statusOptions;
+});
 
 //--------/form_menu
 
@@ -180,7 +199,7 @@ const statusOptions = [
                             data-testid="appointments-date"
                             required
                             :showIcon="true"
-                            dateFormat="mm/dd/yy"
+                            dateFormat="dd/mm/yy"
                             :minDate="new Date()"
                         />
                         <div class="required-field hidden"></div>
@@ -200,6 +219,7 @@ const statusOptions = [
                                   hourFormat="24"
                                   showIcon
                                   placeholder="Select time"
+                                  :stepMinute="60">
                                   name="appointments-time"
                                   data-testid="appointments-time">
                             <template #inputicon="{ clickCallback }">
@@ -222,7 +242,7 @@ const statusOptions = [
                     <div class="p-inputgroup">
                         <Dropdown
                             v-model="store.item.status"
-                            :options="statusOptions"
+                            :options="filteredStatusOptions"
                             placeholder="Select Status"
                             option-label="label"
                             option-value="value"
@@ -232,7 +252,30 @@ const statusOptions = [
                         />
                         <div class="required-field hidden"></div>
                     </div>
+                    <p>Selected Status: {{ store.item.status }}</p>
                 </VhField>
+
+
+
+
+
+
+
+<!--                <VhField label="Status">-->
+<!--                    <div class="p-inputgroup">-->
+<!--                        <Dropdown-->
+<!--                            v-model="store.item.status"-->
+<!--                            :options="statusOptions"-->
+<!--                            placeholder="Select Status"-->
+<!--                            option-label="label"-->
+<!--                            option-value="value"-->
+<!--                            name="appointment-status"-->
+<!--                            data-testid="appointment-status"-->
+<!--                            required-->
+<!--                        />-->
+<!--                        <div class="required-field hidden"></div>-->
+<!--                    </div>-->
+<!--                </VhField>-->
 
 
                 <!--adding status field-->

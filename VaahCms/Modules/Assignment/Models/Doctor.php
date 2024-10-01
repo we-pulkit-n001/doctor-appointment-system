@@ -5,6 +5,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Faker\Factory;
+use WebReinvent\VaahCms\Libraries\VaahMail;
 use WebReinvent\VaahCms\Models\VaahModel;
 use WebReinvent\VaahCms\Traits\CrudWithUuidObservantTrait;
 use WebReinvent\VaahCms\Models\User;
@@ -482,9 +483,12 @@ class Doctor extends VaahModel
     {
         $inputs = $request->all();
 
-        $validation = self::validation($inputs);
-        if (!$validation['success']) {
-            return $validation;
+        $doctor = Doctor::find($inputs['id']);
+        if($doctor['email'] != $inputs['email'] || $doctor['phone'] != $inputs['phone']){
+            $validation = self::validation($inputs);
+            if (!$validation['success']) {
+                return $validation;
+            }
         }
 
         // check if name exist
@@ -514,6 +518,10 @@ class Doctor extends VaahModel
         $item = self::where('id', $id)->withTrashed()->first();
         $item->fill($inputs);
         $item->save();
+
+        if($doctor['working_hours_start'] != $inputs['working_hours_start'] || $doctor['working_hours_end'] != $inputs['working_hours_end']){
+            self::availabilityUpdatedMail($inputs);
+        }
 
         $response = self::getItem($item->id);
         $response['messages'][] = trans("vaahcms-general.saved_successfully");
@@ -573,9 +581,10 @@ class Doctor extends VaahModel
         $rules = array(
             'name' => 'required|max:150',
             'specialization' => 'required|max:150',
-            'email' => 'required|email',
-            'phone' => 'required|digits:10',
-            'slug' => 'required|max:150',
+            'email' => 'required|email|unique:vh_doctors,email',
+            'phone' => 'required|digits:10|unique:vh_doctors,phone',
+            'working_hours_start' => 'required',
+            'working_hours_end' => 'required'
         );
 
         $validator = \Validator::make($inputs, $rules);
@@ -649,6 +658,44 @@ class Doctor extends VaahModel
         $response['success'] = true;
         $response['data']['fill'] = $inputs;
         return $response;
+    }
+
+    public static function availabilityUpdatedMail($inputs)
+    {
+
+        $subject = 'Availability Updated';
+        $doctor = Doctor::find($inputs['id']);
+        $patient = Patient::find($inputs['id']);
+
+        $appointment_date_time = sprintf('%s at %s', $inputs['working_hours_start'], $inputs['working_hours_end']);
+
+        $email_content_for_patient = sprintf(
+            "Hi, %s\n\n
+                    We would like to inform you that the availability time for your appointment with Dr. %s has changed.\n
+                    The details of your appointment are as follows:\n\n
+                    New Appointment Date & Time: %s\n\n
+                    If you have any questions or would like to reschedule, please contact us.\n\n
+                    Regards,\n
+                    WebReinvent Technologies Pvt. Ltd.",
+
+            $patient->name,
+            $doctor->name,
+            $appointment_date_time
+        );
+        $email_content_for_doctor = sprintf(
+            "Hi, Dr. %s,\n\n
+                    We would like to inform you that the appointment with %s has been rescheduled.\n
+                    The details of the new appointment are as follows:\n\n
+                    New Appointment Date & Time: %s\n\n
+                    If you have any questions or need to make further changes, please let us know.\n\n
+                    Regards,\n
+                    WebReinvent Technologies Pvt. Ltd.",
+            $doctor->name,
+            $patient->name,
+            $appointment_date_time
+        );
+        VaahMail::dispatchGenericMail($subject, $email_content_for_doctor, $doctor->email);
+        VaahMail::dispatchGenericMail($subject, $email_content_for_patient, $patient->email);
     }
 
     //-------------------------------------------------
