@@ -11,6 +11,7 @@ use WebReinvent\VaahCms\Traits\CrudWithUuidObservantTrait;
 use WebReinvent\VaahCms\Models\User;
 use WebReinvent\VaahCms\Libraries\VaahSeeder;
 use Carbon\Carbon;
+use VaahCms\Modules\Assignment\Http\Controllers\Backend\AppointmentsController;
 
 class Doctor extends VaahModel
 {
@@ -162,8 +163,17 @@ class Doctor extends VaahModel
             return $validation;
         }
 
-        $inputs['working_hours_start'] = Carbon::parse($inputs['working_hours_start'])->setTimezone('Asia/Kolkata')->format('H:i:s');
-        $inputs['working_hours_end'] = Carbon::parse($inputs['working_hours_end'])->setTimezone('Asia/Kolkata')->format('H:i:s');
+        $inputs['working_hours_start'] = Carbon::parse($inputs['working_hours_start'])
+            ->setTimezone('Asia/Kolkata')
+            ->format('g:i A');
+
+        $inputs['working_hours_end'] = Carbon::parse($inputs['working_hours_end'])
+            ->setTimezone('Asia/Kolkata')
+            ->format('g:i A');
+
+
+//        $inputs['working_hours_start'] = Carbon::parse($inputs['working_hours_start'])->setTimezone('Asia/Kolkata')->format('H:i:s');
+//        $inputs['working_hours_end'] = Carbon::parse($inputs['working_hours_end'])->setTimezone('Asia/Kolkata')->format('H:i:s');
 
         // check if name exist
         $item = self::where('name', $inputs['name'])->withTrashed()->first();
@@ -271,8 +281,8 @@ class Doctor extends VaahModel
         $search_array = explode(' ',$filter['q']);
         foreach ($search_array as $search_item){
             $query->where(function ($q1) use ($search_item) {
-                $q1->where('name', 'LIKE', '%' . $search_item . '%')
-                    ->orWhere('slug', 'LIKE', '%' . $search_item . '%')
+                $q1->where('email', 'LIKE', '%' . $search_item . '%')
+                    ->orWhere('phone', 'LIKE', '%' . $search_item . '%')
                     ->orWhere('id', 'LIKE', $search_item . '%');
             });
         }
@@ -483,7 +493,8 @@ class Doctor extends VaahModel
     {
         $inputs = $request->all();
 
-        $doctor = Doctor::find($inputs['id']);
+        $doctor = self::find($inputs['id']);
+
         if($doctor['email'] != $inputs['email'] || $doctor['phone'] != $inputs['phone']){
             $validation = self::validation($inputs);
             if (!$validation['success']) {
@@ -664,38 +675,38 @@ class Doctor extends VaahModel
     {
 
         $subject = 'Availability Updated';
-        $doctor = Doctor::find($inputs['id']);
-        $patient = Patient::find($inputs['id']);
+        $doctor = self::find($inputs['id']);
+
+//        $patient = Patient::find($inputs['id']);
 
         $appointment_date_time = sprintf('%s at %s', $inputs['working_hours_start'], $inputs['working_hours_end']);
 
-        $email_content_for_patient = sprintf(
-            "Hi, %s\n\n
-                    We would like to inform you that the availability time for your appointment with Dr. %s has changed.\n
-                    The details of your appointment are as follows:\n\n
-                    New Appointment Date & Time: %s\n\n
-                    If you have any questions or would like to reschedule, please contact us.\n\n
-                    Regards,\n
-                    WebReinvent Technologies Pvt. Ltd.",
-
-            $patient->name,
-            $doctor->name,
-            $appointment_date_time
-        );
+//        $email_content_for_patient = sprintf(
+//            "Hi, %s\n\n
+//                    We would like to inform you that the availability time for your appointment with Dr. %s has changed.\n
+//                    The details of your appointment are as follows:\n\n
+//                    New Appointment Date & Time: %s\n\n
+//                    If you have any questions or would like to reschedule, please contact us.\n\n
+//                    Regards,\n
+//                    WebReinvent Technologies Pvt. Ltd.",
+//
+//            $patient->name,
+//            $doctor->name,
+//            $appointment_date_time
+//        );
         $email_content_for_doctor = sprintf(
-            "Hi, Dr. %s,\n\n
-                    We would like to inform you that the appointment with %s has been rescheduled.\n
-                    The details of the new appointment are as follows:\n\n
-                    New Appointment Date & Time: %s\n\n
+            "Hi, Dr. %s,\n
+                    We would like to inform you that your availability hours have been successfully updated.\n
+                    The details of your updated availability are as follows:\n\n
+                    New Availability Date & Time: %s\n\n
                     If you have any questions or need to make further changes, please let us know.\n\n
                     Regards,\n
                     WebReinvent Technologies Pvt. Ltd.",
             $doctor->name,
-            $patient->name,
             $appointment_date_time
         );
         VaahMail::dispatchGenericMail($subject, $email_content_for_doctor, $doctor->email);
-        VaahMail::dispatchGenericMail($subject, $email_content_for_patient, $patient->email);
+//        VaahMail::dispatchGenericMail($subject, $email_content_for_patient, $patient->email);
     }
 
     //-------------------------------------------------

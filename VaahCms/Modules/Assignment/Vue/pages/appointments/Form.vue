@@ -28,29 +28,49 @@ const toggleFormMenu = (event) => {
     form_menu.value.toggle(event);
 };
 
-// const statusOptions = [
-//     { label: 'Book Appointment', value: 'booked' },
-//     { label: 'Cancel Appointment', value: 'cancelled' },
-// ];
-
-const appointment_time= ref(null);
-
-const status = ref('');
-
 const statusOptions = [
     { label: 'Book Appointment', value: 'booked' },
     { label: 'Cancel Appointment', value: 'cancelled' },
 ];
 
-const filteredStatusOptions = computed(() => {
-    if (status.value === 'booked') {
-        return statusOptions.filter(option => option.value === 'cancelled');
-    } else if (status.value === 'cancelled') {
-        return statusOptions.filter(option => option.value === 'booked');
+const appointment_time= ref(null);
+
+// const status = ref('');
+
+onMounted(async () => {
+    if ((!store.item || Object.keys(store.item).length < 1) && route.params && route.params.id) {
+        await store.getItem(route.params.id);
+    }
+    await store.getFormMenu();
+});
+
+const selectedStatus = ref('');
+
+const statusOptions = [
+    { label: 'Book Appointment', value: 'booked' },
+    { label: 'Cancel Appointment', value: 'cancelled' },
+];
+onMounted(async () => {
+    if ((!store.item || Object.keys(store.item).length < 1) && route.params && route.params.id) {
+        await store.getItem(route.params.id);
     }
 
-    return statusOptions;
+    // Set the selected status from the store after fetching the data
+    selectedStatus.value = store.item?.status || ''; // Prefill with existing status
 });
+
+};
+//
+// const filteredStatusOptions = computed(() => {
+//     if (!store.item || !store.item.status) {
+//         return statusOptions;
+//     } else if (store.item.status === 'booked') {
+//         return [{ label: 'Cancel Appointment', value: 'cancelled' }];
+//     } else if (store.item.status === 'cancelled') {
+//         return [{ label: 'Book Appointment', value: 'booked' }];
+//     }
+//     return statusOptions;
+// });
 
 //--------/form_menu
 
@@ -169,6 +189,7 @@ const filteredStatusOptions = computed(() => {
                                    option-value="id"
                                    name="patient-name"
                                    data-testid="patient-name"
+                                   filter
                                    required/>
                         <div class="required-field hidden"></div>
                     </div>
@@ -183,6 +204,7 @@ const filteredStatusOptions = computed(() => {
                                    option-value="id"
                                    name="doctor-name"
                                    data-testid="doctor-name"
+                                   filter
                                    required/>
                         <div class="required-field hidden"></div>
                     </div>
@@ -242,7 +264,7 @@ const filteredStatusOptions = computed(() => {
                     <div class="p-inputgroup">
                         <Dropdown
                             v-model="store.item.status"
-                            :options="filteredStatusOptions"
+                            :options="statusOptions"
                             placeholder="Select Status"
                             option-label="label"
                             option-value="value"
@@ -261,7 +283,8 @@ const filteredStatusOptions = computed(() => {
 
 
 
-<!--                <VhField label="Status">-->
+
+                <!--                <VhField label="Status">-->
 <!--                    <div class="p-inputgroup">-->
 <!--                        <Dropdown-->
 <!--                            v-model="store.item.status"-->

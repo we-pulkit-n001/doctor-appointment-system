@@ -285,9 +285,15 @@ class Appointment extends VaahModel
         $search_array = explode(' ',$filter['q']);
         foreach ($search_array as $search_item){
             $query->where(function ($q1) use ($search_item) {
-                $q1->where('name', 'LIKE', '%' . $search_item . '%')
-                    ->orWhere('slug', 'LIKE', '%' . $search_item . '%')
-                    ->orWhere('id', 'LIKE', $search_item . '%');
+                $q1->where('status', 'LIKE', '%' . $search_item . '%')
+                    ->orWhere('patient_id', 'LIKE', '%' . $search_item . '%')
+                    ->orWhere('id', 'LIKE', $search_item . '%')
+                    ->orWhereHas('patient', function ($q2) use ($search_item) {
+                        $q2->where('name', 'LIKE', '%' . $search_item . '%');
+                    })
+                    ->orWhereHas('doctor', function ($q2) use ($search_item) {
+                    $q2->where('name', 'LIKE', '%' . $search_item . '%');
+                    });
             });
         }
 
@@ -527,17 +533,28 @@ class Appointment extends VaahModel
 //             return $response;
 //         }
 
+        $appointment = self::find($inputs['id']);
+
+
         $item = self::where('id', $id)->withTrashed()->first();
         $item->fill($inputs);
         $item->save();
 
-        $status_value = Appointment::where("id", $inputs['id'])->value('status');
 
-        if($status_value == "Cancelled"){
-            self::appointmentCancelledMail($inputs);
-        }
-        else{
-            self::appointmentBookedMail($inputs);
+
+//        if($appointment['patient_id'] != $inputs['patient_id'] || $appointment['doctor_id'] != $inputs['doctor_id'] || $appointment['date'] != $inputs['date'] || $appointment['time'] != $inputs['time']){
+//            self::appointmentUpdatedMail($inputs);
+//        }
+
+//        dd($inputs['status']);
+
+        if(strtolower($appointment['status']) != $inputs['status']){
+            if(strtolower($inputs['status']) == "booked"){
+                self::appointmentBookedMail($inputs);
+            }
+            else{
+                self::appointmentCancelledMail($inputs);
+            }
         }
 
         $response = self::getItem($item->id);
@@ -758,6 +775,42 @@ class Appointment extends VaahModel
         VaahMail::dispatchGenericMail($subject, $email_content_for_doctor, $doctor->email);
         VaahMail::dispatchGenericMail($subject, $email_content_for_patient, $patient->email);
     }
+
+//    public static function appointmentUpdatedMail($inputs)
+//    {
+//
+//        $subject = 'Appointment Updated';
+//        $doctor = Doctor::find($inputs['doctor_id']);
+//        $patient = Patient::find($inputs['patient_id']);
+//
+//        $appointment_date_time = sprintf('%s at %s', $inputs['date'], $inputs['time']);
+//
+//        $email_content_for_patient = sprintf(
+//            "Hi, %s\n\n
+//                    We want to inform you that your appointment has been updated with Dr. %s to the following details:\n
+//                    Appointment Date & Time: %s\n\n
+//                    If you have any questions or would like to reschedule, please contact us.\n\n
+//                    Regards,\n
+//                    WebReinvent Technologies Pvt. Ltd.",
+//            $patient->name,
+//            $doctor->name,
+//            $appointment_date_time
+//        );
+//        $email_content_for_doctor = sprintf(
+//            "Hi, Dr. %s\n\n
+//                    We want to inform you that the appointment with %s has been cancelled.\n
+//                    The details of the cancelled appointment were as follows:\n\n
+//                    Appointment Date & Time: %s\n\n
+//                    If you have any questions or need to reschedule, please let us know.\n\n
+//                    Regards,\n
+//                    WebReinvent Technologies Pvt. Ltd.",
+//            $doctor->name,
+//            $patient->name,
+//            $appointment_date_time
+//        );
+//        VaahMail::dispatchGenericMail($subject, $email_content_for_doctor, $doctor->email);
+//        VaahMail::dispatchGenericMail($subject, $email_content_for_patient, $patient->email);
+//    }
 
     //-------------------------------------------------
     //-------------------------------------------------
