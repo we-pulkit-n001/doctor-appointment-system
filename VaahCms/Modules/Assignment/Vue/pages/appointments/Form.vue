@@ -28,49 +28,26 @@ const toggleFormMenu = (event) => {
     form_menu.value.toggle(event);
 };
 
-const statusOptions = [
-    { label: 'Book Appointment', value: 'booked' },
-    { label: 'Cancel Appointment', value: 'cancelled' },
-];
+
 
 const appointment_time= ref(null);
 
-// const status = ref('');
-
-onMounted(async () => {
-    if ((!store.item || Object.keys(store.item).length < 1) && route.params && route.params.id) {
-        await store.getItem(route.params.id);
-    }
-    await store.getFormMenu();
-});
-
-const selectedStatus = ref('');
+const status = ref('');
 
 const statusOptions = [
     { label: 'Book Appointment', value: 'booked' },
     { label: 'Cancel Appointment', value: 'cancelled' },
 ];
-onMounted(async () => {
-    if ((!store.item || Object.keys(store.item).length < 1) && route.params && route.params.id) {
-        await store.getItem(route.params.id);
+
+const filteredStatusOptions = computed(() => {
+    if (status.value === 'booked') {
+        return statusOptions.filter(option => option.value === 'cancelled');
+    } else if (status.value === 'cancelled') {
+        return statusOptions.filter(option => option.value === 'booked');
     }
 
-    // Set the selected status from the store after fetching the data
-    selectedStatus.value = store.item?.status || ''; // Prefill with existing status
+    return statusOptions;
 });
-
-};
-//
-// const filteredStatusOptions = computed(() => {
-//     if (!store.item || !store.item.status) {
-//         return statusOptions;
-//     } else if (store.item.status === 'booked') {
-//         return [{ label: 'Cancel Appointment', value: 'cancelled' }];
-//     } else if (store.item.status === 'cancelled') {
-//         return [{ label: 'Book Appointment', value: 'booked' }];
-//     }
-//     return statusOptions;
-// });
 
 //--------/form_menu
 
@@ -238,7 +215,7 @@ onMounted(async () => {
                         <Calendar class="w-full"
                                   v-model="store.item.time"
                                   timeOnly
-                                  hourFormat="24"
+                                  hourFormat="12"
                                   showIcon
                                   placeholder="Select time"
                                   :stepMinute="60">
@@ -260,23 +237,35 @@ onMounted(async () => {
 
                 <!--adding status field-->
 
+
                 <VhField label="Status">
                     <div class="p-inputgroup">
-                        <Dropdown
-                            v-model="store.item.status"
-                            :options="statusOptions"
-                            placeholder="Select Status"
-                            option-label="label"
-                            option-value="value"
-                            name="appointment-status"
-                            data-testid="appointment-status"
-                            required
-                        />
-                        <div class="required-field hidden"></div>
+                        <Dropdown v-model="store.item.status"
+                                  :options="[{ label: 'Select status' },{ label: 'Cancel', value: 'cancelled' }]"
+                                  optionLabel="label"
+                                  optionValue="value"
+                                  name="status"
+                                  class="w-full md:w-14rem"
+                                  placeholder="Select Status" />
                     </div>
-                    <p>Selected Status: {{ store.item.status }}</p>
                 </VhField>
 
+<!--                <VhField label="Status">-->
+<!--                    <div class="p-inputgroup">-->
+<!--                        <Dropdown-->
+<!--                            v-model="store.item.status"-->
+<!--                            :options="filteredStatusOptions"-->
+<!--                            placeholder="Select Status"-->
+<!--                            option-label="label"-->
+<!--                            option-value="value"-->
+<!--                            name="appointment-status"-->
+<!--                            data-testid="appointment-status"-->
+<!--                            required-->
+<!--                        />-->
+<!--                        <div class="required-field hidden"></div>-->
+<!--                    </div>-->
+<!--                    <p>Selected Status: {{ store.item.status }}</p>-->
+<!--                </VhField>-->
 
 
 
@@ -284,7 +273,7 @@ onMounted(async () => {
 
 
 
-                <!--                <VhField label="Status">-->
+<!--                <VhField label="Status">-->
 <!--                    <div class="p-inputgroup">-->
 <!--                        <Dropdown-->
 <!--                            v-model="store.item.status"-->

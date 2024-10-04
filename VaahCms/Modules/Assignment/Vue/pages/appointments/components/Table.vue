@@ -5,13 +5,21 @@ import { useAppointmentStore } from '../../../stores/store-appointments'
 const store = useAppointmentStore();
 const useVaah = vaah();
 
+const toggleStatus = (appointment) => {
+    // Toggle the status between 'Booked' and 'Cancelled'
+    appointment.status = appointment.status === 'Booked' ? 'Cancelled' : 'Booked';
+
+    // Optionally, update the appointment in your store or make an API call
+    // this.$store.updateAppointment(appointment);
+};
+
 </script>
 
 <template>
 
     <div v-if="store.list">
         <!--table-->
-         <DataTable :value="store.list.data"
+        <DataTable :value="store.list.data"
                    dataKey="id"
                    :rowClass="store.setRowClass"
                    class="p-datatable-sm p-datatable-hoverable-rows"
@@ -28,15 +36,15 @@ const useVaah = vaah();
             <Column field="id" header="ID" :style="{width: '80px'}" :sortable="true">
             </Column>
 
-             <Column field="patient_name" header="Patient's Name"
-                     class="overflow-wrap-anywhere"
-                     :sortable="true">
+            <Column field="patient_name" header="Patient's Name"
+                    class="overflow-wrap-anywhere"
+                    :sortable="true">
 
-                 <template #body="prop">
+                <template #body="prop">
                     {{prop.data.patient?.name}}
-                 </template>
+                </template>
 
-             </Column>
+            </Column>
 
             <Column field="doctor_name" header="Doctor's Name"
                     class="overflow-wrap-anywhere"
@@ -49,67 +57,67 @@ const useVaah = vaah();
 
             </Column>
 
-             <!--adding date field-->
+            <!--adding date field-->
 
-             <Column field="date" header="Date"
-                     class="overflow-wrap-anywhere"
-                     :sortable="true">
+            <Column field="date" header="Date"
+                    class="overflow-wrap-anywhere"
+                    :sortable="true">
 
-                 <template #body="prop">
-                     <Badge v-if="prop.data.deleted_at"
-                            value="Trashed"
-                            severity="danger"></Badge>
-                     {{prop.data.date}}
-                 </template>
+                <template #body="prop">
+                    <Badge v-if="prop.data.deleted_at"
+                           value="Trashed"
+                           severity="danger"></Badge>
+                    {{prop.data.date}}
+                </template>
 
-             </Column>
+            </Column>
 
-             <!--adding date field-->
+            <!--adding date field-->
 
-             <!--adding time field-->
+            <!--adding time field-->
 
-             <Column field="time" header="Time"
-                     class="overflow-wrap-anywhere"
-                     :sortable="true">
+            <Column field="time" header="Time"
+                    class="overflow-wrap-anywhere"
+                    :sortable="true">
 
-                 <template #body="prop">
-                     <Badge v-if="prop.data.deleted_at"
-                            value="Trashed"
-                            severity="danger"></Badge>
-                     {{prop.data.time}}
-                 </template>
+                <template #body="prop">
+                    <Badge v-if="prop.data.deleted_at"
+                           value="Trashed"
+                           severity="danger"></Badge>
+                    {{prop.data.time}}
+                </template>
 
-             </Column>
+            </Column>
 
-             <!--adding time field-->
+            <!--adding time field-->
 
-             <!--adding status field-->
+            <!--adding status field-->
 
-             <Column field="status" header="Status"
-                     class="overflow-wrap-anywhere"
-                     :sortable="true">
+            <Column field="status" header="Status"
+                    class="overflow-wrap-anywhere"
+                    :sortable="true">
 
-                 <template #body="prop">
-                     <Badge v-if="prop.data.deleted_at"
-                            value="Trashed"
-                            severity="danger"></Badge>
-                     {{prop.data.status}}
-                 </template>
+                <template #body="prop">
+                    <Badge v-if="prop.data.deleted_at"
+                           value="Trashed"
+                           severity="danger"></Badge>
+                    {{prop.data.status}}
+                </template>
 
-             </Column>
+            </Column>
 
-             <!--adding status field-->
+            <!--adding status field-->
 
-                <Column field="updated_at" header="Updated"
-                        v-if="store.isViewLarge()"
-                        style="width:150px;"
-                        :sortable="true">
+            <Column field="updated_at" header="Updated"
+                    v-if="store.isViewLarge()"
+                    style="width:150px;"
+                    :sortable="true">
 
-                    <template #body="prop">
-                        {{useVaah.strToSlug(prop.data.updated_at)}}
-                    </template>
+                <template #body="prop">
+                    {{useVaah.strToSlug(prop.data.updated_at)}}
+                </template>
 
-                </Column>
+            </Column>
 
             <Column field="is_active" v-if="store.isViewLarge()"
                     :sortable="true"
@@ -146,6 +154,42 @@ const useVaah = vaah();
                                 @click="store.toEdit(prop.data)"
                                 icon="pi pi-pencil" />
 
+                        <!--Adding status change toggle-->
+
+
+                        <Button label="Cancel"
+                                v-if="prop.data.status !== 'cancelled'"
+                                @click="store.itemAction('cancel', prop.data)"
+                                v-tooltip.top="'Cancel'"/>
+
+                        <Button label="Cancel"
+                                disabled v-else
+                                v-tooltip.top="'Cancel'"/>
+
+
+
+
+                        <Button class="p-button-tiny p-button-danger p-button-text"
+                                data-testid="appointments-table-action-cancel"
+                                v-if="store.isViewLarge() && !prop.data.deleted_at"
+                                @click="store.itemAction('cancel', prop.data)"
+                                v-tooltip.top="'Change Status'"
+                                :icon="prop.data.status === 'Booked' ? 'pi pi-times' : 'pi pi-check'"
+                        />
+
+
+
+
+<!--                        <Button-->
+<!--                            class="p-button-tiny p-button-text"-->
+<!--                            data-testid="appointments-table-to-edit"-->
+<!--                            v-tooltip.top="'Change Status'"-->
+<!--                            @click="toggleStatus(prop.data)"-->
+<!--                            :icon="prop.data.status === 'Booked' ? 'pi pi-times' : 'pi pi-check'"-->
+<!--                        />-->
+
+                        <!--Adding status change toggle-->
+
                         <Button class="p-button-tiny p-button-danger p-button-text"
                                 data-testid="appointments-table-action-trash"
                                 v-if="store.isViewLarge() && !prop.data.deleted_at"
@@ -169,11 +213,11 @@ const useVaah = vaah();
 
             </Column>
 
-             <template #empty>
-                 <div class="text-center py-3">
-                     No records found.
-                 </div>
-             </template>
+            <template #empty>
+                <div class="text-center py-3">
+                    No records found.
+                </div>
+            </template>
 
         </DataTable>
         <!--/table-->

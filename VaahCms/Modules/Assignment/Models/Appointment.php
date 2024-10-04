@@ -286,7 +286,6 @@ class Appointment extends VaahModel
         foreach ($search_array as $search_item){
             $query->where(function ($q1) use ($search_item) {
                 $q1->where('status', 'LIKE', '%' . $search_item . '%')
-                    ->orWhere('patient_id', 'LIKE', '%' . $search_item . '%')
                     ->orWhere('id', 'LIKE', $search_item . '%')
                     ->orWhereHas('patient', function ($q2) use ($search_item) {
                         $q2->where('name', 'LIKE', '%' . $search_item . '%');
