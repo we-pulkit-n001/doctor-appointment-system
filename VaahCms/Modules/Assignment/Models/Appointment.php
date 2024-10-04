@@ -1,5 +1,6 @@
 <?php namespace VaahCms\Modules\Assignment\Models;
 
+use Carbon\Carbon;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
@@ -159,7 +160,9 @@ class Appointment extends VaahModel
         if (!$validation['success']) {
             return $validation;
         }
-//
+
+        $inputs['working_hours_start'] = Carbon::parse($inputs['time'])->setTimezone('Asia/Kolkata')->format('H:i:s');
+
 //        $inputs['date']= Carbon::parse($inputs['date'])->toDateString();
 //
 //        $inputs['time'] = Carbon::parse($inputs['time'])->format('H:i:00');
@@ -196,6 +199,8 @@ class Appointment extends VaahModel
 //            $response['messages'][] = trans('Requested time slot is not available with '.$doctor->name.' at the moment! Please choose any other slot.');
 //            return $response;
 //        }
+
+        $inputs['status'] = "Booked";
 
         $item = new self();
         $item->fill($inputs);
@@ -581,6 +586,7 @@ class Appointment extends VaahModel
     //-------------------------------------------------
     public static function itemAction($request, $id, $type): array
     {
+
         switch($type)
         {
             case 'activate':
@@ -596,6 +602,14 @@ class Appointment extends VaahModel
             case 'trash':
                 self::find($id)
                     ->delete();
+                break;
+            case 'book':
+                self::find($id)
+                    ->update(['status'=> 'booked']);
+                break;
+            case 'cancel':
+                self::find($id)
+                    ->update(['status'=> 'cancelled']);
                 break;
             case 'restore':
                 self::where('id', $id)
@@ -616,7 +630,6 @@ class Appointment extends VaahModel
 //            'patient_id' => 'required',
             'date' => 'required',
             'time' => 'required',
-            'status' => 'required'
         );
 
         $validator = \Validator::make($inputs, $rules);

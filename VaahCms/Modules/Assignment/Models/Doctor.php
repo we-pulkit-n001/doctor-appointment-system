@@ -163,17 +163,8 @@ class Doctor extends VaahModel
             return $validation;
         }
 
-//        $inputs['working_hours_start'] = Carbon::parse($inputs['working_hours_start'])
-//            ->setTimezone('Asia/Kolkata')
-//            ->format('g:i A');
-//
-//        $inputs['working_hours_end'] = Carbon::parse($inputs['working_hours_end'])
-//            ->setTimezone('Asia/Kolkata')
-//            ->format('g:i A');
-
-
-//        $inputs['working_hours_start'] = Carbon::parse($inputs['working_hours_start'])->setTimezone('Asia/Kolkata')->format('H:i:s');
-//        $inputs['working_hours_end'] = Carbon::parse($inputs['working_hours_end'])->setTimezone('Asia/Kolkata')->format('H:i:s');
+        $inputs['working_hours_start'] = Carbon::parse($inputs['working_hours_start'])->setTimezone('Asia/Kolkata')->format('H:i:s');
+        $inputs['working_hours_end'] = Carbon::parse($inputs['working_hours_end'])->setTimezone('Asia/Kolkata')->format('H:i:s');
 
         // check if name exist
         $item = self::where('name', $inputs['name'])->withTrashed()->first();
@@ -291,6 +282,7 @@ class Doctor extends VaahModel
     //-------------------------------------------------
     public static function getList($request)
     {
+
         $list = self::getSorted($request->filter);
         $list->isActiveFilter($request->filter);
         $list->trashedFilter($request->filter);
@@ -309,7 +301,6 @@ class Doctor extends VaahModel
         $response['data'] = $list;
 
         return $response;
-
 
     }
 

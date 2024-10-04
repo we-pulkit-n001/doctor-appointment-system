@@ -232,48 +232,8 @@ const filteredStatusOptions = computed(() => {
                     </div>
                 </VhField>
 
-
                 <!--adding time field-->
 
-                <!--adding status field-->
-
-
-                <VhField label="Status">
-                    <div class="p-inputgroup">
-                        <Dropdown v-model="store.item.status"
-                                  :options="[{ label: 'Select status' },{ label: 'Cancel', value: 'cancelled' }]"
-                                  optionLabel="label"
-                                  optionValue="value"
-                                  name="status"
-                                  class="w-full md:w-14rem"
-                                  placeholder="Select Status" />
-                    </div>
-                </VhField>
-
-<!--                <VhField label="Status">-->
-<!--                    <div class="p-inputgroup">-->
-<!--                        <Dropdown-->
-<!--                            v-model="store.item.status"-->
-<!--                            :options="filteredStatusOptions"-->
-<!--                            placeholder="Select Status"-->
-<!--                            option-label="label"-->
-<!--                            option-value="value"-->
-<!--                            name="appointment-status"-->
-<!--                            data-testid="appointment-status"-->
-<!--                            required-->
-<!--                        />-->
-<!--                        <div class="required-field hidden"></div>-->
-<!--                    </div>-->
-<!--                    <p>Selected Status: {{ store.item.status }}</p>-->
-<!--                </VhField>-->
-
-
-
-
-
-
-
-<!--                <VhField label="Status">-->
 <!--                    <div class="p-inputgroup">-->
 <!--                        <Dropdown-->
 <!--                            v-model="store.item.status"-->

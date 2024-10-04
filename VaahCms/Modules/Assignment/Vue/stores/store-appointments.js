@@ -347,6 +347,7 @@ export const useAppointmentStore = defineStore({
         },
         //---------------------------------------------------------------------
         async itemAction(type, item=null){
+
             if(!item)
             {
                 item = this.item;

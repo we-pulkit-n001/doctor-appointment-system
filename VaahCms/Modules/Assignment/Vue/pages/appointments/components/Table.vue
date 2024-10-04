@@ -5,12 +5,22 @@ import { useAppointmentStore } from '../../../stores/store-appointments'
 const store = useAppointmentStore();
 const useVaah = vaah();
 
-const toggleStatus = (appointment) => {
-    // Toggle the status between 'Booked' and 'Cancelled'
-    appointment.status = appointment.status === 'Booked' ? 'Cancelled' : 'Booked';
+const convertTo12HourFormat = (time24) => {
+    const [hours, minutes] = time24.split(':').map(Number);
+    const offsetHours = 5;
+    const offsetMinutes = 30;
 
-    // Optionally, update the appointment in your store or make an API call
-    // this.$store.updateAppointment(appointment);
+    let adjustedHours = (hours + offsetHours) % 24;
+    let adjustedMinutes = minutes + offsetMinutes;
+
+    if (adjustedMinutes >= 60) {
+        adjustedMinutes -= 60;
+        adjustedHours = (adjustedHours + 1) % 24;
+    }
+
+    const hour12 = (adjustedHours % 12) || 12;
+    const ampm = adjustedHours >= 12 ? 'PM' : 'AM';
+    return `${hour12}:${String(adjustedMinutes).padStart(2, '0')} ${ampm}`;
 };
 
 </script>
@@ -84,7 +94,7 @@ const toggleStatus = (appointment) => {
                     <Badge v-if="prop.data.deleted_at"
                            value="Trashed"
                            severity="danger"></Badge>
-                    {{prop.data.time}}
+                    {{ convertTo12HourFormat(prop.data.time) }}
                 </template>
 
             </Column>
@@ -156,37 +166,21 @@ const toggleStatus = (appointment) => {
 
                         <!--Adding status change toggle-->
 
-
-                        <Button label="Cancel"
-                                v-if="prop.data.status !== 'cancelled'"
-                                @click="store.itemAction('cancel', prop.data)"
-                                v-tooltip.top="'Cancel'"/>
-
-                        <Button label="Cancel"
-                                disabled v-else
-                                v-tooltip.top="'Cancel'"/>
-
-
-
+                        <Button class="p-button-tiny p-button-danger p-button-text"
+                                data-testid="appointments-table-action-book"
+                                v-if="store.isViewLarge() && !prop.data.deleted_at && prop.data.status === 'Cancelled'"
+                                @click="store.itemAction('book', prop.data)"
+                                v-tooltip.top="'Book Appointment'"
+                                :icon="'pi pi-check'"
+                                :disabled="false" />
 
                         <Button class="p-button-tiny p-button-danger p-button-text"
                                 data-testid="appointments-table-action-cancel"
-                                v-if="store.isViewLarge() && !prop.data.deleted_at"
+                                v-if="store.isViewLarge() && !prop.data.deleted_at && prop.data.status === 'Booked'"
                                 @click="store.itemAction('cancel', prop.data)"
-                                v-tooltip.top="'Change Status'"
-                                :icon="prop.data.status === 'Booked' ? 'pi pi-times' : 'pi pi-check'"
-                        />
-
-
-
-
-<!--                        <Button-->
-<!--                            class="p-button-tiny p-button-text"-->
-<!--                            data-testid="appointments-table-to-edit"-->
-<!--                            v-tooltip.top="'Change Status'"-->
-<!--                            @click="toggleStatus(prop.data)"-->
-<!--                            :icon="prop.data.status === 'Booked' ? 'pi pi-times' : 'pi pi-check'"-->
-<!--                        />-->
+                                v-tooltip.top="'Cancel Appointment'"
+                                :icon="'pi pi-times'"
+                                :disabled="false" />
 
                         <!--Adding status change toggle-->
 

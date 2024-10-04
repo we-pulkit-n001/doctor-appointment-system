@@ -5,6 +5,13 @@ import { useDoctorStore } from '../../../stores/store-doctors'
 const store = useDoctorStore();
 const useVaah = vaah();
 
+const convertTo12HourFormat = (time24) => {
+    const [hours, minutes] = time24.split(':');
+    const hour12 = (hours % 12) || 12; // Convert to 12-hour format
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    return `${hour12}:${minutes} ${ampm}`;
+};
+
 </script>
 
 <template>
@@ -102,7 +109,7 @@ const useVaah = vaah();
                      <Badge v-if="prop.data.deleted_at"
                             value="Trashed"
                             severity="danger"></Badge>
-                     {{prop.data.working_hours_start}}
+                     {{ convertTo12HourFormat(prop.data.working_hours_start) }}
                  </template>
 
              </Column>
@@ -119,7 +126,7 @@ const useVaah = vaah();
                      <Badge v-if="prop.data.deleted_at"
                             value="Trashed"
                             severity="danger"></Badge>
-                     {{prop.data.working_hours_end}}
+                     {{ convertTo12HourFormat(prop.data.working_hours_end) }}
                  </template>
 
              </Column>
