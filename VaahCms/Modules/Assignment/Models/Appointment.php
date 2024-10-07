@@ -163,10 +163,6 @@ class Appointment extends VaahModel
 
         $inputs['working_hours_start'] = Carbon::parse($inputs['time'])->setTimezone('Asia/Kolkata')->format('H:i:s');
 
-//        $inputs['date']= Carbon::parse($inputs['date'])->toDateString();
-//
-//        $inputs['time'] = Carbon::parse($inputs['time'])->format('H:i:00');
-
 //        // check if name exist
 //        $item = self::where('name', $inputs['name'])->withTrashed()->first();
 //
@@ -187,20 +183,33 @@ class Appointment extends VaahModel
 //            return $response;
 //        }
 
-//        $input_appointment_date = Carbon::parse($inputs['date'])->toDateString();
-//        $input_appointment_time = Carbon::parse($inputs['time'])->toTimeString();
+        $inputs['status'] = "Booked";
+
+        $doctor = doctor::where('id', $inputs['doctor_id'])->first();
+
+        $working_hours_start = Carbon::parse($doctor->working_hours_start)->setTimezone('Asia/Kolkata')->format('H:i:00');
+        $working_hours_end = Carbon::parse($doctor->working_hours_end)->setTimezone('Asia/Kolkata')->format('H:i:00');
+
+        $appointment_time = Carbon::parse($inputs['time'])->setTimezone('Asia/Kolkata')->format('H:i:00');
+
+        if ($appointment_time < $working_hours_start || $appointment_time > $working_hours_end) {
+            $response['success'] = false;
+            $response['errors'][] = "Unfortunately,\nThe Doctor is not available.\nPlease select a different time for Appointment.";
+            return $response;
+        }
+
+
+//        $value_check = Doctor::find($inputs['doctor_id']);
 //
-//        $doctor = Doctor::find($inputs['doctor_id']);
-//        $appointment_exists = self::where('date', $input_appointment_date)
-//            ->where('time', $input_appointment_time)
-//            ->where('doctor_id', $inputs['doctor_id'])
-//            ->first();
-//        if ($appointment_exists) {
-//            $response['messages'][] = trans('Requested time slot is not available with '.$doctor->name.' at the moment! Please choose any other slot.');
+//        $date_time = new \DateTime($inputs['time']);
+//
+//        $formatted_input_time = $date_time->format('H:i:s');
+//
+//        if (!$formatted_input_time >= $value_check['working_hours_start'] && $formatted_input_time <= $value_check['working_hours_end']) {
+//            $response['success'] = false;
+//            $response['errors'][] = "Doctor is not available at this time!";
 //            return $response;
 //        }
-
-        $inputs['status'] = "Booked";
 
         $item = new self();
         $item->fill($inputs);
@@ -291,7 +300,7 @@ class Appointment extends VaahModel
         foreach ($search_array as $search_item){
             $query->where(function ($q1) use ($search_item) {
                 $q1->where('status', 'LIKE', '%' . $search_item . '%')
-                    ->orWhere('id', 'LIKE', $search_item . '%')
+//                    ->orWhere('id', 'LIKE', $search_item . '%')
                     ->orWhereHas('patient', function ($q2) use ($search_item) {
                         $q2->where('name', 'LIKE', '%' . $search_item . '%');
                     })

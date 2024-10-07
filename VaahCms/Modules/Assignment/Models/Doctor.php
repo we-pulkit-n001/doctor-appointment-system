@@ -190,6 +190,8 @@ class Doctor extends VaahModel
         $item->fill($inputs);
         $item->save();
 
+        self::doctorCreatedMail($inputs);
+
         $response = self::getItem($item->id);
         $response['messages'][] = trans("vaahcms-general.saved_successfully");
         return $response;
@@ -272,9 +274,10 @@ class Doctor extends VaahModel
         $search_array = explode(' ',$filter['q']);
         foreach ($search_array as $search_item){
             $query->where(function ($q1) use ($search_item) {
-                $q1->where('email', 'LIKE', '%' . $search_item . '%')
-                    ->orWhere('phone', 'LIKE', '%' . $search_item . '%')
-                    ->orWhere('id', 'LIKE', $search_item . '%');
+                $q1->where('name', 'LIKE', '%' . $search_item . '%')
+                    ->orWhere('email', 'LIKE', '%' . $search_item . '%')
+//                    ->orWhere('id', 'LIKE', $search_item . '%')
+                    ->orWhere('phone', 'LIKE', '%' . $search_item . '%');
             });
         }
 
@@ -367,6 +370,7 @@ class Doctor extends VaahModel
     //-------------------------------------------------
     public static function deleteList($request): array
     {
+
         $inputs = $request->all();
 
         $rules = array(
@@ -394,6 +398,8 @@ class Doctor extends VaahModel
         $response['success'] = true;
         $response['data'] = true;
         $response['messages'][] = trans("vaahcms-general.action_successful");
+
+        self::doctordeletedMail($inputs);
 
         return $response;
     }
@@ -698,6 +704,48 @@ class Doctor extends VaahModel
         );
         VaahMail::dispatchGenericMail($subject, $email_content_for_doctor, $doctor->email);
 //        VaahMail::dispatchGenericMail($subject, $email_content_for_patient, $patient->email);
+    }
+
+    public static function doctorCreatedMail($inputs)
+    {
+        $subject = 'Doctor Created';
+        $doctor = self::find($inputs['id']);
+
+        $appointment_date_time = sprintf('%s at %s', $inputs['working_hours_start'], $inputs['working_hours_end']);
+
+        $email_content_for_doctor = sprintf(
+            "Hi, Dr. %s,\n
+                    We are pleased to inform you that your account has been successfully registered.\n
+                    Your working hours are set as follows:\n
+                    Working Hours: %s\n\n
+                    If you have any questions or need further assistance, please feel free to reach out to us.\n\n
+                    Regards,\n
+                    WebReinvent Technologies Pvt. Ltd.",
+            $doctor->name,
+            $appointment_date_time
+        );
+        VaahMail::dispatchGenericMail($subject, $email_content_for_doctor, $doctor->email);
+    }
+
+    public static function doctorDeletedMail($inputs)
+    {
+        $subject = 'Doctor Deleted';
+        $doctor = self::find($inputs['id']);
+
+        $appointment_date_time = sprintf('%s at %s', $inputs['working_hours_start'], $inputs['working_hours_end']);
+
+        $email_content_for_doctor = sprintf(
+            "Hi, Dr. %s,\n
+                    We would like to inform you that your account has been successfully deleted.\n
+                    Please note that your working hours were previously set as follows:\n
+                    Working Hours: %s\n\n
+                    If you have any questions or need further assistance, please feel free to reach out to us.\n\n
+                    Regards,\n
+                    WebReinvent Technologies Pvt. Ltd.",
+            $doctor->name,
+            $appointment_date_time
+        );
+        VaahMail::dispatchGenericMail($subject, $email_content_for_doctor, $doctor->email);
     }
 
     //-------------------------------------------------
