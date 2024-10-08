@@ -161,55 +161,30 @@ class Appointment extends VaahModel
             return $validation;
         }
 
-        $inputs['working_hours_start'] = Carbon::parse($inputs['time'])->setTimezone('Asia/Kolkata')->format('H:i:s');
-
-//        // check if name exist
-//        $item = self::where('name', $inputs['name'])->withTrashed()->first();
-//
-//        if ($item) {
-//            $error_message = "This name is already exist".($item->deleted_at?' in trash.':'.');
-//            $response['success'] = false;
-//            $response['messages'][] = $error_message;
-//            return $response;
-//        }
-
-        // check if slug exist
-//        $item = self::where('slug', $inputs['slug'])->withTrashed()->first();
-
-//        if ($item) {
-//            $error_message = "This slug is already exist".($item->deleted_at?' in trash.':'.');
-//            $response['success'] = false;
-//            $response['messages'][] = $error_message;
-//            return $response;
-//        }
-
         $inputs['status'] = "Booked";
+
+        $inputs['time'] = Carbon::parse($inputs['time'])->setTimezone('Asia/Kolkata')->format('H:i:00');
 
         $doctor = doctor::where('id', $inputs['doctor_id'])->first();
 
-        $working_hours_start = Carbon::parse($doctor->working_hours_start)->setTimezone('Asia/Kolkata')->format('H:i:00');
-        $working_hours_end = Carbon::parse($doctor->working_hours_end)->setTimezone('Asia/Kolkata')->format('H:i:00');
+        $appointments = self::all();
 
-        $appointment_time = Carbon::parse($inputs['time'])->setTimezone('Asia/Kolkata')->format('H:i:00');
+        foreach ($appointments as $appointment) {
+            if($inputs['time'] == $appointment['time']){
+                $response['success'] = false;
+                $response['errors'][] = "Unfortunately,\nThe appointment time slot is already booked.\nPlease select a different time.";
+                return $response;
+            }
+        }
 
-        if ($appointment_time < $working_hours_start || $appointment_time > $working_hours_end) {
+        $working_hours_start = Carbon::parse($doctor['working_hours_start'])->format('H:i:00');
+        $working_hours_end = Carbon::parse($doctor['working_hours_end'])->format('H:i:00');
+
+        if ($inputs['time'] < $working_hours_start || $inputs['time'] >= $working_hours_end) {
             $response['success'] = false;
             $response['errors'][] = "Unfortunately,\nThe Doctor is not available.\nPlease select a different time for Appointment.";
             return $response;
         }
-
-
-//        $value_check = Doctor::find($inputs['doctor_id']);
-//
-//        $date_time = new \DateTime($inputs['time']);
-//
-//        $formatted_input_time = $date_time->format('H:i:s');
-//
-//        if (!$formatted_input_time >= $value_check['working_hours_start'] && $formatted_input_time <= $value_check['working_hours_end']) {
-//            $response['success'] = false;
-//            $response['errors'][] = "Doctor is not available at this time!";
-//            return $response;
-//        }
 
         $item = new self();
         $item->fill($inputs);

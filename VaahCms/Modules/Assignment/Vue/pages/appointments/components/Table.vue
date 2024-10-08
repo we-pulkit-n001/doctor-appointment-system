@@ -7,8 +7,8 @@ const useVaah = vaah();
 
 const convertTo12HourFormat = (time24) => {
     const [hours, minutes] = time24.split(':').map(Number);
-    const offsetHours = 5;
-    const offsetMinutes = 30;
+    const offsetHours = 0;
+    const offsetMinutes = 0;
 
     let adjustedHours = (hours + offsetHours) % 24;
     let adjustedMinutes = minutes + offsetMinutes;

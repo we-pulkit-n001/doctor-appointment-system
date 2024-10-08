@@ -49,6 +49,10 @@ const filteredStatusOptions = computed(() => {
     return statusOptions;
 });
 
+const minuteTemplate = (minute) => {
+    return minute === 0 || minute === 30;
+};
+
 //--------/form_menu
 
 </script>
@@ -210,27 +214,50 @@ const filteredStatusOptions = computed(() => {
 
                 <!--adding time field-->
 
-                <VhField label="Time">
-                    <div class="p-inputgroup">
-                        <Calendar class="w-full"
-                                  v-model="store.item.time"
-                                  timeOnly
-                                  hourFormat="12"
-                                  showIcon
-                                  placeholder="Select time"
-                                  :stepMinute="60">
-                                  name="appointments-time"
-                                  data-testid="appointments-time">
-                            <template #inputicon="{ clickCallback }">
-                                <i class="pi pi-clock cursor-pointer" @click="clickCallback"></i>
-                            </template>
-                        </Calendar>
-                        <span class="p-inputgroup-addon">
-                            <i class="pi pi-clock"></i>
-                        </span>
-                        <div class="required-field hidden"></div>
-                    </div>
-                </VhField>
+                    <VhField label="Time">
+                        <div class="p-inputgroup">
+                            <Calendar class="w-full"
+                                      v-model="time"
+                                      timeOnly
+                                      hourFormat="12"
+                                      showIcon
+                                      placeholder="Select time"
+                                      :stepMinute="30"
+                                      :minuteTemplate="minuteTemplate">
+                                <template #inputicon="{ clickCallback }">
+                                    <i class="pi pi-clock cursor-pointer" @click="clickCallback"></i>
+                                </template>
+                            </Calendar>
+                            <span class="p-inputgroup-addon">
+                <i class="pi pi-clock"></i>
+            </span>
+                            <div class="required-field hidden"></div>
+                        </div>
+                    </VhField>
+
+
+
+                <!--                <VhField label="Time">-->
+<!--                    <div class="p-inputgroup">-->
+<!--                        <Calendar class="w-full"-->
+<!--                                  v-model="store.item.time"-->
+<!--                                  timeOnly-->
+<!--                                  hourFormat="12"-->
+<!--                                  showIcon-->
+<!--                                  placeholder="Select time"-->
+<!--                                  :stepMinute="60">-->
+<!--                                  name="appointments-time"-->
+<!--                                  data-testid="appointments-time">-->
+<!--                            <template #inputicon="{ clickCallback }">-->
+<!--                                <i class="pi pi-clock cursor-pointer" @click="clickCallback"></i>-->
+<!--                            </template>-->
+<!--                        </Calendar>-->
+<!--                        <span class="p-inputgroup-addon">-->
+<!--                            <i class="pi pi-clock"></i>-->
+<!--                        </span>-->
+<!--                        <div class="required-field hidden"></div>-->
+<!--                    </div>-->
+<!--                </VhField>-->
 
                 <!--adding time field-->
 
