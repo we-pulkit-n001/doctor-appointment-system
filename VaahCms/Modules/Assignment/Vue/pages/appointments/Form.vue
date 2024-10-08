@@ -217,7 +217,7 @@ const minuteTemplate = (minute) => {
                     <VhField label="Time">
                         <div class="p-inputgroup">
                             <Calendar class="w-full"
-                                      v-model="time"
+                                      v-model="store.item.time"
                                       timeOnly
                                       hourFormat="12"
                                       showIcon
@@ -235,47 +235,7 @@ const minuteTemplate = (minute) => {
                         </div>
                     </VhField>
 
-
-
-                <!--                <VhField label="Time">-->
-<!--                    <div class="p-inputgroup">-->
-<!--                        <Calendar class="w-full"-->
-<!--                                  v-model="store.item.time"-->
-<!--                                  timeOnly-->
-<!--                                  hourFormat="12"-->
-<!--                                  showIcon-->
-<!--                                  placeholder="Select time"-->
-<!--                                  :stepMinute="60">-->
-<!--                                  name="appointments-time"-->
-<!--                                  data-testid="appointments-time">-->
-<!--                            <template #inputicon="{ clickCallback }">-->
-<!--                                <i class="pi pi-clock cursor-pointer" @click="clickCallback"></i>-->
-<!--                            </template>-->
-<!--                        </Calendar>-->
-<!--                        <span class="p-inputgroup-addon">-->
-<!--                            <i class="pi pi-clock"></i>-->
-<!--                        </span>-->
-<!--                        <div class="required-field hidden"></div>-->
-<!--                    </div>-->
-<!--                </VhField>-->
-
                 <!--adding time field-->
-
-<!--                    <div class="p-inputgroup">-->
-<!--                        <Dropdown-->
-<!--                            v-model="store.item.status"-->
-<!--                            :options="statusOptions"-->
-<!--                            placeholder="Select Status"-->
-<!--                            option-label="label"-->
-<!--                            option-value="value"-->
-<!--                            name="appointment-status"-->
-<!--                            data-testid="appointment-status"-->
-<!--                            required-->
-<!--                        />-->
-<!--                        <div class="required-field hidden"></div>-->
-<!--                    </div>-->
-<!--                </VhField>-->
-
 
                 <!--adding status field-->
 

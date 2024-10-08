@@ -203,18 +203,18 @@ const toggleFormMenu = (event) => {
                                   hourFormat="12"
                                   showIcon
                                   placeholder="Select start time"
+                                  :stepMinute="30"
                                   data-testid="doctors-working_hours_start">
                             <template #inputicon="{ clickCallback }">
                                 <i class="pi pi-clock cursor-pointer" @click="clickCallback"></i>
                             </template>
                         </Calendar>
                         <span class="p-inputgroup-addon">
-            <i class="pi pi-clock"></i> <!-- PrimeIcons clock icon -->
+            <i class="pi pi-clock"></i>
         </span>
                         <div class="required-field hidden"></div>
                     </div>
                 </VhField>
-
 
                 <!--adding working_hours_start field-->
 
@@ -228,6 +228,7 @@ const toggleFormMenu = (event) => {
                                   hourFormat="12"
                                   showIcon
                                   placeholder="Select end time"
+                                  :stepMinute="30"
                                   data-testid="doctors-working_hours_end">
                             <template #inputicon="{ clickCallback }">
                                 <i class="pi pi-clock cursor-pointer" @click="clickCallback"></i>
@@ -243,7 +244,7 @@ const toggleFormMenu = (event) => {
 
                 <!--adding working_hours_end field-->
 
-                <!--adding price field-->
+                <!--adding consultation_fees field-->
 
 <!--                <VhField label="Price">-->
 <!--                    <div class="p-inputgroup">-->

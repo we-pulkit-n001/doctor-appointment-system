@@ -11,7 +11,6 @@ use WebReinvent\VaahCms\Traits\CrudWithUuidObservantTrait;
 use WebReinvent\VaahCms\Models\User;
 use WebReinvent\VaahCms\Libraries\VaahSeeder;
 use Carbon\Carbon;
-use VaahCms\Modules\Assignment\Http\Controllers\Backend\AppointmentsController;
 
 class Doctor extends VaahModel
 {
@@ -157,6 +156,7 @@ class Doctor extends VaahModel
     {
 
         $inputs = $request->all();
+
 
         $validation = self::validation($inputs);
         if (!$validation['success']) {
@@ -399,8 +399,6 @@ class Doctor extends VaahModel
         $response['data'] = true;
         $response['messages'][] = trans("vaahcms-general.action_successful");
 
-        self::doctordeletedMail($inputs);
-
         return $response;
     }
     //-------------------------------------------------
@@ -556,6 +554,7 @@ class Doctor extends VaahModel
     //-------------------------------------------------
     public static function itemAction($request, $id, $type): array
     {
+
         switch($type)
         {
             case 'activate':
@@ -569,8 +568,17 @@ class Doctor extends VaahModel
                     ->update(['is_active' => null]);
                 break;
             case 'trash':
+
+                self::doctorDeletedMail($id);
+//                dd("out here");
                 self::find($id)
                     ->delete();
+
+
+
+
+
+
                 break;
             case 'restore':
                 self::where('id', $id)
@@ -709,7 +717,6 @@ class Doctor extends VaahModel
     public static function doctorCreatedMail($inputs)
     {
         $subject = 'Doctor Created';
-        $doctor = self::find($inputs['id']);
 
         $appointment_date_time = sprintf('%s at %s', $inputs['working_hours_start'], $inputs['working_hours_end']);
 
@@ -721,18 +728,31 @@ class Doctor extends VaahModel
                     If you have any questions or need further assistance, please feel free to reach out to us.\n\n
                     Regards,\n
                     WebReinvent Technologies Pvt. Ltd.",
-            $doctor->name,
+            $inputs['name'],
             $appointment_date_time
         );
-        VaahMail::dispatchGenericMail($subject, $email_content_for_doctor, $doctor->email);
+        VaahMail::dispatchGenericMail($subject, $email_content_for_doctor, $inputs['email']);
     }
 
-    public static function doctorDeletedMail($inputs)
+    public static function doctorDeletedMail($id)
     {
         $subject = 'Doctor Deleted';
-        $doctor = self::find($inputs['id']);
 
-        $appointment_date_time = sprintf('%s at %s', $inputs['working_hours_start'], $inputs['working_hours_end']);
+        $doctor = self::find($id);
+
+        $appointments = Appointment::all();
+
+        foreach($appointments as $appointment){
+
+        }
+
+//        $appointment = Appointment::select('time')->where('status', 'Booked');
+
+//        $appointment = Appointment::where('doctor_id', 15)->first();
+
+        dd($appointment['time']);
+
+        $appointment_date_time = sprintf('%s at %s', $doctor['working_hours_start'], $doctor['working_hours_end']);
 
         $email_content_for_doctor = sprintf(
             "Hi, Dr. %s,\n
