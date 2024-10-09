@@ -737,20 +737,29 @@ class Doctor extends VaahModel
     public static function doctorDeletedMail($id)
     {
         $subject = 'Doctor Deleted';
-
         $doctor = self::find($id);
-
+        $patient = Patient::find($inputs['patient_id']);
         $appointments = Appointment::all();
 
-        foreach($appointments as $appointment){
-
-        }
-
+//        foreach($appointments as $appointment){
+//
+//        }
 //        $appointment = Appointment::select('time')->where('status', 'Booked');
-
 //        $appointment = Appointment::where('doctor_id', 15)->first();
 
-        dd($appointment['time']);
+        $appointment_date_time = sprintf('%s at %s', $inputs['date'], $inputs['time']);
+
+        $email_content_for_patient = sprintf(
+            "Hi, %s
+                We want to inform you that your appointment has been cancelled due to a change in the doctor’s timings. Here are the details of your appointment:
+                Appointment Date & Time: %s
+                If you have any questions or would like to reschedule, please contact us or you can book another appointment slot [here](<insert_link_here>).
+                Regards,
+                WebReinvent Technologies Pvt. Ltd.",
+            $patient->name,
+            $doctor->name,
+            $appointment_date_time
+        );
 
         $appointment_date_time = sprintf('%s at %s', $doctor['working_hours_start'], $doctor['working_hours_end']);
 
