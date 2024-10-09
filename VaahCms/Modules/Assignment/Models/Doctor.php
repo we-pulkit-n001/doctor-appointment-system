@@ -751,9 +751,9 @@ class Doctor extends VaahModel
 
         $email_content_for_patient = sprintf(
             "Hi, %s
-                We want to inform you that your appointment has been cancelled due to a change in the doctor’s timings. Here are the details of your appointment:
+                We want to inform you that your appointment has been cancelled due to a change in the doctor’s working approval. Here are the details of your appointment:
                 Appointment Date & Time: %s
-                If you have any questions or would like to reschedule, please contact us or you can book another appointment slot [here](<insert_link_here>).
+                If you have any questions or would like to reschedule, please contact us or you can book another appointment slot [here](http://localhost:8000/backend/assignment#/appointments?rows=20).
                 Regards,
                 WebReinvent Technologies Pvt. Ltd.",
             $patient->name,
