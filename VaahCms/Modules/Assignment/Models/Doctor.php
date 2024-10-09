@@ -568,17 +568,9 @@ class Doctor extends VaahModel
                     ->update(['is_active' => null]);
                 break;
             case 'trash':
-
                 self::doctorDeletedMail($id);
-//                dd("out here");
                 self::find($id)
                     ->delete();
-
-
-
-
-
-
                 break;
             case 'restore':
                 self::where('id', $id)
@@ -737,31 +729,33 @@ class Doctor extends VaahModel
     public static function doctorDeletedMail($id)
     {
         $subject = 'Doctor Deleted';
+
         $doctor = self::find($id);
-        $patient = Patient::find($inputs['patient_id']);
-        $appointments = Appointment::all();
 
-//        foreach($appointments as $appointment){
-//
-//        }
-//        $appointment = Appointment::select('time')->where('status', 'Booked');
-//        $appointment = Appointment::where('doctor_id', 15)->first();
+        $appointments = Appointment::where('doctor_id', $id)->get();
 
-        $appointment_date_time = sprintf('%s at %s', $inputs['date'], $inputs['time']);
+        foreach($appointments as $appointment){
 
-        $email_content_for_patient = sprintf(
-            "Hi, %s
-                We want to inform you that your appointment has been cancelled due to a change in the doctor’s working approval. Here are the details of your appointment:
-                Appointment Date & Time: %s
-                If you have any questions or would like to reschedule, please contact us or you can book another appointment slot [here](http://localhost:8000/backend/assignment#/appointments?rows=20).
-                Regards,
-                WebReinvent Technologies Pvt. Ltd.",
-            $patient->name,
-            $doctor->name,
-            $appointment_date_time
-        );
+            $patient = Patient::find($appointment['patient_id']);
+            $appointment['status'] = "Cancelled";
 
-        $appointment_date_time = sprintf('%s at %s', $doctor['working_hours_start'], $doctor['working_hours_end']);
+            $appointment_date_time = sprintf('%s at %s', $appointment['date'], $appointment['time']);
+
+            $email_content_for_patient = sprintf(
+                "Hi, %s
+                    We want to inform you that your appointment has been cancelled. As %s is no longer working with us.\nWe apologize for the inconvenience.\nHere are the details of your appointment:
+                    Appointment Date & Time: %s
+                    If you have any questions or would like to reschedule, please contact us or you can book another appointment slot [here](http://localhost:8000/backend/assignment#/appointments).
+                    Regards,
+                    WebReinvent Technologies Pvt. Ltd.",
+                $patient->name,
+                $doctor->name,
+                $appointment_date_time
+            );
+            VaahMail::dispatchGenericMail($subject, $email_content_for_patient, $patient->email);
+        }
+
+        $doctor_working_hours = sprintf('%s to %s', $doctor['working_hours_start'], $doctor['working_hours_end']);
 
         $email_content_for_doctor = sprintf(
             "Hi, Dr. %s,\n
@@ -772,7 +766,7 @@ class Doctor extends VaahModel
                     Regards,\n
                     WebReinvent Technologies Pvt. Ltd.",
             $doctor->name,
-            $appointment_date_time
+            $doctor_working_hours
         );
         VaahMail::dispatchGenericMail($subject, $email_content_for_doctor, $doctor->email);
     }
