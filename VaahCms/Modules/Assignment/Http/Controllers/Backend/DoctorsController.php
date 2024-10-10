@@ -19,6 +19,13 @@ class DoctorsController extends Controller
 
     public function getAssets(Request $request)
     {
+        if(!\Auth::user()->hasPermission('assignment-has-access-of-doctor-section'))
+        {
+            $response['success'] = false;
+            $response['errors'][] = trans("vaahcms::messages.permission_denied");
+
+            return response()->json($response);
+        }
 
         try{
 
@@ -88,7 +95,6 @@ class DoctorsController extends Controller
     //----------------------------------------------------------
     public function listAction(Request $request, $type)
     {
-
 
         try{
             return Doctor::listAction($request, $type);

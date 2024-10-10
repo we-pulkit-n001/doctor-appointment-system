@@ -347,7 +347,6 @@ export const useAppointmentStore = defineStore({
         },
         //---------------------------------------------------------------------
         async itemAction(type, item=null){
-
             if(!item)
             {
                 item = this.item;
@@ -674,6 +673,9 @@ export const useAppointmentStore = defineStore({
             }
 
             return text;
+        },
+        hasPermission(permissions, slug) {
+            return vaah().hasPermission(permissions, slug);
         },
         //---------------------------------------------------------------------
         async getListSelectedMenu()

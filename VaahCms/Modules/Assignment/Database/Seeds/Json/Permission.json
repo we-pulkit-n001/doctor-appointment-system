@@ -1,0 +1,14 @@
+[
+    {
+        "name": "Has Access of Patient Section",
+        "module": "Assignment",
+        "section": "patient",
+        "details": "This will allow users to access Patient Section."
+    },
+    {
+        "name": "Has Access of Doctor Section",
+        "module": "Assignment",
+        "section": "doctor",
+        "details": "This will allow users to access Doctor Section."
+    }
+]
