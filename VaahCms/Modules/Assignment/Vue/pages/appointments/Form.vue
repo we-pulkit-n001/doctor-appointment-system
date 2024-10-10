@@ -191,6 +191,23 @@ const minuteTemplate = (minute) => {
                     </div>
                 </VhField>
 
+                <!--adding consultation_fees field-->
+
+                <VhField label="Consultation Fees">
+                    <div class="p-inputgroup">
+                        <InputNumber class="w-full"
+                                     placeholder="Enter the price"
+                                     data-testid="appointment-price"
+                                     v-model="store.item.price"
+                                     mode="decimal"
+                                     prefix="$ "
+                                     required />
+                        <div class="required-field hidden"></div>
+                    </div>
+                </VhField>
+
+                <!--adding consultation_fees field-->
+
                 <!--adding date field-->
 
                 <VhField label="Date">

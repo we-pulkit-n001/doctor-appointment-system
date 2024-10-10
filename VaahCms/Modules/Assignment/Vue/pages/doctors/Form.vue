@@ -193,6 +193,23 @@ const toggleFormMenu = (event) => {
 
                 <!--adding phone field-->
 
+                <!--adding consultation_fees field-->
+
+                <VhField label="Consultation Fees">
+                    <div class="p-inputgroup">
+                        <InputNumber class="w-full"
+                                     placeholder="Enter the price"
+                                     data-testid="appointment-price"
+                                     v-model="store.item.price"
+                                     mode="decimal"
+                                     prefix="$ "
+                                     required />
+                        <div class="required-field hidden"></div>
+                    </div>
+                </VhField>
+
+                <!--adding consultation_fees field-->
+
                 <!--adding working_hours_start field-->
 
                 <VhField label="Start Time">

@@ -179,13 +179,14 @@ const convertTo12HourFormat = (time24) => {
                                 @click="store.toEdit(prop.data)"
                                 icon="pi pi-pencil" />
 
+                        <p v-for="permission in store.assets.permission">
                         <Button class="p-button-tiny p-button-danger p-button-text"
                                 data-testid="doctors-table-action-trash"
-                                v-if="store.isViewLarge() && !prop.data.deleted_at"
+                                v-if="store.isViewLarge() && !prop.data.deleted_at && permission == 'assignment-can-trash-doctor'"
                                 @click="store.itemAction('trash', prop.data)"
                                 v-tooltip.top="'Trash'"
                                 icon="pi pi-trash" />
-
+                        </p>
 
                         <Button class="p-button-tiny p-button-success p-button-text"
                                 data-testid="doctors-table-action-restore"

@@ -35,6 +35,7 @@ class Doctor extends VaahModel
         'phone',
         'working_hours_start',
         'working_hours_end',
+        'consultation_fees',
         'slug',
         'is_active',
         'created_by',
@@ -737,7 +738,7 @@ class Doctor extends VaahModel
         foreach($appointments as $appointment){
 
             $patient = Patient::find($appointment['patient_id']);
-            $appointment['status'] = "Cancelled";
+            Appointment::where('doctor_id', $id)->update(['status' => 'cancelled']);
 
             $appointment_date_time = sprintf('%s at %s', $appointment['date'], $appointment['time']);
 

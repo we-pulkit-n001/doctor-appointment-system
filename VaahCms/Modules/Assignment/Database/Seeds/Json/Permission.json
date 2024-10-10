@@ -1,14 +1,14 @@
 [
     {
-        "name": "Has Access of Patient Section",
+        "name": "Can Trash Patient",
         "module": "Assignment",
         "section": "patient",
-        "details": "This will allow users to access Patient Section."
+        "details": "This will allow users to Trash Patient"
     },
     {
-        "name": "Has Access of Doctor Section",
+        "name": "Can Trash Doctor",
         "module": "Assignment",
         "section": "doctor",
-        "details": "This will allow users to access Doctor Section."
+        "details": "This will allow users to Trash Doctor"
     }
 ]

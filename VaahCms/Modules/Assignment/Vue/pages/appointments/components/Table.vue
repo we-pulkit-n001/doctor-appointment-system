@@ -184,13 +184,14 @@ const convertTo12HourFormat = (time24) => {
 
                         <!--Adding status change toggle-->
 
+                        <p v-for="permission in store.assets.permission">
                         <Button class="p-button-tiny p-button-danger p-button-text"
                                 data-testid="appointments-table-action-trash"
-                                v-if="store.isViewLarge() && !prop.data.deleted_at"
+                                v-if="store.isViewLarge() && !prop.data.deleted_at && permission == 'assignment-can-trash-appointment'"
                                 @click="store.itemAction('trash', prop.data)"
                                 v-tooltip.top="'Trash'"
                                 icon="pi pi-trash" />
-
+                        </p>
 
                         <Button class="p-button-tiny p-button-success p-button-text"
                                 data-testid="appointments-table-action-restore"
