@@ -662,6 +662,18 @@ class Doctor extends VaahModel
          * You should also return relationship from here
          */
 
+        $inputs['name'] = $faker->name;
+        $inputs['specialization'] = 'Faker-Specialization';
+        $inputs['email'] = $faker->email;
+        $inputs['phone'] = $inputs['phone'] = mt_rand(1000000000, 9999999999);
+        $inputs['consultation_fees'] = $faker->numberBetween(50, 500);
+        $startTime = $faker->dateTimeBetween('-1 year', 'now');
+        $endTime = (clone $startTime)->modify('+' . mt_rand(1, 10) . ' hours');
+
+        $inputs['working_hours_start'] = $startTime->format('h:i A');
+        $inputs['working_hours_end'] = $endTime->format('h:i A');
+        $inputs['is_active'] = 1;
+
         if(!$is_response_return){
             return $inputs;
         }

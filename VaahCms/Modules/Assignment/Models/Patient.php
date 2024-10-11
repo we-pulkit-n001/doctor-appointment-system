@@ -634,6 +634,11 @@ class Patient extends VaahModel
          * You should also return relationship from here
          */
 
+        $inputs['name'] = $faker->name;
+        $inputs['email'] = $faker->email;
+        $inputs['phone'] = mt_rand(1000000000, 9999999999);
+        $inputs['is_active'] = 1;
+
         if(!$is_response_return){
             return $inputs;
         }
