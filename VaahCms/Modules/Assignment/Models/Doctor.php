@@ -158,11 +158,12 @@ class Doctor extends VaahModel
 
         $inputs = $request->all();
 
-
         $validation = self::validation($inputs);
         if (!$validation['success']) {
             return $validation;
         }
+
+        $inputs['is_active'] = 1;
 
         $inputs['working_hours_start'] = Carbon::parse($inputs['working_hours_start'])->setTimezone('Asia/Kolkata')->format('H:i:s');
         $inputs['working_hours_end'] = Carbon::parse($inputs['working_hours_end'])->setTimezone('Asia/Kolkata')->format('H:i:s');

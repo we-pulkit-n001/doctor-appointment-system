@@ -156,6 +156,8 @@ class Patient extends VaahModel
             return $validation;
         }
 
+        $inputs['is_active'] = 1;
+
         // check if name exist
         $item = self::where('name', $inputs['name'])->withTrashed()->first();
 

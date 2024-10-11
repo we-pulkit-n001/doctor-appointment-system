@@ -162,6 +162,7 @@ class Appointment extends VaahModel
         }
 
         $inputs['status'] = "Booked";
+        $inputs['is_active'] = 1;
 
         $inputs['time'] = Carbon::parse($inputs['time'])->setTimezone('Asia/Kolkata')->format('H:i:00');
 
