@@ -61,8 +61,8 @@ const convertTo12HourFormat = (time24) => {
                     :sortable="true">
 
                 <template #body="prop">
-
-                    {{prop.data.doctor?.name}}
+                    {{prop.data.doctor ? prop.data.doctor.name : 'N/A'}}
+                    <!--{{prop.data.doctor?.name}}-->
                 </template>
 
             </Column>
@@ -172,7 +172,9 @@ const convertTo12HourFormat = (time24) => {
                                 @click="store.itemAction('book', prop.data)"
                                 v-tooltip.top="'Book Appointment'"
                                 :icon="'pi pi-check'"
-                                :disabled="false" />
+                                :disabled="false"
+                                :style="{ visibility: prop.data.doctor && prop.data.doctor.name !== 'N/A' ? 'visible' : 'hidden' }" />
+
 
                         <Button class="p-button-tiny p-button-danger p-button-text"
                                 data-testid="appointments-table-action-cancel"

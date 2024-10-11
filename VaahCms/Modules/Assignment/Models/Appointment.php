@@ -35,7 +35,6 @@ class Appointment extends VaahModel
         'slug',
         'doctor_id',
         'patient_id',
-        'consultation_fees',
         'is_active',
         'created_by',
         'updated_by',
