@@ -198,9 +198,9 @@ const toggleFormMenu = (event) => {
                 <VhField label="Consultation Fees">
                     <div class="p-inputgroup">
                         <InputNumber class="w-full"
-                                     placeholder="Enter the price"
-                                     data-testid="appointment-price"
-                                     v-model="store.item.price"
+                                     placeholder="Enter the Price"
+                                     data-testid="doctors-consultaion-fees"
+                                     v-model="store.item.consultation_fees"
                                      mode="decimal"
                                      prefix="$ "
                                      required />
@@ -260,27 +260,6 @@ const toggleFormMenu = (event) => {
 
 
                 <!--adding working_hours_end field-->
-
-                <!--adding consultation_fees field-->
-
-<!--                <VhField label="Price">-->
-<!--                    <div class="p-inputgroup">-->
-<!--                        <InputNumber-->
-<!--                            class="w-full"-->
-<!--                            v-model="store.item.price"-->
-<!--                            mode="decimal"-->
-<!--                            :min="0"-->
-<!--                            step="0.01"-->
-<!--                            placeholder="Enter the price"-->
-<!--                            :currency="'$'"-->
-<!--                            :locale="'en-US'"-->
-<!--                            data-testid="price-input"-->
-<!--                            required />-->
-<!--                        <div class="required-field hidden"></div>-->
-<!--                    </div>-->
-<!--                </VhField>-->
-
-                <!--adding price field-->
 
                 <!--                <VhField label="Slug">-->
 <!--                    <div class="p-inputgroup">-->

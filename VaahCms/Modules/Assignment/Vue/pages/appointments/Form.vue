@@ -53,6 +53,14 @@ const minuteTemplate = (minute) => {
     return minute === 0 || minute === 30;
 };
 
+const consultationFees = ref('');
+
+const updateConsultationFees = () => {
+    const selectedDoctor = store.assets.doctor.find(doctor => doctor.id === store.item.doctor_id);
+    consultationFees.value = selectedDoctor ? selectedDoctor.consultation_fees : '';
+};
+
+
 //--------/form_menu
 
 </script>
@@ -186,19 +194,33 @@ const minuteTemplate = (minute) => {
                                    name="doctor-name"
                                    data-testid="doctor-name"
                                    filter
-                                   required/>
+                                   required
+                                   @change="updateConsultationFees"/>
                         <div class="required-field hidden"></div>
                     </div>
                 </VhField>
 
                 <!--adding consultation_fees field-->
 
+                <VhField label="Consultation Fee">
+                    <div class="p-inputgroup">
+                        <InputText class="w-full"
+                                   placeholder="Select Doctor for Fee"
+                                   name="consultation-fees"
+                                   data-testid="consultation-fees"
+                                   v-model="consultationFees"
+                                   required
+                                   readonly/>
+                        <div class="required-field hidden"></div>
+                    </div>
+                </VhField>
+
 <!--                <VhField label="Consultation Fees">-->
 <!--                    <div class="p-inputgroup">-->
 <!--                        <InputNumber class="w-full"-->
 <!--                                     placeholder="Enter the price"-->
 <!--                                     data-testid="appointment-price"-->
-<!--                                     v-model="store.item.price"-->
+<!--                                     v-model="store.item.consultation_fees"-->
 <!--                                     mode="decimal"-->
 <!--                                     prefix="$ "-->
 <!--                                     required />-->

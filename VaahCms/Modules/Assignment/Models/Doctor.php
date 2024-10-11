@@ -593,6 +593,7 @@ class Doctor extends VaahModel
             'specialization' => 'required|max:150',
             'email' => 'required|email|unique:vh_doctors,email',
             'phone' => 'required|digits:10|unique:vh_doctors,phone',
+            'consultation_fees' => 'required',
             'working_hours_start' => 'required',
             'working_hours_end' => 'required'
         );
