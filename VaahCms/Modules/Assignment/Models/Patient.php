@@ -635,6 +635,7 @@ class Patient extends VaahModel
          */
 
         $inputs['name'] = $faker->name;
+        $inputs['slug'] = $faker->slug;
         $inputs['email'] = $faker->email;
         $inputs['phone'] = mt_rand(1000000000, 9999999999);
         $inputs['is_active'] = 1;

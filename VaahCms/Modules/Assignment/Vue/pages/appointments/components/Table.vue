@@ -69,17 +69,13 @@ const convertTo12HourFormat = (time24) => {
 
             <!--adding consultation_fees field-->
 
-                        <Column field="consultation_fees" header="Consultation Fee"
+            <Column field="consultation_fees" header="Consultation Fee"
                     class="overflow-wrap-anywhere"
                     :sortable="true">
-
                 <template #body="prop">
-                    <Badge v-if="prop.data.deleted_at"
-                           value="Trashed"
-                           severity="danger"></Badge>
-                    <span>${{ prop.data.doctor.consultation_fees }}</span>
+                    <Badge v-if="prop.data.deleted_at" value="Trashed" severity="danger"></Badge>
+                    <span>{{ prop.data.doctor ? `$${prop.data.doctor.consultation_fees}` : 'N/A' }}</span>
                 </template>
-
             </Column>
 
             <!--adding consultation_fees field-->

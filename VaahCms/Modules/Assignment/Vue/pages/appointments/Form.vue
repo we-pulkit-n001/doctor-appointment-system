@@ -204,6 +204,7 @@ const updateConsultationFees = () => {
 
                 <VhField label="Consultation Fee">
                     <div class="p-inputgroup">
+                        <span class="p-inputgroup-addon">$</span>
                         <InputText class="w-full"
                                    placeholder="Select Doctor for Fee"
                                    name="consultation-fees"
