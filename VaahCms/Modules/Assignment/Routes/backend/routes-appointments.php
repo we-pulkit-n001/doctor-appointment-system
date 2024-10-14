@@ -5,9 +5,9 @@ use VaahCms\Modules\Assignment\Http\Controllers\Backend\AppointmentsController;
 Route::group(
     [
         'prefix' => 'backend/assignment/appointments',
-        
+
         'middleware' => ['web', 'has.backend.access'],
-        
+
 ],
 function () {
     /**
@@ -43,6 +43,12 @@ function () {
      */
     Route::post('/', [AppointmentsController::class, 'createItem'])
         ->name('vh.backend.assignment.appointments.create');
+
+    /**
+     * Get Dashboard Data
+     */
+    Route::get('/stats', [AppointmentsController::class, 'getDashboardData']);
+
     /**
      * Get Item
      */

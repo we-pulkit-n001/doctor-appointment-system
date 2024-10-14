@@ -808,6 +808,18 @@ class Appointment extends VaahModel
         VaahMail::dispatchGenericMail($subject, $email_content_for_patient, $patient->email);
     }
 
+    public static function getDashboardData()
+    {
+        $registered_doctors = Doctor::count();
+        $total_appointments = self::count();
+        $cancelled_appointments = Appointment::where('status', 'cancelled')->count();
+        return response()->json([
+            'registered_doctors' => $registered_doctors,
+            'total_appointments' => $total_appointments,
+            'cancelled_appointments' => $cancelled_appointments
+        ]);
+    }
+
     //-------------------------------------------------
     //-------------------------------------------------
     //-------------------------------------------------

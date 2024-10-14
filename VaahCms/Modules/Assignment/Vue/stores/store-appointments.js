@@ -933,6 +933,13 @@ export const useAppointmentStore = defineStore({
             this.form_menu_list = form_menu;
 
         },
+
+        async getDashboardData() {
+            const response = await vaah().ajax(
+                ajax_url + '/stats'
+            );
+            this.getItemAfter(response);
+        },
         //---------------------------------------------------------------------
     }
 });
