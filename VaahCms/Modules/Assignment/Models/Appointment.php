@@ -810,13 +810,18 @@ class Appointment extends VaahModel
 
     public static function getDashboardData()
     {
+        $revenue_till_date = Appointment::leftjoin('vh_doctors', 'vh_appointments.doctor_id', '=', 'vh_doctors.id')
+            ->where('status', 'booked')
+            ->sum('vh_doctors.consultation_fees');
+
         $registered_doctors = Doctor::count();
-        $total_appointments = self::count();
+        $total_appointments = self::where('status', 'booked')->count();
         $cancelled_appointments = Appointment::where('status', 'cancelled')->count();
         return response()->json([
             'registered_doctors' => $registered_doctors,
             'total_appointments' => $total_appointments,
-            'cancelled_appointments' => $cancelled_appointments
+            'cancelled_appointments' => $cancelled_appointments,
+            'revenue_till_date' => $revenue_till_date
         ]);
     }
 

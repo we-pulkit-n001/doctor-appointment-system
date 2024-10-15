@@ -662,9 +662,27 @@ class Doctor extends VaahModel
          * You should also return relationship from here
          */
 
+        $specializations = [
+            'Cardiology',
+            'Dermatology',
+            'Neurology',
+            'Pediatrics',
+            'Orthopedics',
+            'Radiology',
+            'Psychiatry',
+            'Gastroenterology',
+            'Endocrinology',
+            'Oncology',
+            'Anesthesiology',
+            'Ophthalmology',
+            'Urology',
+            'Pulmonology',
+            'Rheumatology'
+        ];
+
         $inputs['name'] = $faker->name;
         $inputs['slug'] = $faker->slug;
-        $inputs['specialization'] = 'Faker-Specialization';
+        $inputs['specialization'] = $specializations[array_rand($specializations)];
         $inputs['email'] = $faker->email;
         $inputs['phone'] = $inputs['phone'] = mt_rand(1000000000, 9999999999);
         $inputs['consultation_fees'] = $faker->numberBetween(50, 500);
