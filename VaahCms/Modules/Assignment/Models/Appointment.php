@@ -815,13 +815,16 @@ class Appointment extends VaahModel
             ->sum('vh_doctors.consultation_fees');
 
         $registered_doctors = Doctor::count();
+        $total_patients = Patient::count();
         $total_appointments = self::where('status', 'booked')->count();
         $cancelled_appointments = Appointment::where('status', 'cancelled')->count();
+
         return response()->json([
             'registered_doctors' => $registered_doctors,
             'total_appointments' => $total_appointments,
             'cancelled_appointments' => $cancelled_appointments,
-            'revenue_till_date' => $revenue_till_date
+            'revenue_till_date' => $revenue_till_date,
+            'total_patients' => $total_patients
         ]);
     }
 

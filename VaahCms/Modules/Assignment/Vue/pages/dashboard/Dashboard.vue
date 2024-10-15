@@ -9,25 +9,36 @@ const route = useRoute();
 
 const useVaah = vaah();
 
-onMounted(async () => {
-    await store.getDashboardData();
-});
-
-onMounted(() => {
-    chartData.value = setChartData();
-    chartOptions.value = setChartOptions();
-});
-
 const chartData = ref();
 const chartOptions = ref();
 
+const registered_doctors = ref(null);
+const total_appointments = ref(null);
+const cancelled_appointments = ref(null);
+const revenue_till_date = ref(null);
+const total_patients = ref(null);
+
+onMounted(async () => {
+    await store.getDashboardData();
+
+        registered_doctors.value = store.item?.data.registered_doctors ?? 0;
+        total_appointments.value = store.item?.data.total_appointments ?? 0;
+        cancelled_appointments.value = store.item?.data.cancelled_appointments ?? 0;
+        revenue_till_date.value = store.item?.data.revenue_till_date ?? 0;
+        total_patients.value = store.item?.data.total_patients ?? 0;
+
+    chartData.value = setChartData();
+    chartOptions.value = setChartOptions();
+
+});
+
 const setChartData = () => {
     return {
-        labels: ['Q1', 'Q2', 'Q3', 'Q4'],
+        labels: ['Registered Doctors', 'Overall Patients Registered', 'Appointments Booked', 'Appointments Cancelled'],
         datasets: [
             {
-                label: 'Sales',
-                data: [540, 325, 702, 620],
+                label: 'Statistics',
+                data: [store.item.data.registered_doctors, store.item.data.total_patients, store.item.data.total_appointments, store.item.data.cancelled_appointments],
                 backgroundColor: ['rgba(50, 50, 50, 0.5)', 'rgba(150, 150, 150, 0.5)', 'rgba(100, 100, 100, 0.2)', 'rgba(50, 50, 50, 0.4)'],
                 borderWidth: 1
             }
@@ -92,7 +103,16 @@ document.title = 'Assignment';
 
                 <Card class="card">
                     <template #title>
-                        <h5>Booked Appointments</h5>
+                        <h5>Overall Patients Registered</h5>
+                    </template>
+                    <template #content>
+                        <h2 v-if="store.item">{{ store.item.data.total_patients }}</h2>
+                    </template>
+                </Card>
+
+                <Card class="card">
+                    <template #title>
+                        <h5>Appointments Booked</h5>
                     </template>
                     <template #content>
                             <h2 v-if="store.item">{{ store.item.data.total_appointments }}</h2>
@@ -102,7 +122,7 @@ document.title = 'Assignment';
 
                 <Card class="card">
                     <template #title>
-                        <h5>Cancelled Appointments</h5>
+                        <h5>Appointments Cancelled</h5>
                     </template>
                     <template #content>
                         <h2 v-if="store.item">{{ store.item.data.cancelled_appointments }}</h2>
@@ -111,7 +131,7 @@ document.title = 'Assignment';
 
                 <Card class="card">
                     <template #title>
-                        <h5>Revenue Till Date</h5>
+                        <h5>Accumulated Revenue</h5>
                     </template>
                     <template #content>
                         <h2 v-if="store.item">${{ store.item.data.revenue_till_date }}</h2>
@@ -184,7 +204,7 @@ h1 {
     background-color: white;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     width: 100%;
-    max-width: 600px;
+    max-width: 800px;
     margin-left: auto;
     margin-right: auto;
 }

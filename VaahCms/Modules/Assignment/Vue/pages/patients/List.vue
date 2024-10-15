@@ -87,6 +87,13 @@ const toggleCreateMenu = (event) => {
 
                     <div class="p-inputgroup">
 
+                        <Button data-testid="patients-list-import"
+                                class="p-button-sm"
+                                @click="store.toForm()">
+                            <i class="pi pi-plus mr-1"></i>
+                            Import Patients
+                        </Button>
+
                     <Button data-testid="patients-list-create"
                             class="p-button-sm"
                             @click="store.toForm()">
