@@ -37,6 +37,7 @@ import Dropdown from 'primevue/dropdown';
 import InputNumber from 'primevue/inputnumber';
 import Card from 'primevue/card';
 import Chart from 'primevue/chart';
+import FileUpload from "primevue/fileupload";
 
 //-------------/CRUD PrimeVue Imports
 
@@ -95,6 +96,7 @@ app.component('Dropdown', Dropdown);
 app.component('InputNumber', InputNumber);
 app.component('Card', Card);
 app.component('Chart', Chart);
+app.component('FileUpload',FileUpload);
 
 //-------------/CRUD PrimeVue Use
 
