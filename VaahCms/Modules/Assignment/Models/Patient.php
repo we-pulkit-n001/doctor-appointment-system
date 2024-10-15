@@ -649,6 +649,19 @@ class Patient extends VaahModel
         return $response;
     }
 
+    public static function exportPatientData($request)
+    {
+
+        dd("test");
+
+
+        $response['success'] = true;
+//        $response['data']['fill'] = $inputs;
+        return $response;
+    }
+
+
+
     //-------------------------------------------------
     //-------------------------------------------------
     //-------------------------------------------------

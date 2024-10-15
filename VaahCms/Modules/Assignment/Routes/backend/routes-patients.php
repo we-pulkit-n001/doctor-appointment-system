@@ -5,9 +5,9 @@ use VaahCms\Modules\Assignment\Http\Controllers\Backend\PatientsController;
 Route::group(
     [
         'prefix' => 'backend/assignment/patients',
-        
+
         'middleware' => ['web', 'has.backend.access'],
-        
+
 ],
 function () {
     /**
@@ -70,6 +70,12 @@ function () {
      */
     Route::any('/{id}/action/{action}', [PatientsController::class, 'itemAction'])
         ->name('vh.backend.assignment.patients.item.action');
+
+    /**
+     * Export Patient Data
+     */
+    Route::get('/patients/export', [PatientsController::class, 'exportPatientData'])
+        ->name('vh.backend.assignment.patients.export.action');
 
     //---------------------------------------------------------
 
