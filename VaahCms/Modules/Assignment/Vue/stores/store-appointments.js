@@ -960,6 +960,9 @@ export const useAppointmentStore = defineStore({
                 } catch (error) {
                     console.error('Error occurred while downloading the file:', error);
                 }
+        },
+        async importAppointmentsData(){
+            
         }
         //---------------------------------------------------------------------
     }

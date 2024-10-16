@@ -656,7 +656,10 @@ class Patient extends VaahModel
         return Excel::download(new ExportPatientsData,'patients.csv');
     }
 
-
+    public static function importPatientData()
+    {
+        dd("here");
+    }
 
     //-------------------------------------------------
     //-------------------------------------------------

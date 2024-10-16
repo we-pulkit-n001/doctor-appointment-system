@@ -64,6 +64,10 @@ const exportDoctorData = () => {
     store.exportDoctorData();
 }
 
+const importDoctorData = () => {
+    store.importDoctorData();
+}
+
 </script>
 <template>
 
@@ -89,6 +93,13 @@ const exportDoctorData = () => {
                 <template #icons>
 
                     <div class="p-inputgroup">
+
+                        <Button data-testid="doctors-list-import"
+                                class="p-button-sm"
+                                @click="importDoctorData">
+                            <i class="pi pi-upload mr-1"></i>
+                            Import Doctors
+                        </Button>
 
                         <Button data-testid="doctors-list-export"
                                 class="p-button-sm"

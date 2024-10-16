@@ -77,6 +77,12 @@ function () {
     Route::get('/patients/export', [PatientsController::class, 'exportPatientData'])
         ->name('vh.backend.assignment.patients.export.action');
 
+    /**
+     * Import Patient Data
+     */
+    Route::post('/patients/import', [PatientsController::class, 'importPatientData'])
+        ->name('vh.backend.assignment.patients.import.action');
+
     //---------------------------------------------------------
 
 });

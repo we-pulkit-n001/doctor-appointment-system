@@ -951,7 +951,39 @@ export const usePatientStore = defineStore({
             } catch (error) {
                 console.error('Error occurred while downloading the file:', error);
             }
+        },
+        async importPatientData() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.csv';
+
+            input.onchange = async (event) => {
+                const file = event.target.files[0];
+                if (!file) {
+                    console.error('No file selected.');
+                    return;
+                }
+
+                const formData = new FormData();
+                formData.append('file', file);
+
+                try {
+                    const response = await vaah().ajax(
+                        this.ajax_url.concat('/patients/import'),
+                        {
+                            method: 'POST',
+                            body: formData
+                        }
+                    );
+                    console.log('Import successful:', response.data);
+                } catch (error) {
+                    console.error('Error occurred while importing the file:', error);
+                }
+            };
+
+            input.click();
         }
+
         //---------------------------------------------------------------------
     }
 });

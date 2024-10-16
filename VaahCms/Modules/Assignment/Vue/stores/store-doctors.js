@@ -952,6 +952,9 @@ export const useDoctorStore = defineStore({
                 console.error('Error occurred while downloading the file:', error);
             }
 
+        },
+        async importDoctorData(){
+
         }
         //---------------------------------------------------------------------
     }
