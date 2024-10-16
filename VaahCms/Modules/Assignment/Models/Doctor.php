@@ -1,10 +1,12 @@
 <?php namespace VaahCms\Modules\Assignment\Models;
 
+use App\Export\ExportDoctorsData;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Faker\Factory;
+use Maatwebsite\Excel\Facades\Excel;
 use WebReinvent\VaahCms\Libraries\VaahMail;
 use WebReinvent\VaahCms\Models\VaahModel;
 use WebReinvent\VaahCms\Traits\CrudWithUuidObservantTrait;
@@ -803,6 +805,11 @@ class Doctor extends VaahModel
             $doctor_working_hours
         );
         VaahMail::dispatchGenericMail($subject, $email_content_for_doctor, $doctor->email);
+    }
+
+    public static function exportDoctorData()
+    {
+        return Excel::download(new ExportDoctorsData,'doctors.csv');
     }
 
     //-------------------------------------------------
