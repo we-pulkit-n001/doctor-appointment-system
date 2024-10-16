@@ -1,16 +1,19 @@
 <?php namespace VaahCms\Modules\Assignment\Models;
 
+use App\Export\ExportDoctorsData;
 use Carbon\Carbon;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Faker\Factory;
+use Maatwebsite\Excel\Facades\Excel;
 use WebReinvent\VaahCms\Models\VaahModel;
 use WebReinvent\VaahCms\Traits\CrudWithUuidObservantTrait;
 use WebReinvent\VaahCms\Models\User;
 use WebReinvent\VaahCms\Libraries\VaahSeeder;
 use WebReinvent\VaahCms\Libraries\VaahMail;
+use App\Export\ExportAppointmentsData;
 
 class Appointment extends VaahModel
 {
@@ -826,6 +829,11 @@ class Appointment extends VaahModel
             'revenue_till_date' => $revenue_till_date,
             'total_patients' => $total_patients
         ]);
+    }
+
+    public static function exportAppointmentsData()
+    {
+        return Excel::download(new ExportAppointmentsData,'appointments.csv');
     }
 
     //-------------------------------------------------

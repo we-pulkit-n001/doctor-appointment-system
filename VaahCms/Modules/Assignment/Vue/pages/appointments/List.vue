@@ -60,6 +60,9 @@ const toggleCreateMenu = (event) => {
 };
 //--------/form_menu
 
+const exportAppointmentsData = () => {
+    store.exportAppointmentsData();
+}
 
 </script>
 <template>
@@ -86,6 +89,13 @@ const toggleCreateMenu = (event) => {
                 <template #icons>
 
                     <div class="p-inputgroup">
+
+                        <Button data-testid="appointments-list-export"
+                                class="p-button-sm"
+                                @click="exportAppointmentsData">
+                            <i class="pi pi-download mr-1"></i>
+                            Export Appointments
+                        </Button>
 
                     <Button data-testid="appointments-list-create"
                             class="p-button-sm"
