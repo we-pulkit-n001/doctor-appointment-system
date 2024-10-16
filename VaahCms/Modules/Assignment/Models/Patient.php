@@ -9,6 +9,8 @@ use WebReinvent\VaahCms\Models\VaahModel;
 use WebReinvent\VaahCms\Traits\CrudWithUuidObservantTrait;
 use WebReinvent\VaahCms\Models\User;
 use WebReinvent\VaahCms\Libraries\VaahSeeder;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Export\ExportPatientsData;
 
 class Patient extends VaahModel
 {
@@ -649,15 +651,9 @@ class Patient extends VaahModel
         return $response;
     }
 
-    public static function exportPatientData($request)
+    public static function exportPatientData()
     {
-
-        dd("test");
-
-
-        $response['success'] = true;
-//        $response['data']['fill'] = $inputs;
-        return $response;
+        return Excel::download(new ExportPatientsData,'patients.csv');
     }
 
 

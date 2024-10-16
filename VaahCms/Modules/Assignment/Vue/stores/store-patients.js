@@ -930,6 +930,28 @@ export const usePatientStore = defineStore({
             this.form_menu_list = form_menu;
 
         },
+        async exportPatientData(){
+            let file_data = null;
+            try {
+                await vaah().ajax(
+                    this.ajax_url.concat('/patients/export'),
+                    (data, res) => {
+                        file_data = res.data;
+                    }
+                );
+                const blob = new Blob([file_data]);
+                const url = window.URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.setAttribute('download', 'patients.csv');
+                document.body.appendChild(link);
+                link.click();
+                link.remove();
+                window.URL.revokeObjectURL(url);
+            } catch (error) {
+                console.error('Error occurred while downloading the file:', error);
+            }
+        }
         //---------------------------------------------------------------------
     }
 });
