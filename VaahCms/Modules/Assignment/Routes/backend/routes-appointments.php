@@ -77,6 +77,12 @@ function () {
     Route::any('/{id}/action/{action}', [AppointmentsController::class, 'itemAction'])
         ->name('vh.backend.assignment.appointments.item.action');
 
+    /**
+     * Export Appointments
+     */
+    Route::get('/appointments/export', [AppointmentsController::class, 'exportAppointmentsData'])
+        ->name('vh.backend.assignment.appointments.export.action');
+
     //---------------------------------------------------------
 
 });
