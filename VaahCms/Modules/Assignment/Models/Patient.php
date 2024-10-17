@@ -661,6 +661,8 @@ class Patient extends VaahModel
 
         $patientsData = $request->all();
 
+
+
         $newCount = 0;
         $updatedCount = 0;
 
@@ -670,6 +672,7 @@ class Patient extends VaahModel
                 [
                     'name' => $patient['name'],
                     'phone' => $patient['phone'],
+                    'is_active' => 1,
                 ]
             );
 

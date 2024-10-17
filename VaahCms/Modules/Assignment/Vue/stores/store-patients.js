@@ -958,6 +958,7 @@ export const usePatientStore = defineStore({
                     this.ajax_url.concat('/import'),
                     (data, res) => {
                         console.log(res.data);
+                        this.getList();
                     },
                     {
                         method: 'POST',

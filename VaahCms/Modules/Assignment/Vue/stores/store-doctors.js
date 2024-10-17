@@ -953,8 +953,26 @@ export const useDoctorStore = defineStore({
             }
 
         },
-        async importDoctorData(){
-
+        async importDoctorsData(fileData){
+            console.log(fileData);
+            try {
+                await vaah().ajax(
+                    this.ajax_url.concat('/import'),
+                    (data, res) => {
+                        console.log(res.data);
+                        this.getList();
+                    },
+                    {
+                        method: 'POST',
+                        params: fileData,
+                        headers: {
+                            'Content-Type': 'application/json',
+                        }
+                    }
+                );
+            } catch (error) {
+                console.error('Error importing doctor data:', error);
+            }
         }
         //---------------------------------------------------------------------
     }

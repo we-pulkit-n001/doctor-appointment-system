@@ -77,6 +77,12 @@ function () {
     Route::get('/doctors/export', [DoctorsController::class, 'exportDoctorData'])
         ->name('vh.backend.assignment.doctors.export.action');
 
+    /**
+     * Import Doctor Data
+     */
+    Route::post('/import', [DoctorsController::class, 'importDoctorsData'])
+        ->name('vh.backend.assignment.doctors.import.action');
+
     //---------------------------------------------------------
 
 });

@@ -64,9 +64,37 @@ const exportDoctorData = () => {
     store.exportDoctorData();
 }
 
-const importDoctorData = () => {
-    store.importDoctorData();
-}
+const fileInput = ref(null);
+
+const importDoctorsData = (data) => {
+    console.log(data);
+    // store.importDoctorsData(data);
+};
+
+const handleFileChange = async (event) => {
+    const file = event.target.files[0];
+    if (file) {
+        const text = await file.text();
+        const parsedData = parseCSV(text);
+        importDoctorsData(parsedData);
+    }
+};
+
+const triggerFileInput = () => {
+    fileInput.value.click();
+};
+
+const parseCSV = (csv) => {
+    const rows = csv.split('\n').map(row => row.split(','));
+    const headers = rows[0].map(header => header.replace(/"/g, '').trim().toLowerCase());
+
+    return rows.slice(1).map(row => {
+        return headers.reduce((acc, header, index) => {
+            acc[header] = row[index]?.replace(/"/g, '').trim() || '';
+            return acc;
+        }, {});
+    });
+};
 
 </script>
 <template>
@@ -94,9 +122,18 @@ const importDoctorData = () => {
 
                     <div class="p-inputgroup">
 
-                        <Button data-testid="doctors-list-import"
-                                class="p-button-sm"
-                                @click="importDoctorData">
+                        <input
+                            type="file"
+                            accept=".csv"
+                            ref="fileInput"
+                            @change="handleFileChange"
+                            style="display: none"
+                        />
+                        <Button
+                            data-testid="doctors-list-import"
+                            class="p-button-sm"
+                            @click="triggerFileInput"
+                        >
                             <i class="pi pi-upload mr-1"></i>
                             Import Doctors
                         </Button>

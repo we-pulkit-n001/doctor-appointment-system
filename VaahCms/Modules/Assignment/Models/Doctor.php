@@ -812,6 +812,46 @@ class Doctor extends VaahModel
         return Excel::download(new ExportDoctorsData,'doctors.csv');
     }
 
+    public static function importDoctorsData(Request $request)
+    {
+        $doctorsData = $request->all();
+
+//        dd($doctorsData);
+
+        $newCount = 0;
+        $updatedCount = 0;
+
+        foreach ($doctorsData as $doctor) {
+            $record = Doctor::updateOrCreate(
+                ['email' => $doctor['email']],
+                [
+                    'name' => $doctor['name'],
+                    'specialization' => $doctor['specialization'],
+                    'consultation_fees' => $doctor['consultation_fees'],
+                    'is_active' => 1,
+                    'working_hours_start' => $doctor['working_hours_start'],
+                    'working_hours_end' => $doctor['working_hours_end']
+                ]
+            );
+
+            if ($record->wasRecentlyCreated) {
+                $newCount++;
+            } else {
+                $updatedCount++;
+            }
+        }
+
+        $response['messages'][] = trans("vaahcms-general.saved_successfully", [
+            'new' => $newCount,
+            'updated' => $updatedCount,
+        ]);
+
+        $response['new_records'] = $newCount;
+        $response['updated_records'] = $updatedCount;
+
+        return response()->json($response);
+    }
+
     //-------------------------------------------------
     //-------------------------------------------------
     //-------------------------------------------------

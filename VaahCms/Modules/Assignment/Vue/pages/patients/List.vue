@@ -64,10 +64,6 @@ const exportPatientData = () => {
     store.exportPatientData();
 }
 
-const importPatientData = () => {
-    store.importPatientData();
-}
-
 const fileInput = ref(null);
 
 const importPatientsData = (data) => {

@@ -248,6 +248,23 @@ class DoctorsController extends Controller
         }
     }
 
+    public function importDoctorsData(Request $request)
+    {
+        try{
+            return Doctor::importDoctorsData($request);
+        }catch (\Exception $e){
+            $response = [];
+            $response['success'] = false;
+            if(env('APP_DEBUG')){
+                $response['errors'][] = $e->getMessage();
+                $response['hint'] = $e->getTrace();
+            } else{
+                $response['errors'][] = trans("vaahcms-general.something_went_wrong");
+            }
+            return $response;
+        }
+    }
+
     //----------------------------------------------------------
 
 
