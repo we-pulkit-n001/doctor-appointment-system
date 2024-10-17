@@ -250,10 +250,11 @@ class PatientsController extends Controller
         }
     }
 
-    public function importPatientData()
+    public function importPatientsData(Request $request)
     {
+
         try{
-            return Patient::importPatientData();
+            return Patient::importPatientsData($request);
         }catch (\Exception $e){
             $response = [];
             $response['success'] = false;

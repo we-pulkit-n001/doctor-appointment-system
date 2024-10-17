@@ -80,7 +80,7 @@ function () {
     /**
      * Import Patient Data
      */
-    Route::post('/patients/import', [PatientsController::class, 'importPatientData'])
+    Route::post('/import', [PatientsController::class, 'importPatientsData'])
         ->name('vh.backend.assignment.patients.import.action');
 
     //---------------------------------------------------------

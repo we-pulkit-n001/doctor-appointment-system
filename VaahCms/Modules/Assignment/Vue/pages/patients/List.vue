@@ -68,6 +68,38 @@ const importPatientData = () => {
     store.importPatientData();
 }
 
+const fileInput = ref(null);
+
+const importPatientsData = (data) => {
+    store.importPatientsData(data);
+};
+
+const handleFileChange = async (event) => {
+    const file = event.target.files[0];
+    if (file) {
+        const text = await file.text();
+        const parsedData = parseCSV(text);
+        importPatientsData(parsedData);
+    }
+};
+
+const triggerFileInput = () => {
+    fileInput.value.click();
+};
+
+
+const parseCSV = (csv) => {
+    const rows = csv.split('\n').map(row => row.split(','));
+    const headers = rows[0].map(header => header.replace(/"/g, '').trim().toLowerCase());
+
+    return rows.slice(1).map(row => {
+        return headers.reduce((acc, header, index) => {
+            acc[header] = row[index]?.replace(/"/g, '').trim() || '';
+            return acc;
+        }, {});
+    });
+};
+
 </script>
 <template>
 
@@ -93,13 +125,21 @@ const importPatientData = () => {
                 <template #icons>
 
                     <div class="p-inputgroup">
-
-                        <Button data-testid="patients-list-import"
+                            <input
+                                type="file"
+                                accept=".csv"
+                                ref="fileInput"
+                                @change="handleFileChange"
+                                style="display: none"
+                            />
+                            <Button
+                                data-testid="patients-list-import"
                                 class="p-button-sm"
-                                @click="importPatientData">
-                            <i class="pi pi-upload mr-1"></i>
-                            Import Patients
-                        </Button>
+                                @click="triggerFileInput"
+                            >
+                                <i class="pi pi-upload mr-1"></i>
+                                Import Patients
+                            </Button>
 
                         <Button data-testid="patients-list-export"
                                 class="p-button-sm"

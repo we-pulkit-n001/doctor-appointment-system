@@ -656,9 +656,40 @@ class Patient extends VaahModel
         return Excel::download(new ExportPatientsData,'patients.csv');
     }
 
-    public static function importPatientData()
+    public static function importPatientsData(Request $request)
     {
-        dd("here");
+
+        $patientsData = $request->all();
+
+        $newCount = 0;
+        $updatedCount = 0;
+
+        foreach ($patientsData as $patient) {
+            $record = Patient::updateOrCreate(
+                ['email' => $patient['email']],
+                [
+                    'name' => $patient['name'],
+                    'phone' => $patient['phone'],
+                ]
+            );
+
+            if ($record->wasRecentlyCreated) {
+                $newCount++;
+            } else {
+                $updatedCount++;
+            }
+        }
+
+        $response['messages'][] = trans("vaahcms-general.saved_successfully", [
+            'new' => $newCount,
+            'updated' => $updatedCount,
+        ]);
+
+        $response['new_records'] = $newCount;
+        $response['updated_records'] = $updatedCount;
+
+        return response()->json($response);
+
     }
 
     //-------------------------------------------------
