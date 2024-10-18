@@ -226,6 +226,37 @@ class Doctor extends VaahModel
         return $query->orderBy($sort[0], $sort[1]);
     }
     //-------------------------------------------------
+    public function scopeSpecializationFilter($query, $filter)
+    {
+
+        if(!isset($filter['specialization'])
+            || is_null($filter['specialization'])
+            || $filter['specialization'] === 'null'
+        )
+        {
+            return $query;
+        }
+        $selected_specialization = $filter['specialization'];
+
+        return $query->whereIn('specialization', $selected_specialization);
+
+    }
+    //-------------------------------------------------
+    public function scopePriceFilter($query, $filter)
+    {
+//        if(!isset($filter['specialization'])
+//            || is_null($filter['specialization'])
+//            || $filter['specialization'] === 'null'
+//        )
+//        {
+//            return $query;
+//        }
+//        $selected_specialization = $filter['specialization'];
+
+        return $query->whereBetween('consultation_fees', [$filter['price'][0],$filter['price'][1]]);
+
+    }
+    //-------------------------------------------------
     public function scopeIsActiveFilter($query, $filter)
     {
 
@@ -291,6 +322,8 @@ class Doctor extends VaahModel
     {
 
         $list = self::getSorted($request->filter);
+        $list->specializationFilter($request->filter);
+        $list->priceFilter($request->filter);
         $list->isActiveFilter($request->filter);
         $list->trashedFilter($request->filter);
         $list->searchFilter($request->filter);
@@ -851,6 +884,16 @@ class Doctor extends VaahModel
         $response['updated_records'] = $updatedCount;
 
         return response()->json($response);
+    }
+
+    public static function getUniqueSpecializations()
+    {
+
+        $specializations = self::distinct()->pluck('specialization');
+
+        return response()->json([
+            'specialization' => $specializations
+        ]);
     }
 
     //-------------------------------------------------

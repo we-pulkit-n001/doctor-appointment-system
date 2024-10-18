@@ -38,6 +38,8 @@ import InputNumber from 'primevue/inputnumber';
 import Card from 'primevue/card';
 import Chart from 'primevue/chart';
 import FileUpload from "primevue/fileupload";
+import Checkbox from 'primevue/checkbox';
+import Slider from 'primevue/slider';
 
 //-------------/CRUD PrimeVue Imports
 
@@ -97,6 +99,8 @@ app.component('InputNumber', InputNumber);
 app.component('Card', Card);
 app.component('Chart', Chart);
 app.component('FileUpload',FileUpload);
+app.component('Checkbox',Checkbox);
+app.component('Slider',Slider);
 
 //-------------/CRUD PrimeVue Use
 

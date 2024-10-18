@@ -43,6 +43,13 @@ function () {
      */
     Route::post('/', [DoctorsController::class, 'createItem'])
         ->name('vh.backend.assignment.doctors.create');
+
+    /**
+     * Fetch Unique Specializations for filter
+     */
+    Route::get('/specializations', [DoctorsController::class, 'getUniqueSpecializations'])
+        ->name('vh.backend.assignment.doctors.specialization.read');
+
     /**
      * Get Item
      */

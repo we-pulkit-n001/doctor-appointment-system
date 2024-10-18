@@ -2,8 +2,22 @@
 
 import { useDoctorStore } from '../../../stores/store-doctors'
 import VhFieldVertical from './../../../vaahvue/vue-three/primeflex/VhFieldVertical.vue'
+import {onBeforeMount} from "vue";
+import { ref, computed  } from 'vue';
 
 const store = useDoctorStore();
+
+onBeforeMount(() =>{
+    store.getUniqueSpecializations();
+})
+
+const minPrice = 50;
+const maxPrice = 500;
+const priceRange = ref([minPrice, maxPrice]);
+
+const selectedValue = computed(() => {
+    return priceRange.value;
+});
 
 </script>
 
@@ -70,6 +84,48 @@ const store = useDoctorStore();
             </VhFieldVertical>
 
             <Divider/>
+
+<!--                Test Code-->
+
+                <VhFieldVertical >
+                    <template #label>
+                        <b>Specialization:</b>
+                    </template>
+                    <div>
+                        <div v-for="(specialization, index) in store.specializations" :key="index" class="field-checkbox">
+                            <Checkbox :name="'specialization-' + index"
+                                      :inputId="specialization"
+                                      :value="specialization"
+                                      v-model="store.query.filter.specialization" />
+                            <label :for="specialization" class="cursor-pointer">{{ specialization }}</label>
+                        </div>
+                    </div>
+                </VhFieldVertical>
+
+                <Divider/>
+
+                <div>
+                    <h4>Select Price Range</h4>
+                    <Slider
+                        v-model="store.query.filter.price"
+                        :range="true"
+                        :min="50"
+                        :max="500"
+                        :step="10"
+                        :tooltip="true"
+                        tooltipPlacement="top"
+                        name="price-all"
+                        inputId="price-all"
+                        data-testid="doctors-filters-price-all"
+                    />
+                    <div class="price-range">
+                        <p>Selected Price Range: ${{ store?.query?.filter?.price[0] }} - ${{ store?.query?.filter?.price[1] }}</p>
+                    </div>
+                </div>
+
+                <Divider/>
+
+<!--                Test Code-->
 
             <VhFieldVertical >
                 <template #label>
@@ -142,3 +198,9 @@ const store = useDoctorStore();
 
     </div>
 </template>
+
+<style scoped>
+.price-range {
+    margin-top: 20px;
+}
+</style>

@@ -18,6 +18,7 @@ let empty_states = {
             is_active: null,
             trashed: null,
             sort: null,
+            specialization: null,
         },
     },
     action: {
@@ -65,7 +66,8 @@ export const useDoctorStore = defineStore({
         list_create_menu: [],
         item_menu_list: [],
         item_menu_state: null,
-        form_menu_list: []
+        form_menu_list: [],
+        specializations: []
     }),
     getters: {
 
@@ -973,6 +975,15 @@ export const useDoctorStore = defineStore({
             } catch (error) {
                 console.error('Error importing doctor data:', error);
             }
+        },
+        async getUniqueSpecializations(){
+            await vaah().ajax(
+                this.ajax_url.concat('/specializations'),
+                (data,res) => {
+                    console.log(data, res);
+                    this.specializations = res.data.specialization;
+                }
+            );
         }
         //---------------------------------------------------------------------
     }
