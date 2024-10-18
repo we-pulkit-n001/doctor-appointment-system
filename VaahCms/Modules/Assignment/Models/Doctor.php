@@ -827,6 +827,7 @@ class Doctor extends VaahModel
                 [
                     'name' => $doctor['name'],
                     'specialization' => $doctor['specialization'],
+                    'phone' => $doctor['phone'],
                     'consultation_fees' => $doctor['consultation_fees'],
                     'is_active' => 1,
                     'working_hours_start' => $doctor['working_hours_start'],

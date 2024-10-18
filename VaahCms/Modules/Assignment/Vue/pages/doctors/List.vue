@@ -67,8 +67,7 @@ const exportDoctorData = () => {
 const fileInput = ref(null);
 
 const importDoctorsData = (data) => {
-    console.log(data);
-    // store.importDoctorsData(data);
+    store.importDoctorsData(data);
 };
 
 const handleFileChange = async (event) => {
