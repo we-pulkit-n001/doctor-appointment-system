@@ -244,18 +244,38 @@ class Doctor extends VaahModel
     //-------------------------------------------------
     public function scopePriceFilter($query, $filter)
     {
-//        if(!isset($filter['specialization'])
-//            || is_null($filter['specialization'])
-//            || $filter['specialization'] === 'null'
-//        )
-//        {
-//            return $query;
-//        }
-//        $selected_specialization = $filter['specialization'];
+        if (!isset($filter['price']) || !is_array($filter['price']) || count($filter['price']) !== 2) {
+            return $query;
+        }
 
-        return $query->whereBetween('consultation_fees', [$filter['price'][0],$filter['price'][1]]);
+        $minPrice = $filter['price'][0];
+        $maxPrice = $filter['price'][1];
+
+        return $query->whereBetween('consultation_fees', [$minPrice, $maxPrice]);
+
 
     }
+
+//-------------------------------------------------
+    public function scopeTimeFilter($query, $filter)
+    {
+
+        if (isset($filter['working_hours_start']) && isset($filter['working_hours_end'])) {
+            $filter['working_hours_start'] = Carbon::parse($filter['working_hours_start'])->setTimezone('Asia/Kolkata')->format('H:i:00');
+            $filter['working_hours_end'] = Carbon::parse($filter['working_hours_end'])->setTimezone('Asia/Kolkata')->format('H:i:00');
+            $workingHoursStart = $filter['working_hours_start'];
+            $workingHoursEnd = $filter['working_hours_end'];
+
+            $query = $query->where(function ($q) use ($workingHoursStart, $workingHoursEnd) {
+                $q->where('working_hours_start', '<=', $workingHoursEnd)
+                    ->where('working_hours_end', '>=', $workingHoursStart);
+            });
+        }
+
+        return $query;
+
+    }
+
     //-------------------------------------------------
     public function scopeIsActiveFilter($query, $filter)
     {
@@ -324,6 +344,7 @@ class Doctor extends VaahModel
         $list = self::getSorted($request->filter);
         $list->specializationFilter($request->filter);
         $list->priceFilter($request->filter);
+        $list->timeFilter($request->filter);
         $list->isActiveFilter($request->filter);
         $list->trashedFilter($request->filter);
         $list->searchFilter($request->filter);
@@ -721,11 +742,15 @@ class Doctor extends VaahModel
         $inputs['email'] = $faker->email;
         $inputs['phone'] = $inputs['phone'] = mt_rand(1000000000, 9999999999);
         $inputs['consultation_fees'] = $faker->numberBetween(50, 500);
+
         $startTime = $faker->dateTimeBetween('-1 year', 'now');
         $endTime = (clone $startTime)->modify('+' . mt_rand(1, 10) . ' hours');
 
-        $inputs['working_hours_start'] = $startTime->format('h:i A');
-        $inputs['working_hours_end'] = $endTime->format('h:i A');
+
+        $filter['working_hours_start'] = Carbon::parse($startTime)->setTimezone('Asia/Kolkata')->format('H:i:00');
+        $filter['working_hours_end'] = Carbon::parse($endTime)->setTimezone('Asia/Kolkata')->format('H:i:00');
+        
+
         $inputs['is_active'] = 1;
 
         if(!$is_response_return){
@@ -848,8 +873,6 @@ class Doctor extends VaahModel
     public static function importDoctorsData(Request $request)
     {
         $doctorsData = $request->all();
-
-//        dd($doctorsData);
 
         $newCount = 0;
         $updatedCount = 0;

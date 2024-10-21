@@ -19,6 +19,9 @@ let empty_states = {
             trashed: null,
             sort: null,
             specialization: null,
+            price: [10, 500],
+            working_hours_start: "",
+            working_hours_end: "",
         },
     },
     action: {

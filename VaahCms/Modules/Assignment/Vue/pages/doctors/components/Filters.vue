@@ -11,14 +11,6 @@ onBeforeMount(() =>{
     store.getUniqueSpecializations();
 })
 
-const minPrice = 50;
-const maxPrice = 500;
-const priceRange = ref([minPrice, maxPrice]);
-
-const selectedValue = computed(() => {
-    return priceRange.value;
-});
-
 </script>
 
 <template>
@@ -109,7 +101,7 @@ const selectedValue = computed(() => {
                     <Slider
                         v-model="store.query.filter.price"
                         :range="true"
-                        :min="50"
+                        :min="10"
                         :max="500"
                         :step="10"
                         :tooltip="true"
@@ -118,10 +110,51 @@ const selectedValue = computed(() => {
                         inputId="price-all"
                         data-testid="doctors-filters-price-all"
                     />
-                    <div class="price-range">
-                        <p>Selected Price Range: ${{ store?.query?.filter?.price[0] }} - ${{ store?.query?.filter?.price[1] }}</p>
+                    <div>
+                        Selected Price Range: {{ store.query.filter.price[0] }} - {{ store.query.filter.price[1] }}
                     </div>
                 </div>
+
+
+                <Divider/>
+                <div>
+                    <h4 class="mb-2">Timings:</h4>
+                    <div class="flex space-x-4">
+                        <div class="w-full">
+                            <h5>Start Time</h5>
+                            <Calendar class="w-full"
+                                      v-model="store.query.filter.working_hours_start"
+                                      timeOnly
+                                      hourFormat="12"
+                                      showIcon
+                                      placeholder="Select start time"
+                                      :stepMinute="30"
+                                      data-testid="doctors-working_hours_start">
+                                <template #inputicon="{ clickCallback }">
+                                    <i class="pi pi-clock cursor-pointer" @click="clickCallback"></i>
+                                </template>
+                            </Calendar>
+                        </div>
+
+                        <div class="w-full">
+                            <h5>End Time</h5>
+                            <Calendar class="w-full"
+                                      v-model="store.query.filter.working_hours_end"
+                                      timeOnly
+                                      hourFormat="12"
+                                      showIcon
+                                      placeholder="Select end time"
+                                      :stepMinute="30"
+                                      data-testid="doctors-working_hours_end">
+                                <template #inputicon="{ clickCallback }">
+                                    <i class="pi pi-clock cursor-pointer" @click="clickCallback"></i>
+                                </template>
+                            </Calendar>
+                        </div>
+                    </div>
+                </div>
+
+
 
                 <Divider/>
 
