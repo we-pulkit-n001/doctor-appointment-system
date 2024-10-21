@@ -1,102 +1,110 @@
 <script setup>
-import {onMounted, reactive, ref} from "vue";
-import {useRoute} from 'vue-router';
-
-import {useAppointmentStore} from '../../stores/store-appointments'
-import {useRootStore} from '../../stores/root'
-
+import { ref, onMounted } from "vue";
+import { useRoute } from 'vue-router';
+import { useAppointmentStore } from '../../stores/store-appointments';
+import { useRootStore } from '../../stores/root';
 import Actions from "./components/Actions.vue";
 import Table from "./components/Table.vue";
-import Filters from './components/Filters.vue'
+import Filters from './components/Filters.vue';
 
 const store = useAppointmentStore();
 const root = useRootStore();
 const route = useRoute();
 
-import { useConfirm } from "primevue/useconfirm";
-const confirm = useConfirm();
-
+const exportAppointmentsData = () => {
+    store.exportAppointmentsData();
+};
 
 onMounted(async () => {
     document.title = 'Appointments - Assignment';
     store.item = null;
-    /**
-     * call onLoad action when List view loads
-     */
     await store.onLoad(route);
-
-    /**
-     * watch routes to update view, column width
-     * and get new item when routes get changed
-     */
     await store.watchRoutes(route);
-
-    /**
-     * watch states like `query.filter` to
-     * call specific actions if a state gets
-     * changed
-     */
     await store.watchStates();
-
-    /**
-     * fetch assets required for the crud
-     * operation
-     */
     await store.getAssets();
-
-    /**
-     * fetch list of records
-     */
     await store.getList();
-
     await store.getListCreateMenu();
-
 });
 
-//--------form_menu
+// --------form_menu
 const create_menu = ref();
 const toggleCreateMenu = (event) => {
     create_menu.value.toggle(event);
 };
-//--------/form_menu
 
-const exportAppointmentsData = () => {
-    store.exportAppointmentsData();
-}
 
-const importAppointmentsData = () => {
-    store.importAppointmentsData();
-}
+// test code
+const isDialogVisible = ref(false);
+const currentStep = ref(0);
+
+const steps = ref([
+    { label: 'Upload File' },
+    { label: 'Header Mapping' },
+    { label: 'Confirm/Fail' }
+]);
+
+const uploadedFileName = ref('');
+
+const handleFileUpload = (event) => {
+    const file = event.files[0];
+    if (file) {
+        uploadedFileName.value = file.name;
+    } else {
+        uploadedFileName.value = '';
+    }
+};
+
+const nextStep = () => {
+    if (currentStep.value < steps.value.length - 1) {
+        currentStep.value++;
+    }
+};
+
+const prevStep = () => {
+    if (currentStep.value > 0) {
+        currentStep.value--;
+    }
+};
+
+const finishUpload = () => {
+    console.log("Upload process finished");
+    closeDialog(); // Close dialog on finish
+};
+
+const openDialog = () => {
+    isDialogVisible.value = true;
+};
+
+const closeDialog = () => {
+    isDialogVisible.value = false;
+    currentStep.value = 0;
+    uploadedFileName.value = '';
+};
+// test code
 
 </script>
+
 <template>
-
     <div class="grid" v-if="store.assets">
-
-        <div :class="'col-'+(store.show_filters?9:store.list_view_width)">
+        <div :class="'col-'+(store.show_filters ? 9 : store.list_view_width)">
             <Panel class="is-small">
-
                 <template class="p-1" #header>
-
                     <div class="flex flex-row">
-                        <div >
+                        <div>
                             <b class="mr-1">Appointments</b>
                             <Badge v-if="store.list && store.list.total > 0"
                                    :value="store.list.total">
                             </Badge>
                         </div>
-
                     </div>
-
                 </template>
 
                 <template #icons>
-
                     <div class="p-inputgroup">
 
                         <Button data-testid="appointments-list-import"
                                 class="p-button-sm"
-                                @click="importAppointmentsData">
+                                @click="openDialog">
                             <i class="pi pi-upload mr-1"></i>
                             Import Appointments
                         </Button>
@@ -108,52 +116,150 @@ const importAppointmentsData = () => {
                             Export Appointments
                         </Button>
 
-                    <Button data-testid="appointments-list-create"
-                            class="p-button-sm"
-                            @click="store.toForm()">
-                        <i class="pi pi-plus mr-1"></i>
-                        Create
-                    </Button>
+                        <Button data-testid="appointments-list-create"
+                                class="p-button-sm"
+                                @click="store.toForm()">
+                            <i class="pi pi-plus mr-1"></i>
+                            Create
+                        </Button>
 
-                    <Button data-testid="appointments-list-reload"
-                            class="p-button-sm"
-                            @click="store.getList()">
-                        <i class="pi pi-refresh mr-1"></i>
-                    </Button>
+                        <Button data-testid="appointments-list-reload"
+                                class="p-button-sm"
+                                @click="store.getList()">
+                            <i class="pi pi-refresh mr-1"></i>
+                        </Button>
 
-                    <!--form_menu-->
+                        <Button v-if="root.assets && root.assets.module && root.assets.module.is_dev"
+                                type="button"
+                                @click="toggleCreateMenu"
+                                class="p-button-sm"
+                                data-testid="appointments-create-menu"
+                                icon="pi pi-angle-down"
+                                aria-haspopup="true"/>
 
-                    <Button v-if="root.assets && root.assets.module
-                                                && root.assets.module.is_dev"
-                        type="button"
-                        @click="toggleCreateMenu"
-                        class="p-button-sm"
-                        data-testid="appointments-create-menu"
-                        icon="pi pi-angle-down"
-                        aria-haspopup="true"/>
-
-                    <Menu ref="create_menu"
-                          :model="store.list_create_menu"
-                          :popup="true" />
-
-                    <!--/form_menu-->
-
+                        <Menu ref="create_menu"
+                              :model="store.list_create_menu"
+                              :popup="true" />
                     </div>
-
                 </template>
 
-                <Actions/>
-
-                <Table/>
-
+                <Actions />
+                <Table />
             </Panel>
         </div>
 
-         <Filters/>
+        <Filters />
+        <RouterView />
 
-        <RouterView/>
+        <Dialog header="Upload CSV File" v-model:visible="isDialogVisible" modal style="width: 50vw" @hide="closeDialog">
 
+            <Steps :model="steps" :activeIndex="currentStep" />
+
+            <div class="content-box">
+                <div class="file-upload-container">
+                    <span class="file-upload-text">Select a CSV file to import:</span>
+
+                    <FileUpload
+                        name="csvFile"
+                        accept=".csv"
+                        mode="basic"
+                        auto
+                        chooseLabel="Choose CSV"
+                        class="file-upload-button"
+                        @upload="handleFileUpload"
+                    />
+                </div>
+
+                <div v-if="uploadedFileName" class="uploaded-file-name">
+                    Uploaded File: {{ uploadedFileName }}
+                </div>
+            </div>
+
+            <div class="dialog-buttons">
+                <Button label="Previous" @click="prevStep" v-if="currentStep > 0" />
+                <div class="next-button-container">
+                    <Button label="Next" @click="nextStep" v-if="currentStep < steps.length - 1" />
+                    <Button label="Finish" @click="finishUpload" v-if="currentStep === steps.length - 1" />
+                </div>
+            </div>
+        </Dialog>
     </div>
 
-
 </template>
+
+
+<style scoped>
+.file-upload-container {
+    display: flex;                  /* Use flexbox for layout */
+    justify-content: center;        /* Center the contents horizontally */
+    align-items: center;            /* Center vertically */
+    height: 100%;                   /* Full height of the dialog */
+}
+
+.file-upload-text {
+    margin-right: 10px;             /* Space between the text and button */
+    flex-shrink: 0;                 /* Prevent the text from shrinking */
+}
+
+.file-upload-button {
+    flex-shrink: 0;                 /* Prevent the button from shrinking */
+}
+
+.uploaded-file-name {
+    margin-top: 10px;               /* Space between upload button and file name */
+    color: #555;                    /* Optional styling for the file name */
+}
+
+.dialog-buttons {
+    display: flex;                  /* Use flexbox for layout */
+    justify-content: space-between; /* Space out buttons */
+    margin-top: 20px;               /* Space between steps and buttons */
+}
+
+.next-button-container {
+    display: flex;                  /* Use flexbox for layout */
+    justify-content: flex-end;      /* Align next/finish button to the right */
+    flex-grow: 1;                   /* Allow this container to grow */
+}
+
+.content-box {
+    border: 1px solid #ccc;         /* Border for the content box */
+    border-radius: 8px;             /* Rounded corners */
+    padding: 20px;                   /* Padding inside the box */
+    margin-top: 20px;                /* Space above the content box */
+}
+
+.file-upload-container {
+    display: flex;                  /* Use flexbox for layout */
+    justify-content: center;        /* Center the contents horizontally */
+    align-items: center;            /* Center vertically */
+}
+
+.file-upload-text {
+    margin-right: 10px;             /* Space between the text and button */
+    flex-shrink: 0;                 /* Prevent the text from shrinking */
+}
+
+.file-upload-button {
+    flex-shrink: 0;                 /* Prevent the button from shrinking */
+}
+
+.uploaded-file-name {
+    margin-top: 10px;               /* Space between upload button and file name */
+    color: #555;                    /* Optional styling for the file name */
+    text-align: center;             /* Center the uploaded file name */
+}
+
+.dialog-buttons {
+    display: flex;                  /* Use flexbox for layout */
+    justify-content: space-between; /* Space out buttons */
+    margin-top: 20px;               /* Space between steps and buttons */
+}
+
+.next-button-container {
+    display: flex;                  /* Use flexbox for layout */
+    justify-content: flex-end;      /* Align next/finish button to the right */
+    flex-grow: 1;                   /* Allow this container to grow */
+}
+
+</style>

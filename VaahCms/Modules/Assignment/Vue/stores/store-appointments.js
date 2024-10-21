@@ -39,6 +39,7 @@ export const useAppointmentStore = defineStore({
         list: null,
         item: null,
         fillable:null,
+        appointments: [],
         empty_query:empty_states.query,
         empty_action:empty_states.action,
         query: vaah().clone(empty_states.query),
@@ -961,9 +962,27 @@ export const useAppointmentStore = defineStore({
                     console.error('Error occurred while downloading the file:', error);
                 }
         },
-        async importAppointmentsData(){
-            
-        }
+        // async importAppointmentsData(fileData){
+            // console.log(fileData);
+            // try {
+            //     await vaah().ajax(
+            //         this.ajax_url.concat('/import'),
+            //         (data, res) => {
+            //             console.log(res.data);
+            //             this.getList();
+            //         },
+            //         {
+            //             method: 'POST',
+            //             params: fileData,
+            //             headers: {
+            //                 'Content-Type': 'application/json',
+            //             }
+            //         }
+            //     );
+            // } catch (error) {
+            //     console.error('Error importing doctor data:', error);
+            // }
+        // },
         //---------------------------------------------------------------------
     }
 });

@@ -1,14 +1,12 @@
-import {createApp, markRaw} from 'vue';
-import { createPinia, PiniaVuePlugin  } from 'pinia'
+import { createApp, markRaw } from 'vue';
+import { createPinia, PiniaVuePlugin } from 'pinia';
 
-
-//-------------PrimeVue Imports
-
-import PrimeVue from "primevue/config";
-import BadgeDirective from "primevue/badgedirective";
+// -------------PrimeVue Imports
+import PrimeVue from 'primevue/config';
+import BadgeDirective from 'primevue/badgedirective';
 import ConfirmDialog from 'primevue/confirmdialog';
 import ConfirmationService from 'primevue/confirmationservice';
-import DialogService from 'primevue/dialogservice'
+import DialogService from 'primevue/dialogservice';
 import Menu from 'primevue/menu';
 import ProgressBar from 'primevue/progressbar';
 import Ripple from 'primevue/ripple';
@@ -16,52 +14,51 @@ import StyleClass from 'primevue/styleclass';
 import Toast from 'primevue/toast';
 import ToastService from 'primevue/toastservice';
 import Tooltip from 'primevue/tooltip';
-//-------------/PrimeVue Imports
+import Dialog from 'primevue/dialog';
 
-//-------------CRUD PrimeVue Imports
+// -------------/PrimeVue Imports
 
-import Badge from "primevue/badge";
-import Button from "primevue/button";
-import Panel from "primevue/panel";
-import InputText from "primevue/inputtext";
-import Column from "primevue/column";
-import InputSwitch from "primevue/inputswitch";
-import DataTable from "primevue/datatable";
-import Paginator from "primevue/paginator";
-import Divider from "primevue/divider";
-import RadioButton from "primevue/radiobutton";
-import Message from "primevue/message";
-import Tag from "primevue/tag";
-import Calendar from "primevue/calendar";
+// -------------CRUD PrimeVue Imports
+import Badge from 'primevue/badge';
+import Button from 'primevue/button';
+import Panel from 'primevue/panel';
+import InputText from 'primevue/inputtext';
+import Column from 'primevue/column';
+import InputSwitch from 'primevue/inputswitch';
+import DataTable from 'primevue/datatable';
+import Paginator from 'primevue/paginator';
+import Divider from 'primevue/divider';
+import RadioButton from 'primevue/radiobutton';
+import Message from 'primevue/message';
+import Tag from 'primevue/tag';
+import Calendar from 'primevue/calendar';
 import Dropdown from 'primevue/dropdown';
 import InputNumber from 'primevue/inputnumber';
 import Card from 'primevue/card';
 import Chart from 'primevue/chart';
-import FileUpload from "primevue/fileupload";
 import Checkbox from 'primevue/checkbox';
 import Slider from 'primevue/slider';
+import FileUpload from 'primevue/fileupload';
+import Steps from "primevue/steps";
 
-//-------------/CRUD PrimeVue Imports
+// -------------/CRUD PrimeVue Imports
 
-
-
-//-------------APP
-import App from './layouts/App.vue'
-import router from './routes/router'
+// -------------APP
+import App from './layouts/App.vue';
+import router from './routes/router';
 
 const app = createApp(App);
 
 const pinia = createPinia();
 pinia.use(({ store }) => {
-    store.$router = markRaw(router)
+    store.$router = markRaw(router);
 });
 app.use(pinia);
 app.use(PiniaVuePlugin);
 app.use(router);
-//-------------/APP
+// -------------/APP
 
-
-//-------------PrimeVue Use
+// -------------PrimeVue Use
 app.use(PrimeVue, { ripple: true });
 app.use(ConfirmationService);
 app.use(ToastService);
@@ -72,15 +69,15 @@ app.directive('badge', BadgeDirective);
 app.directive('ripple', Ripple);
 app.directive('styleclass', StyleClass);
 
-
 app.component('ConfirmDialog', ConfirmDialog);
 app.component('Menu', Menu);
 app.component('ProgressBar', ProgressBar);
 app.component('Toast', Toast);
-//-------------/PrimeVue Use
+app.component('Dialog', Dialog);
+
+// -------------/PrimeVue Use
 
 // -------------CRUD PrimeVue Use
-
 app.component('Badge', Badge);
 app.component('Button', Button);
 app.component('Panel', Panel);
@@ -98,14 +95,13 @@ app.component('Dropdown', Dropdown);
 app.component('InputNumber', InputNumber);
 app.component('Card', Card);
 app.component('Chart', Chart);
-app.component('FileUpload',FileUpload);
-app.component('Checkbox',Checkbox);
-app.component('Slider',Slider);
+app.component('Checkbox', Checkbox);
+app.component('Slider', Slider);
+app.component('FileUpload', FileUpload);
+app.component('Steps', Steps);
 
-//-------------/CRUD PrimeVue Use
+// -------------/CRUD PrimeVue Use
 
+app.mount('#appAssignment');
 
-app.mount('#appAssignment')
-
-
-export { app }
+export { app };
