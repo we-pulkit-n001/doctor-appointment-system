@@ -749,7 +749,7 @@ class Doctor extends VaahModel
 
         $filter['working_hours_start'] = Carbon::parse($startTime)->setTimezone('Asia/Kolkata')->format('H:i:00');
         $filter['working_hours_end'] = Carbon::parse($endTime)->setTimezone('Asia/Kolkata')->format('H:i:00');
-        
+
 
         $inputs['is_active'] = 1;
 
