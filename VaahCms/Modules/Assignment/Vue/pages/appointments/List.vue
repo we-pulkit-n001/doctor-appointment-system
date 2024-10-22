@@ -12,62 +12,98 @@ const root = useRootStore();
 const route = useRoute();
 
 const isDialogVisible = ref(false);
-const currentStep = ref(0);
-const steps = ref([
+const active = ref(0);
+const uploadedFileName = ref('');
+const fileUploaded = ref(false);
+const headers = ref([]);
+const headerMappings = ref({
+    patientEmail: '',
+    doctorEmail: '',
+    time: '',
+    status: ''
+});
+
+const items = ref([
     { label: 'Upload' },
-    { label: 'Map' },
-    { label: 'Preview' },
-    { label: 'Result' }
+    { label: 'Mapping' },
+    { label: 'Preview' }
 ]);
 
-const uploadedFileName = ref('');
-
-const handleFileUpload = (event) => {
-    console.log('here');
-    // const file = event.files[0];
-    // if (file) {
-    //     uploadedFileName.value = file.name;
-    // } else {
-    //     uploadedFileName.value = '';
-    // }
+const importAppointmentsData = (data) => {
+    console.log("Data to import:", data);
 };
 
-const nextStep = async () => {
-    if (currentStep.value === 0 && uploadedFileName.value) {
-        // If on the Upload step, send the file to the store
-        const file = event.files[0]; // Get the file for uploading
-        await store.importAppointments(file); // Call the store's import method
+const handleFileUpload = async (event) => {
+    const file = event.files[0];
+    if (file) {
+        uploadedFileName.value = file.name;
+        fileUploaded.value = true;
+        const text = await file.text();
+        const parsedData = parseCSV(text);
+        headers.value = Object.keys(parsedData[0]);
+        importAppointmentsData(parsedData);
+    } else {
+        uploadedFileName.value = '';
+        fileUploaded.value = false;
     }
-    if (currentStep.value < steps.value.length - 1) {
-        currentStep.value++;
+};
+
+const parseCSV = (csv) => {
+    const rows = csv.split('\n').map(row => row.split(','));
+    const headers = rows[0].map(header => header.replace(/"/g, '').trim().toLowerCase());
+
+    return rows.slice(1).map(row => {
+        return headers.reduce((acc, header, index) => {
+            acc[header] = row[index]?.replace(/"/g, '').trim() || '';
+            return acc;
+        }, {});
+    });
+};
+
+const nextStep = () => {
+    if (active.value === 0) {
+        if (!fileUploaded.value) {
+            alert("Please upload a file before proceeding to the next step.");
+            return;
+        }
+    }
+    if (active.value === 1) {
+        if (!Object.values(headerMappings.value).every(value => value)) {
+            alert("Please map all fields before proceeding to the next step.");
+            return;
+        }
+    }
+    if (active.value < items.value.length - 1) {
+        active.value++;
     }
 };
 
 const prevStep = () => {
-    if (currentStep.value > 0) {
-        currentStep.value--;
+    if (active.value > 0) {
+        active.value--;
     }
 };
 
 const finishUpload = () => {
-    console.log("Upload process finished");
-    closeDialog(); // Close dialog on finish
+    console.log("Upload process finished with mappings:", headerMappings.value);
+    closeDialog();
 };
 
 const openDialog = () => {
-    isDialogVisible.value = true; // Open dialog
-    currentStep.value = 0; // Reset to first step
+    isDialogVisible.value = true;
+    active.value = 0;
 };
 
 const closeDialog = () => {
     isDialogVisible.value = false;
-    currentStep.value = 0;
+    active.value = 0;
     uploadedFileName.value = '';
-    store.clearMessages(); // Clear previous messages in store
+    fileUploaded.value = false;
+    headers.value = [];
+    Object.keys(headerMappings.value).forEach(key => headerMappings.value[key] = '');
 };
 
 onMounted(async () => {
-    // Load initial data when the component is mounted
     document.title = 'Appointments - Assignment';
     await store.onLoad(route);
     await store.watchRoutes(route);
@@ -130,13 +166,20 @@ onMounted(async () => {
         <RouterView />
 
         <Dialog header="Bulk Import" v-model:visible="isDialogVisible" modal style="width: 50vw" @hide="closeDialog">
-            <Steps :model="steps" :activeIndex="currentStep" />
+            <div class="card">
+                <div class="flex mb-2 gap-2 justify-content-end">
+                    <Button @click="active = 0" rounded label="1" class="w-2rem h-2rem p-0" :outlined="active !== 0" />
+                    <Button @click="active = 1" rounded label="2" class="w-2rem h-2rem p-0" :outlined="active !== 1" />
+                    <Button @click="active = 2" rounded label="3" class="w-2rem h-2rem p-0" :outlined="active !== 2" />
+                </div>
+                <Steps v-model:activeStep="active" :model="items" />
+            </div>
 
             <div class="content-box">
-                <template v-if="currentStep === 0">
+                <template v-if="active === 0">
                     <div class="file-upload-row">
                         <div class="file-upload-container">
-                            <span class="file-upload-text">Select a CSV file to Import </span>
+                            <span class="file-upload-text">Select a CSV file to Import:</span>
                             <FileUpload
                                 name="csvFile"
                                 accept=".csv"
@@ -144,7 +187,7 @@ onMounted(async () => {
                                 auto
                                 chooseLabel="Click to Upload"
                                 class="file-upload-button"
-                                @upload="handleFileUpload"
+                                @select="handleFileUpload"
                             />
                         </div>
                     </div>
@@ -153,47 +196,85 @@ onMounted(async () => {
                     </div>
                 </template>
 
-                <template v-else-if="currentStep === 1">
+                <template v-if="active === 1">
                     <div>
-                        <!-- Display content related to mapping here -->
                         <h3>Mapping Step</h3>
-                        <p>Provide mapping instructions or options for the uploaded CSV data.</p>
+                        <p>Please map the following fields from the uploaded CSV file:</p>
+                        <div v-for="(field, index) in ['patientEmail', 'doctorEmail', 'time', 'status']" :key="index" class="mapping-row">
+                            <div class="mapping-label">
+                                <label :for="field">{{ field.replace(/([A-Z])/g, ' $1') }}:</label>
+                            </div>
+                            <div class="mapping-dropdown">
+                                <Dropdown
+                                    :options="headers.map(header => ({ label: header, value: header }))"
+                                    v-model="headerMappings[field]"
+                                    placeholder="Select a header"
+                                    optionLabel="label"
+                                />
+                            </div>
+                        </div>
                     </div>
                 </template>
 
-                <template v-else-if="currentStep === 2">
+                <template v-if="active === 2">
                     <div>
-                        <!-- Display a preview of the data here -->
                         <h3>Preview Step</h3>
                         <p>Display a preview of the appointments to be imported.</p>
-                        <!-- You could map through data to display it here -->
-                    </div>
-                </template>
-
-                <template v-else-if="currentStep === 3">
-                    <div>
-                        <!-- Display result after upload here -->
-                        <h3>Result Step</h3>
-                        <p>Display the result of the import process.</p>
-                        <div v-if="store.uploadSuccess" class="upload-success">{{ store.uploadSuccess }}</div>
-                        <div v-if="store.uploadError" class="upload-error">{{ store.uploadError }}</div>
+                        <table>
+                            <thead>
+                            <tr>
+                                <th>Doctor Email</th>
+                                <th>Patient Email</th>
+                                <th>Time</th>
+                                <th>Status</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>{{ headerMappings.doctorEmail }}</td>
+                                <td>{{ headerMappings.patientEmail }}</td>
+                                <td>{{ headerMappings.time }}</td>
+                                <td>{{ headerMappings.status }}</td>
+                            </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </template>
             </div>
 
             <div class="dialog-buttons">
-                <Button label="Previous" @click="prevStep" v-if="currentStep > 0" />
+                <Button label="Previous" @click="prevStep" v-if="active > 0" />
                 <div class="next-button-container">
-                    <Button label="Next" @click="nextStep" v-if="currentStep < steps.length - 1" />
-                    <Button label="Finish" @click="finishUpload" v-if="currentStep === steps.length - 1" />
+                    <Button label="Next" @click="nextStep" v-if="active < items.length - 1" />
+                    <Button label="Finish" @click="finishUpload" v-if="active === items.length - 1" />
                 </div>
             </div>
         </Dialog>
     </div>
 </template>
 
-
 <style scoped>
+.card {
+    padding: 20px;
+}
+
+.mapping-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+.mapping-label {
+    flex-basis: 40%;
+    text-align: left;
+    margin-right: 10px;
+}
+
+.mapping-dropdown {
+    flex-basis: 50%;
+}
+
 .file-upload-container {
     display: flex;
     align-items: center;
@@ -239,5 +320,20 @@ onMounted(async () => {
     padding: 20px;
     margin-top: 20px;
 }
-</style>
 
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    background-color: #f4f4f4;
+}
+</style>

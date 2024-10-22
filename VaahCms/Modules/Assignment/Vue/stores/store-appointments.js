@@ -982,7 +982,28 @@ export const useAppointmentStore = defineStore({
                     }
                 );
             } catch (error) {
-                console.error('Error importing doctor data:', error);
+                console.error('Error importing appointments data:', error);
+            }
+        },
+        async onFileSelect(fileData){
+            console.log(fileData);
+            try {
+                await vaah().ajax(
+                    this.ajax_url.concat('/import'),
+                    (data, res) => {
+                        console.log(res.data);
+                        this.getList();
+                    },
+                    {
+                        method: 'POST',
+                        params: fileData,
+                        headers: {
+                            'Content-Type': 'application/json',
+                        }
+                    }
+                );
+            } catch (error) {
+                console.error('Error importing appointments data:', error);
             }
         },
         //---------------------------------------------------------------------

@@ -50,7 +50,7 @@ function () {
     Route::get('/stats', [AppointmentsController::class, 'getDashboardData']);
 
     /**
-     * Get Item
+     * Get I\tem
      */
     Route::get('/{id}', [AppointmentsController::class, 'getItem'])
         ->name('vh.backend.assignment.appointments.read');
@@ -82,6 +82,12 @@ function () {
      */
     Route::get('/appointments/export', [AppointmentsController::class, 'exportAppointmentsData'])
         ->name('vh.backend.assignment.appointments.export.action');
+
+    /**
+     * Import Appointment Data
+     */
+    Route::post('/import', [AppointmentsController::class, 'importAppointmentsData'])
+        ->name('vh.backend.assignment.appointments.import.action');
 
     //---------------------------------------------------------
 

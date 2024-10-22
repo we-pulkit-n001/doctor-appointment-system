@@ -836,6 +836,13 @@ class Appointment extends VaahModel
         return Excel::download(new ExportAppointmentsData,'appointments.csv');
     }
 
+    public static function importAppointmentsData($request)
+    {
+        dd("inside model");
+
+        return Excel::download(new ExportAppointmentsData,'appointments.csv');
+    }
+
     //-------------------------------------------------
     //-------------------------------------------------
     //-------------------------------------------------
