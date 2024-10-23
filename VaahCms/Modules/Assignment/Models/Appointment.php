@@ -838,10 +838,100 @@ class Appointment extends VaahModel
 
     public static function importAppointmentsData($request)
     {
-        dd("inside model");
+        $inputs = $request->all();
+        $responses = [];
+        $validRecords = [];
 
-        return Excel::download(new ExportAppointmentsData,'appointments.csv');
+        if (!isset($inputs) || !is_array($inputs) || empty($inputs)) {
+            return response()->json([
+                'success' => false,
+                'error' => ['Input data is not valid or empty.'],
+            ]);
+        }
+
+        foreach ($inputs as $index => $record) {
+            $validator = \Validator::make($record, [
+                'patient_email' => 'required|email',
+                'doctor_email' => 'required|email',
+                'time' => 'required|date_format:H:i',
+                'status' => 'required|in:Booked,Cancelled',
+            ]);
+
+            if ($validator->fails()) {
+                $responses[] = [
+                    'patient_email' => $record['patient_email'],
+                    'doctor_email' => $record['doctor_email'],
+                    'error' => $validator->errors()->all(),
+                ];
+                continue;
+            }
+
+            $validRecords[] = $record;
+        }
+
+        foreach ($validRecords as $record) {
+            $appointmentTime = Carbon::parse($record['time'])->format('H:i:00');
+            $appointmentStatus = $record['status'];
+
+            $doctor = Doctor::where('email', $record['doctor_email'])->first();
+            if (!$doctor) {
+                $responses[] = [
+                    'patient_email' => $record['patient_email'],
+                    'doctor_email' => $record['doctor_email'],
+                    'error' => ['Doctor not found'],
+                ];
+                continue;
+            }
+
+            $patient = Patient::where('email', $record['patient_email'])->first();
+            if (!$patient) {
+                $responses[] = [
+                    'patient_email' => $record['patient_email'],
+                    'doctor_email' => $record['doctor_email'],
+                    'error' => ['Patient not found'],
+                ];
+                continue;
+            }
+
+            $existingWorkingHoursStart = Carbon::parse($doctor->working_hours_start)->setTimezone('Asia/Kolkata')->format('H:i:00');
+            $existingWorkingHoursEnd = Carbon::parse($doctor->working_hours_end)->setTimezone('Asia/Kolkata')->format('H:i:00');
+
+            if ($appointmentTime < $existingWorkingHoursStart || $appointmentTime > $existingWorkingHoursEnd) {
+                $responses[] = [
+                    'patient_email' => $record['patient_email'],
+                    'doctor_email' => $record['doctor_email'],
+                    'error' => ["Doctor is not available at the selected time"],
+                ];
+                continue;
+            }
+
+            $existingAppointment = self::where('time', $appointmentTime)
+                ->where('doctor_id', $doctor->id)
+                ->first();
+
+            if ($existingAppointment) {
+                $responses[] = [
+                    'patient_email' => $record['patient_email'],
+                    'doctor_email' => $record['doctor_email'],
+                    'error' => ['Requested time slot is not available with Dr. ' . $doctor->name . '! Choose another slot.'],
+                ];
+                continue;
+            }
+
+            Appointment::create([
+                'patient_id' => $patient->id,
+                'doctor_id' => $doctor->id,
+                'time' => $appointmentTime,
+                'status' => $appointmentStatus
+            ]);
+        }
+        
+        return response()->json([
+            'success' => true,
+            'error' => $responses,
+        ]);
     }
+
 
     //-------------------------------------------------
     //-------------------------------------------------

@@ -22,15 +22,19 @@ const headerMappings = ref({
     time: '',
     status: ''
 });
+const parsedData = ref([]);
+const validationResult = ref({ isValid: false, message: '' });
 
 const items = ref([
     { label: 'Upload' },
     { label: 'Mapping' },
-    { label: 'Preview' }
+    { label: 'Preview' },
+    { label: 'Result & Validation' }  // Step 4
 ]);
 
 const importAppointmentsData = (data) => {
-    console.log("Data to import:", data);
+    parsedData.value = data; // Store parsed data for later
+    console.log(parsedData.value);
 };
 
 const handleFileUpload = async (event) => {
@@ -39,9 +43,9 @@ const handleFileUpload = async (event) => {
         uploadedFileName.value = file.name;
         fileUploaded.value = true;
         const text = await file.text();
-        const parsedData = parseCSV(text);
-        headers.value = Object.keys(parsedData[0]);
-        importAppointmentsData(parsedData);
+        const parsedDataArray = parseCSV(text);
+        headers.value = Object.keys(parsedDataArray[0]);
+        importAppointmentsData(parsedDataArray);
     } else {
         uploadedFileName.value = '';
         fileUploaded.value = false;
@@ -61,20 +65,28 @@ const parseCSV = (csv) => {
 };
 
 const nextStep = () => {
-    if (active.value === 0) {
-        if (!fileUploaded.value) {
-            alert("Please upload a file before proceeding to the next step.");
-            return;
-        }
+    if (active.value === 0 && !fileUploaded.value) {
+        alert("Please upload a file before proceeding.");
+        return;
     }
-    if (active.value === 1) {
-        if (!Object.values(headerMappings.value).every(value => value)) {
-            alert("Please map all fields before proceeding to the next step.");
-            return;
-        }
+    if (active.value === 1 && !Object.values(headerMappings.value).every(value => value)) {
+        alert("Please map all fields before proceeding.");
+        return;
     }
+
+    // Generate and log JSON when clicking "Next" after preview (Step 2).
+    if (active.value === 2) {
+        const jsonData = generateMappedJson();
+        // You can store this jsonData in a variable or pass it to the backend
+        store.importAppointmentsData(jsonData);
+    }
+
     if (active.value < items.value.length - 1) {
         active.value++;
+    }
+
+    if (active.value === 3) {
+        validateData();
     }
 };
 
@@ -85,8 +97,33 @@ const prevStep = () => {
 };
 
 const finishUpload = () => {
-    console.log("Upload process finished with mappings:", headerMappings.value);
+    console.log("Upload completed with mappings:", headerMappings.value);
     closeDialog();
+};
+
+const validateData = () => {
+    // Basic validation, you can add more advanced validation here
+    validationResult.value = { isValid: true, message: "All records are valid!" };
+
+    // Example of failing validation:
+    if (parsedData.value.some(row => !row[headerMappings.value.patientEmail] || !row[headerMappings.value.doctorEmail])) {
+        validationResult.value = {
+            isValid: false,
+            message: "Some records are missing important fields."
+        };
+    }
+};
+
+const generateMappedJson = () => {
+    const mappedJson = parsedData.value.map(row => ({
+        "patient_email": row[headerMappings.value.patientEmail.value],
+        "doctor_email": row[headerMappings.value.doctorEmail.value],
+        "time": row[headerMappings.value.time.value],
+        "status": row[headerMappings.value.status.value]
+    }));
+
+    console.log("Generated JSON Data: ", mappedJson);
+    return mappedJson;
 };
 
 const openDialog = () => {
@@ -100,7 +137,9 @@ const closeDialog = () => {
     uploadedFileName.value = '';
     fileUploaded.value = false;
     headers.value = [];
+    parsedData.value = []; // Clear parsed data on close
     Object.keys(headerMappings.value).forEach(key => headerMappings.value[key] = '');
+    validationResult.value = { isValid: false, message: '' };
 };
 
 onMounted(async () => {
@@ -144,16 +183,6 @@ onMounted(async () => {
                         <Button data-testid="appointments-list-reload" class="p-button-sm" @click="store.getList()">
                             <i class="pi pi-refresh mr-1"></i>
                         </Button>
-                        <Button
-                            v-if="root.assets && root.assets.module && root.assets.module.is_dev"
-                            type="button"
-                            @click="toggleCreateMenu"
-                            class="p-button-sm"
-                            data-testid="appointments-create-menu"
-                            icon="pi pi-angle-down"
-                            aria-haspopup="true"
-                        />
-                        <Menu ref="create_menu" :model="store.list_create_menu" :popup="true" />
                     </div>
                 </template>
 
@@ -167,15 +196,8 @@ onMounted(async () => {
 
         <Dialog header="Bulk Import" v-model:visible="isDialogVisible" modal style="width: 50vw" @hide="closeDialog">
             <div class="card">
-                <div class="flex mb-2 gap-2 justify-content-end">
-                    <Button @click="active = 0" rounded label="1" class="w-2rem h-2rem p-0" :outlined="active !== 0" />
-                    <Button @click="active = 1" rounded label="2" class="w-2rem h-2rem p-0" :outlined="active !== 1" />
-                    <Button @click="active = 2" rounded label="3" class="w-2rem h-2rem p-0" :outlined="active !== 2" />
-                </div>
                 <Steps v-model:activeStep="active" :model="items" />
-            </div>
 
-            <div class="content-box">
                 <template v-if="active === 0">
                     <div class="file-upload-row">
                         <div class="file-upload-container">
@@ -197,47 +219,55 @@ onMounted(async () => {
                 </template>
 
                 <template v-if="active === 1">
-                    <div>
-                        <h3>Mapping Step</h3>
-                        <p>Please map the following fields from the uploaded CSV file:</p>
-                        <div v-for="(field, index) in ['patientEmail', 'doctorEmail', 'time', 'status']" :key="index" class="mapping-row">
-                            <div class="mapping-label">
-                                <label :for="field">{{ field.replace(/([A-Z])/g, ' $1') }}:</label>
-                            </div>
-                            <div class="mapping-dropdown">
-                                <Dropdown
-                                    :options="headers.map(header => ({ label: header, value: header }))"
-                                    v-model="headerMappings[field]"
-                                    placeholder="Select a header"
-                                    optionLabel="label"
-                                />
-                            </div>
+                    <h3>Mapping Step</h3>
+                    <p>Please map the following fields from the uploaded CSV file:</p>
+                    <div v-for="(field, index) in ['patientEmail', 'doctorEmail', 'time', 'status']" :key="index" class="mapping-row">
+                        <div class="mapping-label">
+                            <label :for="field">{{ field.replace(/([A-Z])/g, ' $1') }}:</label>
+                        </div>
+                        <div class="mapping-dropdown">
+                            <Dropdown
+                                :options="headers.map(header => ({ label: header, value: header }))"
+                                v-model="headerMappings[field]"
+                                placeholder="Select a header"
+                                optionLabel="label"
+                            />
                         </div>
                     </div>
                 </template>
 
                 <template v-if="active === 2">
-                    <div>
-                        <h3>Preview Step</h3>
-                        <p>Display a preview of the appointments to be imported.</p>
-                        <table>
-                            <thead>
-                            <tr>
-                                <th>Doctor Email</th>
-                                <th>Patient Email</th>
-                                <th>Time</th>
-                                <th>Status</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr>
-                                <td>{{ headerMappings.doctorEmail }}</td>
-                                <td>{{ headerMappings.patientEmail }}</td>
-                                <td>{{ headerMappings.time }}</td>
-                                <td>{{ headerMappings.status }}</td>
-                            </tr>
-                            </tbody>
-                        </table>
+                    <h3>Preview Step</h3>
+                    <p>Here is a preview of the appointments to be imported:</p>
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>Patient Email</th>
+                            <th>Doctor Email</th>
+                            <th>Time</th>
+                            <th>Status</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr v-for="(row, index) in parsedData" :key="index">
+                            <td>{{ row[headerMappings.patientEmail.value] }}</td>
+                            <td>{{ row[headerMappings.doctorEmail.value] }}</td>
+                            <td>{{ row[headerMappings.time.value] }}</td>
+                            <td>{{ row[headerMappings.status.value] }}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </template>
+
+
+                <template v-if="active === 3">
+                    <h3>Result & Validation Step</h3>
+                    <p>Validation Results:</p>
+                    <div v-if="validationResult.isValid">
+                        <p class="valid-message">{{ validationResult.message }}</p>
+                    </div>
+                    <div v-else>
+                        <p class="invalid-message">{{ validationResult.message }}</p>
                     </div>
                 </template>
             </div>
@@ -314,13 +344,6 @@ onMounted(async () => {
     flex-grow: 1;
 }
 
-.content-box {
-    border: 1px dashed #ccc;
-    border-radius: 8px;
-    padding: 20px;
-    margin-top: 20px;
-}
-
 table {
     width: 100%;
     border-collapse: collapse;
@@ -335,5 +358,13 @@ th, td {
 
 th {
     background-color: #f4f4f4;
+}
+
+.valid-message {
+    color: green;
+}
+
+.invalid-message {
+    color: red;
 }
 </style>

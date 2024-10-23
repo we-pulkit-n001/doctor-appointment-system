@@ -965,6 +965,7 @@ export const useAppointmentStore = defineStore({
                 }
         },
         async importAppointmentsData(fileData){
+            console.log("inside store");
             console.log(fileData);
             try {
                 await vaah().ajax(
