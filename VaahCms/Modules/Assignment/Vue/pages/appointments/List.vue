@@ -263,13 +263,23 @@ onMounted(async () => {
                 <template v-if="active === 3">
                     <h3>Result & Validation Step</h3>
                     <p>Validation Results:</p>
+
                     <div v-if="validationResult.isValid">
-                        <p class="valid-message">{{ validationResult.message }}</p>
+                        <p class="valid-message">All records are valid! Data inserted successfully.</p>
                     </div>
                     <div v-else>
-                        <p class="invalid-message">{{ validationResult.message }}</p>
+                        <p class="invalid-message">Errors found:</p>
+                        <ul>
+                            <li v-if="store.doctor_not_found_display.length > 0" class="error-message">Doctor not found.</li>
+                            <li v-if="store.patient_not_found_display.length > 0" class="error-message">Patient not found.</li>
+                            <li v-if="store.doctor_is_not_available_at_the_selected_time_display.length > 0" class="error-message">Doctor is not available at the selected time.</li>
+                            <li v-if="store.requested_time_slot_is_not_available_display.length>0" class="error-message">Requested time slot is not available.</li>
+                            <li v-if="store.data_not_valid_display.length > 0" class="error-message">Data is not valid.</li>
+                        </ul>
                     </div>
                 </template>
+
+
             </div>
 
             <div class="dialog-buttons">
@@ -367,4 +377,11 @@ th {
 .invalid-message {
     color: red;
 }
+
+.error-message {
+    color: red;
+    margin: 5px 0;
+}
+
+
 </style>

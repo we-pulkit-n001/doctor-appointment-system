@@ -838,15 +838,20 @@ class Appointment extends VaahModel
 
     public static function importAppointmentsData($request)
     {
-        $inputs = $request->all();
+        $inputs = $request->json()->all();
+
         $responses = [];
         $validRecords = [];
+        $errors = [
+            'data_not_valid' => [],
+            'Doctor_not_found'  => [],
+            'patient_not_found'  => [],
+            'Doctor_is_not_available_at_the_selected_time'  => [],
+            'Requested_time_slot_is_not_available'  => []
+        ];
 
         if (!isset($inputs) || !is_array($inputs) || empty($inputs)) {
-            return response()->json([
-                'success' => false,
-                'error' => ['Input data is not valid or empty.'],
-            ]);
+           $errors['data_not_valid'][] =  "Input data is not valid";
         }
 
         foreach ($inputs as $index => $record) {
@@ -870,25 +875,26 @@ class Appointment extends VaahModel
         }
 
         foreach ($validRecords as $record) {
+
             $appointmentTime = Carbon::parse($record['time'])->format('H:i:00');
             $appointmentStatus = $record['status'];
-
-            $doctor = Doctor::where('email', $record['doctor_email'])->first();
-            if (!$doctor) {
-                $responses[] = [
-                    'patient_email' => $record['patient_email'],
-                    'doctor_email' => $record['doctor_email'],
-                    'error' => ['Doctor not found'],
-                ];
-                continue;
-            }
 
             $patient = Patient::where('email', $record['patient_email'])->first();
             if (!$patient) {
                 $responses[] = [
                     'patient_email' => $record['patient_email'],
                     'doctor_email' => $record['doctor_email'],
-                    'error' => ['Patient not found'],
+                    $errors['patient_not_found'][] = 'Patient Not Registered',
+                ];
+                continue;
+            }
+
+            $doctor = Doctor::where('email', $record['doctor_email'])->first();
+            if (!$doctor) {
+                $responses[] = [
+                    'patient_email' => $record['patient_email'],
+                    'doctor_email' => $record['doctor_email'],
+                    $errors['doctor_not_found'][] = 'Doctor Not Registered',
                 ];
                 continue;
             }
@@ -900,7 +906,7 @@ class Appointment extends VaahModel
                 $responses[] = [
                     'patient_email' => $record['patient_email'],
                     'doctor_email' => $record['doctor_email'],
-                    'error' => ["Doctor is not available at the selected time"],
+                    $errors['Doctor_is_not_available_at_the_selected_time'][] = 'Doctor is not available at the selected time',
                 ];
                 continue;
             }
@@ -909,26 +915,28 @@ class Appointment extends VaahModel
                 ->where('doctor_id', $doctor->id)
                 ->first();
 
+
+
             if ($existingAppointment) {
                 $responses[] = [
                     'patient_email' => $record['patient_email'],
                     'doctor_email' => $record['doctor_email'],
-                    'error' => ['Requested time slot is not available with Dr. ' . $doctor->name . '! Choose another slot.'],
+                    $errors['Requested_time_slot_is_not_available'][] = 'Requested time slot is not available',
                 ];
                 continue;
             }
 
-            Appointment::create([
+            self::updateOrCreate([
                 'patient_id' => $patient->id,
                 'doctor_id' => $doctor->id,
-                'time' => $appointmentTime,
-                'status' => $appointmentStatus
+//                'time' => $appointmentTime,
+//                'status' => 'booked'
             ]);
         }
-        
+
         return response()->json([
             'success' => true,
-            'error' => $responses,
+            'error' => $errors,
         ]);
     }
 

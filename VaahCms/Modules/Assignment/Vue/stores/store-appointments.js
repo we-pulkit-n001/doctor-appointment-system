@@ -68,7 +68,17 @@ export const useAppointmentStore = defineStore({
         list_create_menu: [],
         item_menu_list: [],
         item_menu_state: null,
-        form_menu_list: []
+        form_menu_list: [],
+        data_not_valid_display: [],
+        doctor_not_found_display: null,
+        patient_not_found_display: null,
+        doctor_is_not_available_at_the_selected_time_display: null,
+        requested_time_slot_is_not_available_display: null
+
+
+
+
+
     }),
     getters: {
 
@@ -965,15 +975,11 @@ export const useAppointmentStore = defineStore({
                 }
         },
         async importAppointmentsData(fileData){
-            console.log("inside store");
             console.log(fileData);
             try {
                 await vaah().ajax(
                     this.ajax_url.concat('/import'),
-                    (data, res) => {
-                        console.log(res.data);
-                        this.getList();
-                    },
+                    this.afterImportAppointment,
                     {
                         method: 'POST',
                         params: fileData,
@@ -985,6 +991,14 @@ export const useAppointmentStore = defineStore({
             } catch (error) {
                 console.error('Error importing appointments data:', error);
             }
+        },
+        async afterImportAppointment(data, res)
+        {
+            this.data_not_valid_display = res.data.error.data_not_valid,
+                this.doctor_not_found_display = res.data.error.Doctor_not_found,
+                this.patient_not_found_display = res.data.error.patient_not_found,
+                this.doctor_is_not_available_at_the_selected_time_display = res.data.error.Doctor_is_not_available_at_the_selected_time,
+                this.requested_time_slot_is_not_available_display = res.data.error.Requested_time_slot_is_not_available
         },
         async onFileSelect(fileData){
             console.log(fileData);
