@@ -840,17 +840,18 @@ class Appointment extends VaahModel
     {
         $inputs = $request->json()->all();
 
-        dd($inputs);
-
         $errors = [
             'patient_not_defined' => [],
             'doctor_not_defined' => [],
+            'date_not_defined' => [],
             'time_not_defined' => [],
             'status_not_defined' => [],
             'patient_not_registered'  => [],
             'Doctor_not_registered'  => [],
             'Doctor_is_not_available_at_the_selected_time'  => [],
-            'Requested_time_slot_is_not_available'  => []
+            'Requested_time_slot_is_not_available'  => [],
+            'invalid_date_format' => [],
+            'invalid_time_format' => []
 
         ];
 
@@ -866,6 +867,11 @@ class Appointment extends VaahModel
                 continue;
             }
 
+            if (!isset($record['date']) || empty($record['date'])) {
+                $errors['date_not_defined'] = 'Date Not defined at ' . ($index+1);
+                continue;
+            }
+
             if (!isset($record['time']) || empty($record['time'])) {
                 $errors['time_not_defined'] = 'Time Not defined at ' . ($index+1);
                 continue;
@@ -873,6 +879,16 @@ class Appointment extends VaahModel
 
             if (!isset($record['status']) || empty($record['status'])) {
                 $errors['status_not_defined'] = 'Status Not defined at ' . ($index+1);
+                continue;
+            }
+
+            if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $record['date'])) {
+                $errors['invalid_date_format'] = 'Invalid date format at ' . ($index + 1) . '. Expected format: YYYY-MM-DD';
+                continue;
+            }
+
+            if (!preg_match('/^(?:[01]\d|2[0-3]):[0-5]\d$/', $record['time'])) {
+                $errors['invalid_time_format'] = 'Invalid time format at ' . ($index + 1) . '. Expected format: HH:MM in 24-hour format';
                 continue;
             }
 
@@ -920,6 +936,7 @@ class Appointment extends VaahModel
                 self::updateOrCreate([
                     'patient_id' => $patient->id,
                     'doctor_id' => $doctor->id,
+                    'date' => $record['date'],
                     'time' => $appointmentTime,
                     'status' => $appointmentStatus
                 ]);

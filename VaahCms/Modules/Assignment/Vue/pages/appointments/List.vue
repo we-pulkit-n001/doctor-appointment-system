@@ -19,6 +19,7 @@ const headers = ref([]);
 const headerMappings = ref({
     patientEmail: '',
     doctorEmail: '',
+    date: '',
     time: '',
     status: ''
 });
@@ -118,6 +119,7 @@ const generateMappedJson = () => {
     const mappedJson = parsedData.value.map(row => ({
         "patient_email": row[headerMappings.value.patientEmail.value],
         "doctor_email": row[headerMappings.value.doctorEmail.value],
+        "date": row[headerMappings.value.date.value],
         "time": row[headerMappings.value.time.value],
         "status": row[headerMappings.value.status.value]
     }));
@@ -232,7 +234,7 @@ onMounted(async () => {
                 <template v-if="active === 1">
                     <h3>Mapping Step</h3>
                     <p>Please map the following fields from the uploaded CSV file:</p>
-                    <div v-for="(field, index) in ['patientEmail', 'doctorEmail', 'time', 'status']" :key="index" class="mapping-row">
+                    <div v-for="(field, index) in ['patientEmail', 'doctorEmail', 'date', 'time', 'status']" :key="index" class="mapping-row">
                         <div class="mapping-label">
                             <label :for="field">{{ field.replace(/([A-Z])/g, ' $1') }}:</label>
                         </div>
@@ -255,6 +257,7 @@ onMounted(async () => {
                         <tr>
                             <th>Patient Email</th>
                             <th>Doctor Email</th>
+                            <th>Date</th>
                             <th>Time</th>
                             <th>Status</th>
                         </tr>
@@ -263,6 +266,7 @@ onMounted(async () => {
                         <tr v-for="(row, index) in parsedData" :key="index">
                             <td>{{ row[headerMappings.patientEmail.value] }}</td>
                             <td>{{ row[headerMappings.doctorEmail.value] }}</td>
+                            <td>{{ row[headerMappings.date.value] }}</td>
                             <td>{{ row[headerMappings.time.value] }}</td>
                             <td>{{ row[headerMappings.status.value] }}</td>
                         </tr>
@@ -283,12 +287,15 @@ onMounted(async () => {
                         <ul>
                             <li v-if="store.patient_not_defined_display.length > 0" class="error-message">{{store.patient_not_defined_display}}</li>
                             <li v-if="store.doctor_not_defined_display.length > 0" class="error-message">{{store.doctor_not_defined_display}}</li>
+                            <li v-if="store.date_not_defined_display.length > 0" class="error-message">{{store.date_not_defined_display}}</li>
                             <li v-if="store.time_not_defined_display.length > 0" class="error-message">{{store.time_not_defined_display}}</li>
                             <li v-if="store.status_not_defined_display.length > 0" class="error-message">{{store.status_not_defined_display}}</li>
                             <li v-if="store.doctor_not_registered_display.length > 0" class="error-message">Doctor not found.</li>
                             <li v-if="store.patient_not_registered_display.length > 0" class="error-message">Patient not found.</li>
                             <li v-if="store.doctor_is_not_available_at_the_selected_time_display.length > 0" class="error-message">Doctor is not available at the selected time.</li>
                             <li v-if="store.requested_time_slot_is_not_available_display.length>0" class="error-message">Requested time slot is not available.</li>
+                            <li v-if="store.invalid_date_format_display.length>0" class="error-message">{{store.invalid_date_format_display}}</li>
+                            <li v-if="store.invalid_time_format_display.length>0" class="error-message">{{store.invalid_time_format_display}}</li>
                         </ul>
                     </div>
                 </template>

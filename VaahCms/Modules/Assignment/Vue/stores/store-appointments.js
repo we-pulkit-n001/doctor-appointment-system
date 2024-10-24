@@ -72,12 +72,15 @@ export const useAppointmentStore = defineStore({
 
         patient_not_defined_display: null,
         doctor_not_defined_display: null,
+        date_not_defined_display: null,
         time_not_defined_display: null,
         status_not_defined_display: null,
         patient_not_registered_display: null,
         doctor_not_registered_display: null,
         doctor_is_not_available_at_the_selected_time_display: null,
         requested_time_slot_is_not_available_display: null,
+        invalid_date_format_display: null,
+        invalid_time_format_display: null
 
 
 
@@ -999,13 +1002,16 @@ export const useAppointmentStore = defineStore({
         {
             this.patient_not_defined_display = res.data.error.patient_not_defined,
                 this.doctor_not_defined_display = res.data.error.doctor_not_defined,
+                this.date_not_defined_display = res.data.error.date_not_defined,
             this.time_not_defined_display = res.data.error.time_not_defined,
             this.status_not_defined_display = res.data.error.status_not_defined,
 
                 this.patient_not_registered_display = res.data.error.patient_not_registered,
                 this.doctor_not_registered_display = res.data.error.Doctor_not_registered,
                 this.doctor_is_not_available_at_the_selected_time_display = res.data.error.Doctor_is_not_available_at_the_selected_time,
-                this.requested_time_slot_is_not_available_display = res.data.error.Requested_time_slot_is_not_available
+                this.requested_time_slot_is_not_available_display = res.data.error.Requested_time_slot_is_not_available,
+                this.invalid_date_format_display = res.data.error.invalid_date_format,
+                this.invalid_time_format_display = res.data.error.invalid_time_format
         }
         //---------------------------------------------------------------------
     }
