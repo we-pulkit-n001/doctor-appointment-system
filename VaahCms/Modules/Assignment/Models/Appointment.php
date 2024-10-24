@@ -840,62 +840,54 @@ class Appointment extends VaahModel
     {
         $inputs = $request->json()->all();
 
-        $responses = [];
-        $validRecords = [];
+        dd($inputs);
+
         $errors = [
-            'data_not_valid' => [],
-            'Doctor_not_found'  => [],
-            'patient_not_found'  => [],
+            'patient_not_defined' => [],
+            'doctor_not_defined' => [],
+            'time_not_defined' => [],
+            'status_not_defined' => [],
+            'patient_not_registered'  => [],
+            'Doctor_not_registered'  => [],
             'Doctor_is_not_available_at_the_selected_time'  => [],
             'Requested_time_slot_is_not_available'  => []
+
         ];
 
-        if (!isset($inputs) || !is_array($inputs) || empty($inputs)) {
-           $errors['data_not_valid'][] =  "Input data is not valid";
-        }
-
         foreach ($inputs as $index => $record) {
-            $validator = \Validator::make($record, [
-                'patient_email' => 'required|email',
-                'doctor_email' => 'required|email',
-                'time' => 'required|date_format:H:i',
-                'status' => 'required|in:Booked,Cancelled',
-            ]);
 
-            if ($validator->fails()) {
-                $responses[] = [
-                    'patient_email' => $record['patient_email'],
-                    'doctor_email' => $record['doctor_email'],
-                    'error' => $validator->errors()->all(),
-                ];
+            if (!isset($record['patient_email']) || empty($record['patient_email'])) {
+                $errors['patient_not_defined'] = 'Patient Email Not defined at ' . ($index+1);
                 continue;
             }
 
-            $validRecords[] = $record;
-        }
+            if (!isset($record['doctor_email']) || empty($record['doctor_email'])) {
+                $errors['doctor_not_defined'] = 'Doctor Email Not defined at ' . ($index+1);
+                continue;
+            }
 
-        foreach ($validRecords as $record) {
+            if (!isset($record['time']) || empty($record['time'])) {
+                $errors['time_not_defined'] = 'Time Not defined at ' . ($index+1);
+                continue;
+            }
+
+            if (!isset($record['status']) || empty($record['status'])) {
+                $errors['status_not_defined'] = 'Status Not defined at ' . ($index+1);
+                continue;
+            }
 
             $appointmentTime = Carbon::parse($record['time'])->format('H:i:00');
             $appointmentStatus = $record['status'];
 
             $patient = Patient::where('email', $record['patient_email'])->first();
             if (!$patient) {
-                $responses[] = [
-                    'patient_email' => $record['patient_email'],
-                    'doctor_email' => $record['doctor_email'],
-                    $errors['patient_not_found'][] = 'Patient Not Registered',
-                ];
+                $errors['patient_not_registered'][] = 'Patient Not Registered';
                 continue;
             }
 
             $doctor = Doctor::where('email', $record['doctor_email'])->first();
             if (!$doctor) {
-                $responses[] = [
-                    'patient_email' => $record['patient_email'],
-                    'doctor_email' => $record['doctor_email'],
-                    $errors['doctor_not_found'][] = 'Doctor Not Registered',
-                ];
+                $errors['Doctor_not_registered'][] = 'Doctor Not Registered';
                 continue;
             }
 
@@ -903,11 +895,7 @@ class Appointment extends VaahModel
             $existingWorkingHoursEnd = Carbon::parse($doctor->working_hours_end)->setTimezone('Asia/Kolkata')->format('H:i:00');
 
             if ($appointmentTime < $existingWorkingHoursStart || $appointmentTime > $existingWorkingHoursEnd) {
-                $responses[] = [
-                    'patient_email' => $record['patient_email'],
-                    'doctor_email' => $record['doctor_email'],
-                    $errors['Doctor_is_not_available_at_the_selected_time'][] = 'Doctor is not available at the selected time',
-                ];
+                $errors['Doctor_is_not_available_at_the_selected_time'][] = 'Doctor is not available at the selected time';
                 continue;
             }
 
@@ -915,23 +903,39 @@ class Appointment extends VaahModel
                 ->where('doctor_id', $doctor->id)
                 ->first();
 
-
-
             if ($existingAppointment) {
-                $responses[] = [
-                    'patient_email' => $record['patient_email'],
-                    'doctor_email' => $record['doctor_email'],
-                    $errors['Requested_time_slot_is_not_available'][] = 'Requested time slot is not available',
-                ];
+                $errors['Requested_time_slot_is_not_available'][] = 'Requested time slot is not available';
                 continue;
             }
 
-            self::updateOrCreate([
-                'patient_id' => $patient->id,
-                'doctor_id' => $doctor->id,
+            if (empty($errors['patient_not_defined']) &&
+                empty($errors['doctor_not_defined']) &&
+                empty($errors['time_not_defined']) &&
+                empty($errors['status_not_defined']) &&
+                empty($errors['patient_not_registered']) &&
+                empty($errors['Doctor_not_registered']) &&
+                empty($errors['Doctor_is_not_available_at_the_selected_time']) &&
+                empty($errors['Requested_time_slot_is_not_available'])) {
+
+                self::updateOrCreate([
+                    'patient_id' => $patient->id,
+                    'doctor_id' => $doctor->id,
+                    'time' => $appointmentTime,
+                    'status' => $appointmentStatus
+                ]);
+
+                $response['messages'][] = trans("vaahcms-general.saved_successfully");
+
+                return response()->json($response);
+
+            }
+
+//            self::updateOrCreate([
+//                'patient_id' => $patient->id,
+//                'doctor_id' => $doctor->id,
 //                'time' => $appointmentTime,
-//                'status' => 'booked'
-            ]);
+//                'status' => $appointmentStatus
+//            ]);
         }
 
         return response()->json([

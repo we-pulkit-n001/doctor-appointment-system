@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed  } from "vue";
 import { useRoute } from 'vue-router';
 import { useAppointmentStore } from '../../stores/store-appointments';
 import { useRootStore } from '../../stores/root';
@@ -142,6 +142,17 @@ const closeDialog = () => {
     validationResult.value = { isValid: false, message: '' };
 };
 
+const isFinishDisabled = computed(() => {
+    return store.patient_not_defined_display.length > 0 ||
+        store.doctor_not_defined_display.length > 0 ||
+        store.time_not_defined_display.length > 0 ||
+        store.status_not_defined_display.length > 0 ||
+        store.patient_not_registered_display.length > 0 ||
+        store.doctor_not_registered_display.length > 0 ||
+        store.doctor_is_not_available_at_the_selected_time_display.length > 0 ||
+        store.requested_time_slot_is_not_available_display.length > 0;
+});
+
 onMounted(async () => {
     document.title = 'Appointments - Assignment';
     await store.onLoad(route);
@@ -270,11 +281,14 @@ onMounted(async () => {
                     <div v-else>
                         <p class="invalid-message">Errors found:</p>
                         <ul>
-                            <li v-if="store.doctor_not_found_display.length > 0" class="error-message">Doctor not found.</li>
-                            <li v-if="store.patient_not_found_display.length > 0" class="error-message">Patient not found.</li>
+                            <li v-if="store.patient_not_defined_display.length > 0" class="error-message">{{store.patient_not_defined_display}}</li>
+                            <li v-if="store.doctor_not_defined_display.length > 0" class="error-message">{{store.doctor_not_defined_display}}</li>
+                            <li v-if="store.time_not_defined_display.length > 0" class="error-message">{{store.time_not_defined_display}}</li>
+                            <li v-if="store.status_not_defined_display.length > 0" class="error-message">{{store.status_not_defined_display}}</li>
+                            <li v-if="store.doctor_not_registered_display.length > 0" class="error-message">Doctor not found.</li>
+                            <li v-if="store.patient_not_registered_display.length > 0" class="error-message">Patient not found.</li>
                             <li v-if="store.doctor_is_not_available_at_the_selected_time_display.length > 0" class="error-message">Doctor is not available at the selected time.</li>
                             <li v-if="store.requested_time_slot_is_not_available_display.length>0" class="error-message">Requested time slot is not available.</li>
-                            <li v-if="store.data_not_valid_display.length > 0" class="error-message">Data is not valid.</li>
                         </ul>
                     </div>
                 </template>
@@ -286,7 +300,12 @@ onMounted(async () => {
                 <Button label="Previous" @click="prevStep" v-if="active > 0" />
                 <div class="next-button-container">
                     <Button label="Next" @click="nextStep" v-if="active < items.length - 1" />
-                    <Button label="Finish" @click="finishUpload" v-if="active === items.length - 1" />
+                    <Button
+                        label="Finish"
+                        @click="finishUpload"
+                        v-if="active === items.length - 1"
+                        :disabled="isFinishDisabled"
+                    />
                 </div>
             </div>
         </Dialog>
