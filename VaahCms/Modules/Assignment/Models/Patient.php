@@ -11,6 +11,9 @@ use WebReinvent\VaahCms\Models\User;
 use WebReinvent\VaahCms\Libraries\VaahSeeder;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Export\ExportPatientsData;
+use App\Jobs\CreateBulkPatients;
+use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\Log;
 
 class Patient extends VaahModel
 {
@@ -599,19 +602,33 @@ class Patient extends VaahModel
     public static function seedSampleItems($records=100)
     {
 
-        $i = 0;
 
-        while($i < $records)
-        {
-            $inputs = self::fillItem(false);
+        $batch_size = 100; // Number of records per job
+        $jobs = [];
 
-            $item =  new self();
-            $item->fill($inputs);
-            $item->save();
-
-            $i++;
-
+        for ($i = 0; $i < ceil($records / $batch_size); $i++) {
+            $jobs[] = new CreateBulkPatients($batch_size);
         }
+
+        $batch = Bus::batch($jobs)->dispatch();
+
+        log::info("Batch processing started for batch id :" . $batch->id);
+
+//        CreateBulkPatients::dispatch($records);
+
+//        $i = 0;
+//
+//        while($i < $records)
+//        {
+//            $inputs = self::fillItem(false);
+//
+//            $item =  new self();
+//            $item->fill($inputs);
+//            $item->save();
+//
+//            $i++;
+//
+//        }
 
     }
 

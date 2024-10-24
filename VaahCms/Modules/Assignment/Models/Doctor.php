@@ -1,6 +1,7 @@
 <?php namespace VaahCms\Modules\Assignment\Models;
 
 use App\Export\ExportDoctorsData;
+use App\Jobs\CreateBulkDoctors;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
@@ -681,19 +682,22 @@ class Doctor extends VaahModel
     public static function seedSampleItems($records=100)
     {
 
-        $i = 0;
+        CreateBulkDoctors::dispatch($records);
 
-        while($i < $records)
-        {
-            $inputs = self::fillItem(false);
 
-            $item =  new self();
-            $item->fill($inputs);
-            $item->save();
-
-            $i++;
-
-        }
+//        $i = 0;
+//
+//        while($i < $records)
+//        {
+//            $inputs = self::fillItem(false);
+//
+//            $item =  new self();
+//            $item->fill($inputs);
+//            $item->save();
+//
+//            $i++;
+//
+//        }
 
     }
 

@@ -5,7 +5,7 @@
     "keywords": ["framework", "laravel", "vaahcms"],
     "license": "MIT",
     "require": {
-        "php": "^7.0",
+        "php": "^7.1",
         "ext-gd": "*",
         "ext-imap": "*",
         "barryvdh/laravel-dompdf": "^v2.2",
