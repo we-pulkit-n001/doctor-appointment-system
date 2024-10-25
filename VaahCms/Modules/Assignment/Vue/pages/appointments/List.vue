@@ -180,7 +180,7 @@ onMounted(async () => {
                 </template>
 
                 <template #icons>
-                    <div class="p-inputgroup">
+                    <div v-if="!$isMobile()" class="p-inputgroup">
                         <Button data-testid="appointments-list-import" class="p-button-sm" @click="openDialog">
                             <i class="pi pi-upload mr-1"></i>
                             Import Appointments

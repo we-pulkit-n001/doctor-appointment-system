@@ -27,7 +27,78 @@ const convertTo12HourFormat = (time24) => {
 
 <template>
 
-    <div v-if="store.list">
+<!--    test code-->
+
+    <div v-if="store.list && $isMobile()">
+        <div class="card-container-mobile">
+            <div class="card-mobile" v-for="item in store.list.data" :key="item.id">
+                <div class="card-header-mobile">
+                    <h3>{{ item.patient?.name }}</h3>
+                    <Badge v-if="item.deleted_at" value="Trashed" severity="danger"></Badge>
+                </div>
+                <div class="card-body">
+                    <p><strong>Doctor:</strong> {{ item.doctor ? item.doctor.name : 'N/A' }}</p>
+                    <p><strong>Consultation Fee:</strong> {{ item.doctor ? `$${item.doctor.consultation_fees}` : 'N/A' }}</p>
+                    <p><strong>Date:</strong> {{ item.date }}</p>
+                    <p><strong>Time:</strong> {{ convertTo12HourFormat(item.time) }}</p>
+                    <p><strong>Status:</strong> {{ item.status }}</p>
+                </div>
+                <div class="card-footer">
+                    <div class="button-group">
+                        <Button
+                            class="p-button-danger p-button-text"
+                            data-testid="appointments-table-action-book"
+                            v-if="!item.deleted_at && item.status === 'Cancelled'"
+                            @click="store.itemAction('book', item)"
+                            v-tooltip.top="'Book Appointment'"
+                            icon="pi pi-check" />
+
+                        <Button
+                            class="p-button-danger p-button-text"
+                            data-testid="appointments-table-action-cancel"
+                            v-if="!item.deleted_at && item.status === 'Booked'"
+                            @click="store.itemAction('cancel', item)"
+                            v-tooltip.top="'Cancel Appointment'"
+                            icon="pi pi-times" />
+
+                        <Button
+                            class="p-button-danger p-button-text"
+                            data-testid="appointments-table-action-trash"
+                            v-if="!item.deleted_at && store.assets.permission.includes('assignment-can-trash-appointment')"
+                            @click="store.itemAction('trash', item)"
+                            v-tooltip.top="'Trash'"
+                            icon="pi pi-trash" />
+
+                        <Button
+                            class="p-button-success p-button-text"
+                            data-testid="appointments-table-action-restore"
+                            v-if="item.deleted_at"
+                            @click="store.itemAction('restore', item)"
+                            v-tooltip.top="'Restore'"
+                            icon="pi pi-replay" />
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!--paginator-->
+        <Paginator
+            v-if="store.query.rows"
+            v-model:rows="store.query.rows"
+            :totalRecords="store.list.total"
+            :first="((store.query.page ?? 1) - 1) * store.query.rows"
+            @page="store.paginate($event)"
+            :rowsPerPageOptions="store.rows_per_page"
+            class="bg-white-alpha-0 pt-2">
+        </Paginator>
+        <!--/paginator-->
+    </div>
+
+<!--    test code-->
+
+
+    <div v-if="store.list && !$isMobile()">
         <!--table-->
         <DataTable :value="store.list.data"
                    dataKey="id"
@@ -246,3 +317,48 @@ const convertTo12HourFormat = (time24) => {
     </div>
 
 </template>
+
+<style scoped>
+.card-container-mobile {
+    display: flex;
+    flex-wrap: wrap; /* Allow cards to wrap to the next line */
+    justify-content: center; /* Center the cards */
+    gap: 1rem; /* Space between cards */
+}
+
+.card-mobile {
+    border: 1px solid #e0e0e0; /* Light border for the card */
+    border-radius: 8px; /* Rounded corners */
+    padding: 1rem; /* Inner spacing */
+    width: 100%; /* Full width for mobile */
+    max-width: 300px; /* Limit the card width */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    transition: transform 0.2s; /* Smooth scaling effect */
+}
+
+.card-mobile:hover {
+    transform: scale(1.02); /* Slightly enlarge on hover */
+}
+
+.card-header-mobile {
+    display: flex;
+    justify-content: space-between; /* Space between title and badge */
+    align-items: center;
+}
+
+.card-body p {
+    margin: 0.5rem 0; /* Spacing between paragraphs */
+}
+
+.card-footer {
+    display: flex;
+    justify-content: flex-end; /* Aligns all footer content to the right */
+    margin-top: 1rem; /* Space above the buttons */
+}
+
+.button-group {
+    display: flex; /* Align buttons in a line */
+    gap: 0.5rem; /* Space between buttons */
+}
+
+</style>
