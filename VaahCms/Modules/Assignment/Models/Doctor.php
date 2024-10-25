@@ -747,12 +747,18 @@ class Doctor extends VaahModel
         $inputs['phone'] = $inputs['phone'] = mt_rand(1000000000, 9999999999);
         $inputs['consultation_fees'] = $faker->numberBetween(50, 500);
 
-        $startTime = $faker->dateTimeBetween('-1 year', 'now');
-        $endTime = (clone $startTime)->modify('+' . mt_rand(1, 10) . ' hours');
 
+        $startTime = $faker->dateTimeBetween('06:00', '17:00');
+        $startTime = Carbon::parse($startTime)->setTimezone('Asia/Kolkata');
 
-        $filter['working_hours_start'] = Carbon::parse($startTime)->setTimezone('Asia/Kolkata')->format('H:i:00');
-        $filter['working_hours_end'] = Carbon::parse($endTime)->setTimezone('Asia/Kolkata')->format('H:i:00');
+        $startTime = $startTime->copy()->setMinutes($startTime->minute < 30 ? 0 : 30);
+
+        $endTime = (clone $startTime)->modify('+' . mt_rand(1, min(6, 23 - (int)$startTime->format('H'))) . ' hours');
+
+        $endTime = $endTime->copy()->setMinutes($endTime->minute < 30 ? 0 : 30);
+
+        $inputs['working_hours_start'] = $startTime->format('h:i A');
+        $inputs['working_hours_end'] = $endTime->format('h:i A');
 
 
         $inputs['is_active'] = 1;

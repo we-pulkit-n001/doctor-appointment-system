@@ -12,8 +12,6 @@ use WebReinvent\VaahCms\Libraries\VaahSeeder;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Export\ExportPatientsData;
 use App\Jobs\CreateBulkPatients;
-use Illuminate\Support\Facades\Bus;
-use Illuminate\Support\Facades\Log;
 
 class Patient extends VaahModel
 {
@@ -603,18 +601,7 @@ class Patient extends VaahModel
     {
 
 
-        $batch_size = 100; // Number of records per job
-        $jobs = [];
-
-        for ($i = 0; $i < ceil($records / $batch_size); $i++) {
-            $jobs[] = new CreateBulkPatients($batch_size);
-        }
-
-        $batch = Bus::batch($jobs)->dispatch();
-
-        log::info("Batch processing started for batch id :" . $batch->id);
-
-//        CreateBulkPatients::dispatch($records);
+        CreateBulkPatients::dispatch($records);
 
 //        $i = 0;
 //

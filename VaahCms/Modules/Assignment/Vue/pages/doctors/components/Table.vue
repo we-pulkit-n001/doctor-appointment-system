@@ -1,24 +1,33 @@
 <script setup>
 import { vaah } from '../../../vaahvue/pinia/vaah'
 import { useDoctorStore } from '../../../stores/store-doctors'
+import { computed } from 'vue';
 
 const store = useDoctorStore();
 const useVaah = vaah();
 
+// Helper function to convert 24-hour time to 12-hour format
 const convertTo12HourFormat = (time24) => {
+    if (!time24) return "N/A"; // Return "N/A" or a suitable default if the time is null or undefined
     const [hours, minutes] = time24.split(':');
-    const hour12 = (hours % 12) || 12; // Convert to 12-hour format
-    const ampm = hours >= 12 ? 'PM' : 'AM';
-    return `${hour12}:${minutes} ${ampm}`;
+    const date = new Date(0, 0, 0, hours, minutes);
+    return date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', hour12: true });
 };
 
+// Computed property to format working hours and avoid reactivity loops
+const doctorsWithFormattedHours = computed(() => {
+    return store.list?.data?.map(doctor => ({
+        ...doctor,
+        working_hours_start: convertTo12HourFormat(doctor.working_hours_start),
+        working_hours_end: convertTo12HourFormat(doctor.working_hours_end)
+    }));
+});
 </script>
 
 <template>
-
     <div v-if="store.list">
         <!--table-->
-         <DataTable :value="store.list.data"
+        <DataTable :value="doctorsWithFormattedHours"
                    dataKey="id"
                    :rowClass="store.setRowClass"
                    class="p-datatable-sm p-datatable-hoverable-rows"
@@ -35,155 +44,75 @@ const convertTo12HourFormat = (time24) => {
             <Column field="id" header="ID" :style="{width: '80px'}" :sortable="true">
             </Column>
 
-            <Column field="name" header="Name"
-                    class="overflow-wrap-anywhere"
-                    :sortable="true">
-
+            <Column field="name" header="Name" class="overflow-wrap-anywhere" :sortable="true">
                 <template #body="prop">
-                    <Badge v-if="prop.data.deleted_at"
-                           value="Trashed"
-                           severity="danger"></Badge>
-                    {{prop.data.name}}
+                    <Badge v-if="prop.data.deleted_at" value="Trashed" severity="danger"></Badge>
+                    {{ prop.data.name }}
                 </template>
-
             </Column>
 
-             <!--adding specialization field-->
+            <Column field="specialization" header="Specialization" class="overflow-wrap-anywhere" :sortable="true">
+                <template #body="prop">
+                    <Badge v-if="prop.data.deleted_at" value="Trashed" severity="danger"></Badge>
+                    {{ prop.data.specialization }}
+                </template>
+            </Column>
 
-             <Column field="specialization" header="Specialization"
-                     class="overflow-wrap-anywhere"
-                     :sortable="true">
+            <Column field="email" header="Email" class="overflow-wrap-anywhere" :sortable="true">
+                <template #body="prop">
+                    <Badge v-if="prop.data.deleted_at" value="Trashed" severity="danger"></Badge>
+                    {{ prop.data.email }}
+                </template>
+            </Column>
 
-                 <template #body="prop">
-                     <Badge v-if="prop.data.deleted_at"
-                            value="Trashed"
-                            severity="danger"></Badge>
-                     {{prop.data.specialization}}
-                 </template>
+            <Column field="phone" header="Phone" class="overflow-wrap-anywhere" :sortable="true">
+                <template #body="prop">
+                    <Badge v-if="prop.data.deleted_at" value="Trashed" severity="danger"></Badge>
+                    {{ prop.data.phone }}
+                </template>
+            </Column>
 
-             </Column>
+            <Column field="consultation_fees" header="Consultation Fee" class="overflow-wrap-anywhere" :sortable="true">
+                <template #body="prop">
+                    <Badge v-if="prop.data.deleted_at" value="Trashed" severity="danger"></Badge>
+                    <span>${{ prop.data.consultation_fees }}</span>
+                </template>
+            </Column>
 
-             <!--adding specialization field-->
+            <Column field="working_hours_start" header="Start Time" class="overflow-wrap-anywhere" :sortable="true">
+                <template #body="prop">
+                    <Badge v-if="prop.data.deleted_at" value="Trashed" severity="danger"></Badge>
+                    {{ prop.data.working_hours_start }}
+                </template>
+            </Column>
 
-             <!--adding email field-->
+            <Column field="working_hours_end" header="End Time" class="overflow-wrap-anywhere" :sortable="true">
+                <template #body="prop">
+                    <Badge v-if="prop.data.deleted_at" value="Trashed" severity="danger"></Badge>
+                    {{ prop.data.working_hours_end }}
+                </template>
+            </Column>
 
-             <Column field="email" header="Email"
-                     class="overflow-wrap-anywhere"
-                     :sortable="true">
+            <Column field="updated_at" header="Updated" v-if="store.isViewLarge()" style="width:150px;" :sortable="true">
+                <template #body="prop">
+                    {{ useVaah.strToSlug(prop.data.updated_at) }}
+                </template>
+            </Column>
 
-                 <template #body="prop">
-                     <Badge v-if="prop.data.deleted_at"
-                            value="Trashed"
-                            severity="danger"></Badge>
-                     {{prop.data.email}}
-                 </template>
-
-             </Column>
-
-             <!--adding email field-->
-
-             <!--adding phone field-->
-
-             <Column field="phone" header="Phone"
-                     class="overflow-wrap-anywhere"
-                     :sortable="true">
-
-                 <template #body="prop">
-                     <Badge v-if="prop.data.deleted_at"
-                            value="Trashed"
-                            severity="danger"></Badge>
-                     {{prop.data.phone}}
-                 </template>
-
-             </Column>
-
-             <!--adding phone field-->
-
-             <!--adding consultation_fees field-->
-
-             <Column field="consultation_fees" header="Consultation Fee"
-                     class="overflow-wrap-anywhere"
-                     :sortable="true">
-
-                 <template #body="prop">
-                     <Badge v-if="prop.data.deleted_at"
-                            value="Trashed"
-                            severity="danger"></Badge>
-                     <span>${{ prop.data.consultation_fees }}</span>
-                 </template>
-
-             </Column>
-
-             <!--adding consultation_fees field-->
-
-             <!--adding working_hours_start field-->
-
-             <Column field="working_hours_start" header="Start Time"
-                     class="overflow-wrap-anywhere"
-                     :sortable="true">
-
-                 <template #body="prop">
-                     <Badge v-if="prop.data.deleted_at"
-                            value="Trashed"
-                            severity="danger"></Badge>
-                     {{ convertTo12HourFormat(prop.data.working_hours_start) }}
-                 </template>
-
-             </Column>
-
-             <!--adding working_hours_start field-->
-
-             <!--adding working_hours_end field-->
-
-             <Column field="working_hours_end" header="End Time"
-                     class="overflow-wrap-anywhere"
-                     :sortable="true">
-
-                 <template #body="prop">
-                     <Badge v-if="prop.data.deleted_at"
-                            value="Trashed"
-                            severity="danger"></Badge>
-                     {{ convertTo12HourFormat(prop.data.working_hours_end) }}
-                 </template>
-
-             </Column>
-
-             <!--adding working_hours_end field-->
-
-                <Column field="updated_at" header="Updated"
-                        v-if="store.isViewLarge()"
-                        style="width:150px;"
-                        :sortable="true">
-
-                    <template #body="prop">
-                        {{useVaah.strToSlug(prop.data.updated_at)}}
-                    </template>
-
-                </Column>
-
-            <Column field="is_active" v-if="store.isViewLarge()"
-                    :sortable="true"
-                    style="width:100px;"
-                    header="Is Active">
-
+            <Column field="is_active" v-if="store.isViewLarge()" :sortable="true" style="width:100px;" header="Is Active">
                 <template #body="prop">
                     <InputSwitch v-model.bool="prop.data.is_active"
                                  data-testid="doctors-table-is-active"
-                                 v-bind:false-value="0"  v-bind:true-value="1"
+                                 v-bind:false-value="0" v-bind:true-value="1"
                                  class="p-inputswitch-sm"
                                  @input="store.toggleIsActive(prop.data)">
                     </InputSwitch>
                 </template>
-
             </Column>
 
-            <Column field="actions" style="width:150px;"
-                    :style="{width: store.getActionWidth() }"
-                    :header="store.getActionLabel()">
-
+            <Column field="actions" style="width:150px;" :style="{width: store.getActionWidth()}" :header="store.getActionLabel()">
                 <template #body="prop">
-                    <div class="p-inputgroup ">
-
+                    <div class="p-inputgroup">
                         <Button class="p-button-tiny p-button-text"
                                 data-testid="doctors-table-to-view"
                                 v-tooltip.top="'View'"
@@ -197,12 +126,12 @@ const convertTo12HourFormat = (time24) => {
                                 icon="pi pi-pencil" />
 
                         <p v-for="permission in store.assets.permission">
-                        <Button class="p-button-tiny p-button-danger p-button-text"
-                                data-testid="doctors-table-action-trash"
-                                v-if="store.isViewLarge() && !prop.data.deleted_at && permission == 'assignment-can-trash-doctor'"
-                                @click="store.itemAction('trash', prop.data)"
-                                v-tooltip.top="'Trash'"
-                                icon="pi pi-trash" />
+                            <Button class="p-button-tiny p-button-danger p-button-text"
+                                    data-testid="doctors-table-action-trash"
+                                    v-if="store.isViewLarge() && !prop.data.deleted_at && permission == 'assignment-can-trash-doctor'"
+                                    @click="store.itemAction('trash', prop.data)"
+                                    v-tooltip.top="'Trash'"
+                                    icon="pi pi-trash" />
                         </p>
 
                         <Button class="p-button-tiny p-button-success p-button-text"
@@ -211,21 +140,15 @@ const convertTo12HourFormat = (time24) => {
                                 @click="store.itemAction('restore', prop.data)"
                                 v-tooltip.top="'Restore'"
                                 icon="pi pi-replay" />
-
-
                     </div>
-
                 </template>
-
-
             </Column>
 
-             <template #empty>
-                 <div class="text-center py-3">
-                     No records found.
-                 </div>
-             </template>
-
+            <template #empty>
+                <div class="text-center py-3">
+                    No records found.
+                </div>
+            </template>
         </DataTable>
         <!--/table-->
 
@@ -233,13 +156,11 @@ const convertTo12HourFormat = (time24) => {
         <Paginator v-if="store.query.rows"
                    v-model:rows="store.query.rows"
                    :totalRecords="store.list.total"
-                   :first="((store.query.page??1)-1)*store.query.rows"
+                   :first="((store.query.page ?? 1) - 1) * store.query.rows"
                    @page="store.paginate($event)"
                    :rowsPerPageOptions="store.rows_per_page"
                    class="bg-white-alpha-0 pt-2">
         </Paginator>
         <!--/paginator-->
-
     </div>
-
 </template>
