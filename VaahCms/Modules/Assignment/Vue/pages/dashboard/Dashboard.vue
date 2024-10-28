@@ -142,11 +142,13 @@ document.title = 'Assignment';
             <div class="row">
                 <Card class="card">
                     <template #title>
+                        <div class="card-title">
+                            <i class="pi pi-user icon"></i>
+                        </div>
                         <h5>Registered Doctors</h5>
                     </template>
                     <template #content>
                         <div class="content-wrapper">
-                            <i class="pi pi-user-md icon"></i>
                             <h2 v-if="store.item">{{ store.item.data.registered_doctors }}</h2>
                         </div>
                     </template>
@@ -156,8 +158,8 @@ document.title = 'Assignment';
                     <template #title>
                         <div class="card-title">
                             <i class="pi pi-users icon"></i>
-                            <h5>Overall Patients Registered</h5>
                         </div>
+                        <h5>Overall Patients Registered</h5>
                     </template>
                     <template #content>
                         <h2 v-if="store.item">{{ store.item.data.total_patients }}</h2>
@@ -170,6 +172,9 @@ document.title = 'Assignment';
 
                 <Card class="card">
                     <template #title>
+                        <div class="card-title">
+                            <i class="pi pi-calendar-plus icon"></i>
+                        </div>
                         <h5>Appointments Booked</h5>
                     </template>
                     <template #content>
@@ -179,6 +184,9 @@ document.title = 'Assignment';
 
                 <Card class="card">
                     <template #title>
+                        <div class="card-title">
+                            <i class="pi pi-calendar-times icon"></i>
+                        </div>
                         <h5>Appointments Cancelled</h5>
                     </template>
                     <template #content>
@@ -188,6 +196,9 @@ document.title = 'Assignment';
 
                 <Card class="card">
                     <template #title>
+                        <div class="card-title">
+                            <i class="pi pi-dollar icon"></i>
+                        </div>
                         <h5>Accumulated Revenue</h5>
                     </template>
                     <template #content>
@@ -330,6 +341,18 @@ h1 {
 .card-title .icon {
     font-size: 20px; /* Adjust icon size as needed */
     margin-right: 5px; /* Space between icon and title */
+}
+
+.card-title {
+    display: flex;
+    align-items: center; /* Centers icon vertically with the label */
+    justify-content: center; /* Centers title within the card */
+    margin-bottom: 10px;
+}
+
+.card-title .icon {
+    font-size: 20px;
+    margin-right: 8px; /* Adjust space between icon and label for alignment */
 }
 
 
