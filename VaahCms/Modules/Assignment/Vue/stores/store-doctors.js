@@ -19,6 +19,7 @@ let empty_states = {
             trashed: null,
             sort: null,
             specialization: null,
+            specialization_count: null,
             price: [10, 500],
             working_hours_start: "",
             working_hours_end: "",
@@ -70,7 +71,8 @@ export const useDoctorStore = defineStore({
         item_menu_list: [],
         item_menu_state: null,
         form_menu_list: [],
-        specializations: []
+        specializations: [],
+        specialization_count: []
     }),
     getters: {
 
@@ -984,7 +986,8 @@ export const useDoctorStore = defineStore({
                 this.ajax_url.concat('/specializations'),
                 (data,res) => {
                     console.log(data, res);
-                    this.specializations = res.data.specialization;
+                    this.specializations = res.data.specializations.specialization;
+                    // this.specialization_count = res.data.specializations.specialization_count;
                 }
             );
         }

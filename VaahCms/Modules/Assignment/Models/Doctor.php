@@ -921,11 +921,28 @@ class Doctor extends VaahModel
 
     public static function getUniqueSpecializations()
     {
+        $values = [
+            'specialization' => [],
+            'specialization_count' => []
+        ];
 
         $specializations = self::distinct()->pluck('specialization');
 
+        foreach ($specializations as $specialization) {
+            $values['specialization'][] = $specialization;
+            $values['specialization_count'][] = self::where('specialization', $specialization)->count();
+        }
+
+//        $values = [];
+//
+//        $specializations = self::distinct()->pluck('specialization');
+//
+//        foreach ($specializations as $specialization) {
+//            $values[$specialization] = self::where('specialization', $specialization)->count();
+//        }
+
         return response()->json([
-            'specialization' => $specializations
+            'specializations' => $values
         ]);
     }
 

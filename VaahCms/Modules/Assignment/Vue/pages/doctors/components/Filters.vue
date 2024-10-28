@@ -79,20 +79,40 @@ onBeforeMount(() =>{
 
 <!--                Test Code-->
 
-                <VhFieldVertical >
+<!--                <VhFieldVertical >-->
+<!--                    <template #label>-->
+<!--                        <b>Specialization:</b>-->
+<!--                    </template>-->
+<!--                    <div>-->
+<!--                        <div v-for="(specialization, index) in store.specializations" :key="index" class="field-checkbox">-->
+<!--                            <Checkbox :name="'specialization-' + index"-->
+<!--                                      :inputId="specialization"-->
+<!--                                      :value="specialization"-->
+<!--                                      v-model="store.query.filter.specialization" />-->
+<!--                            <label :for="specialization" class="cursor-pointer">{{ specialization }} ({{specialization_count}})</label>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </VhFieldVertical>-->
+
+
+                <VhFieldVertical>
                     <template #label>
                         <b>Specialization:</b>
                     </template>
                     <div>
-                        <div v-for="(specialization, index) in store.specializations" :key="index" class="field-checkbox">
+                        <div v-for="(specialization, index) in store.specializations.specialization" :key="index" class="field-checkbox">
                             <Checkbox :name="'specialization-' + index"
                                       :inputId="specialization"
                                       :value="specialization"
                                       v-model="store.query.filter.specialization" />
-                            <label :for="specialization" class="cursor-pointer">{{ specialization }}</label>
+                            <label :for="specialization" class="cursor-pointer">
+                                {{ specialization }} ({{ store.specializations.specialization_count[index] }})
+                            </label>
                         </div>
                     </div>
                 </VhFieldVertical>
+
+
 
                 <Divider/>
 
