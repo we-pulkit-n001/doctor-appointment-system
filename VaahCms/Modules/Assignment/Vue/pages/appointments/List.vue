@@ -71,7 +71,7 @@ const nextStep = () => {
         return;
     }
     if (active.value === 1 && !Object.values(headerMappings.value).every(value => value)) {
-        alert("Please map all fields before proceeding.");
+        alert("Please map all fields before proceeding");
         return;
     }
 
@@ -225,18 +225,21 @@ onMounted(async () => {
                                 @select="handleFileUpload"
                             />
                         </div>
-                    </div>
-                    <div v-if="uploadedFileName" class="uploaded-file-name">
-                        Uploaded File: {{ uploadedFileName }}
+                        <div v-if="uploadedFileName" class="uploaded-file-name">
+                            Uploaded File: {{ uploadedFileName }}
+                        </div>
                     </div>
                 </template>
 
                 <template v-if="active === 1">
                     <h3>Mapping Step</h3>
                     <p>Please map the following fields from the uploaded CSV file:</p>
+
+                    <p class="required-fields-message">*All fields are necessary</p>
+
                     <div v-for="(field, index) in ['patientEmail', 'doctorEmail', 'date', 'time', 'status']" :key="index" class="mapping-row">
                         <div class="mapping-label">
-                            <label :for="field">{{ field.replace(/([A-Z])/g, ' $1') }}:</label>
+                            <label :for="field">{{ field.charAt(0).toUpperCase() + field.slice(1).replace(/([A-Z])/g, ' $1') }}:</label>
                         </div>
                         <div class="mapping-dropdown">
                             <Dropdown
@@ -348,9 +351,14 @@ onMounted(async () => {
 
 .file-upload-row {
     display: flex;
+    flex-direction: column; /* Stack elements vertically */
     align-items: center;
     justify-content: center;
-    margin-top: 20px;
+    margin-top: 30px; /* Maintain increased margin at the top */
+    padding: 40px; /* Keep the increased padding */
+    min-height: 200px; /* Set a minimum height to make the box taller */
+    border: 2px dashed #888; /* Dashed border around content */
+    border-radius: 5px;
 }
 
 .file-upload-text {
@@ -409,5 +417,14 @@ th {
     margin: 5px 0;
 }
 
+.required-fields-message {
+    color: red;
+    margin-bottom: 15px;
+    font-weight: bold;
+}
+
+h3 {
+    margin-top: 20px; /* Add space above the heading */
+}
 
 </style>

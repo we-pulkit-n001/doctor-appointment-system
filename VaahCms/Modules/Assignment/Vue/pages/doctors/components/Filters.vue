@@ -79,39 +79,20 @@ onBeforeMount(() =>{
 
 <!--                Test Code-->
 
-<!--                <VhFieldVertical >-->
-<!--                    <template #label>-->
-<!--                        <b>Specialization:</b>-->
-<!--                    </template>-->
-<!--                    <div>-->
-<!--                        <div v-for="(specialization, index) in store.specializations" :key="index" class="field-checkbox">-->
-<!--                            <Checkbox :name="'specialization-' + index"-->
-<!--                                      :inputId="specialization"-->
-<!--                                      :value="specialization"-->
-<!--                                      v-model="store.query.filter.specialization" />-->
-<!--                            <label :for="specialization" class="cursor-pointer">{{ specialization }} ({{specialization_count}})</label>-->
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                </VhFieldVertical>-->
-
-
-                <VhFieldVertical>
+                <VhFieldVertical >
                     <template #label>
                         <b>Specialization:</b>
                     </template>
                     <div>
-                        <div v-for="(specialization, index) in store.specializations.specialization" :key="index" class="field-checkbox">
-                            <Checkbox :name="'specialization-' + index"
+                        <div v-for="(specialization_count, specialization) in store.specializations" :key="specialization" class="field-checkbox">
+                            <Checkbox :name="specialization"
                                       :inputId="specialization"
                                       :value="specialization"
                                       v-model="store.query.filter.specialization" />
-                            <label :for="specialization" class="cursor-pointer">
-                                {{ specialization }} ({{ store.specializations.specialization_count[index] }})
-                            </label>
+                            <label :for="specialization" class="cursor-pointer">{{ specialization }} ({{specialization_count}})</label>
                         </div>
                     </div>
                 </VhFieldVertical>
-
 
 
                 <Divider/>
@@ -119,10 +100,10 @@ onBeforeMount(() =>{
                 <div>
                     <h4>Select Price Range</h4>
                     <Slider
-                        v-model="store.query.filter.price"
+                        v-model="store.query.filter.price_range"
                         :range="true"
                         :min="10"
-                        :max="500"
+                        :max="store.max_price_display"
                         :step="10"
                         :tooltip="true"
                         tooltipPlacement="top"
@@ -131,7 +112,7 @@ onBeforeMount(() =>{
                         data-testid="doctors-filters-price-all"
                     />
                     <div>
-                        Selected Price Range: {{ store.query.filter.price[0] }} - {{ store.query.filter.price[1] }}
+                        Selected Price Range: ${{ store.query.filter.price_range[0] }} - ${{ store.query.filter.price_range[1] }}
                     </div>
                 </div>
 

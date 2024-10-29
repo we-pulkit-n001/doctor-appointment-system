@@ -245,12 +245,13 @@ class Doctor extends VaahModel
     //-------------------------------------------------
     public function scopePriceFilter($query, $filter)
     {
-        if (!isset($filter['price']) || !is_array($filter['price']) || count($filter['price']) !== 2) {
+
+        if (!isset($filter['price_range']) || !is_array($filter['price_range']) || count($filter['price_range']) !== 2) {
             return $query;
         }
 
-        $minPrice = $filter['price'][0];
-        $maxPrice = $filter['price'][1];
+        $minPrice = $filter['price_range'][0];
+        $maxPrice = $filter['price_range'][1];
 
         return $query->whereBetween('consultation_fees', [$minPrice, $maxPrice]);
 
@@ -650,7 +651,7 @@ class Doctor extends VaahModel
             'specialization' => 'required|max:150',
             'email' => 'required|email|unique:vh_doctors,email',
             'phone' => 'required|digits:10|unique:vh_doctors,phone',
-            'consultation_fees' => 'required',
+            'consultation_fees' => 'required|numeric|min:10',
             'working_hours_start' => 'required',
             'working_hours_end' => 'required'
         );
@@ -921,28 +922,24 @@ class Doctor extends VaahModel
 
     public static function getUniqueSpecializations()
     {
-        $values = [
-            'specialization' => [],
-            'specialization_count' => []
-        ];
 
         $specializations = self::distinct()->pluck('specialization');
 
+        $values = [];
+
+        $max_price = 0;
+
         foreach ($specializations as $specialization) {
-            $values['specialization'][] = $specialization;
-            $values['specialization_count'][] = self::where('specialization', $specialization)->count();
+            $values[$specialization] = self::where('specialization', $specialization)->count();
+            $price = self::where('specialization', $specialization)->max('consultation_fees');
+            if($price > $max_price){
+                $max_price = $price;
+            }
         }
 
-//        $values = [];
-//
-//        $specializations = self::distinct()->pluck('specialization');
-//
-//        foreach ($specializations as $specialization) {
-//            $values[$specialization] = self::where('specialization', $specialization)->count();
-//        }
-
         return response()->json([
-            'specializations' => $values
+            'specialization' => $values,
+            'max_price' => $max_price
         ]);
     }
 
