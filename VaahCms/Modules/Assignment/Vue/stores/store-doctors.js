@@ -24,7 +24,8 @@ let empty_states = {
             price_range: [],
             working_hours_start: "",
             working_hours_end: "",
-            max_price: null
+            max_price: null,
+            timings: []
         },
     },
     action: {
@@ -75,7 +76,19 @@ export const useDoctorStore = defineStore({
         form_menu_list: [],
         specializations: [],
         specialization_count: [],
-        max_price_display: null
+        max_price_display: null,
+        $timings_display: [
+            '12am-3am',
+            '3am-6am',
+            '6am-9am',
+            '9am-12pm',
+            '12pm-3pm',
+            '3pm-6pm',
+            '6pm-9pm',
+            '9pm-12am'
+        ]
+
+
     }),
     getters: {
 

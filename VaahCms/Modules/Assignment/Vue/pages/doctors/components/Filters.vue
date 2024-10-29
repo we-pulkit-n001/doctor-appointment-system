@@ -7,6 +7,19 @@ import { ref, computed  } from 'vue';
 
 const store = useDoctorStore();
 
+const selectedTimings = ref([]);
+
+const timingIntervals = ref([
+    { label: '12am - 3am', value: '12am-3am' },
+    { label: '3am - 6am', value: '3am-6am' },
+    { label: '6am - 9am', value: '6am-9am' },
+    { label: '9am - 12pm', value: '9am-12pm' },
+    { label: '12pm - 3pm', value: '12pm-3pm' },
+    { label: '3pm - 6pm', value: '3pm-6pm' },
+    { label: '6pm - 9pm', value: '6pm-9pm' },
+    { label: '9pm - 12am', value: '9pm-12am' }
+]);
+
 onBeforeMount(() =>{
     store.getUniqueSpecializations();
 })
@@ -118,44 +131,23 @@ onBeforeMount(() =>{
 
 
                 <Divider/>
-                <div>
-                    <h4 class="mb-2">Timings:</h4>
-                    <div class="flex space-x-4">
-                        <div class="w-full">
-                            <h5>Start Time</h5>
-                            <Calendar class="w-full"
-                                      v-model="store.query.filter.working_hours_start"
-                                      timeOnly
-                                      hourFormat="12"
-                                      showIcon
-                                      placeholder="Select start time"
-                                      :stepMinute="30"
-                                      data-testid="doctors-working_hours_start">
-                                <template #inputicon="{ clickCallback }">
-                                    <i class="pi pi-clock cursor-pointer" @click="clickCallback"></i>
-                                </template>
-                            </Calendar>
-                        </div>
 
-                        <div class="w-full">
-                            <h5>End Time</h5>
-                            <Calendar class="w-full"
-                                      v-model="store.query.filter.working_hours_end"
-                                      timeOnly
-                                      hourFormat="12"
-                                      showIcon
-                                      placeholder="Select end time"
-                                      :stepMinute="30"
-                                      data-testid="doctors-working_hours_end">
-                                <template #inputicon="{ clickCallback }">
-                                    <i class="pi pi-clock cursor-pointer" @click="clickCallback"></i>
-                                </template>
-                            </Calendar>
+                <VhFieldVertical>
+                    <template #label>
+                        <b>Timings:</b>
+                    </template>
+                    <div>
+                        <div v-for="(interval, index) in store.$timings_display" :key="index" class="field-checkbox">
+                            <Checkbox
+                                :name="`timings_${index}`"
+                                :inputId="`timings_${index}`"
+                                :value="interval"
+                                v-model="store.query.filter.timings"
+                            />
+                            <label :for="`timings_${index}`" class="cursor-pointer">{{ interval }}</label>
                         </div>
                     </div>
-                </div>
-
-
+                </VhFieldVertical>
 
                 <Divider/>
 

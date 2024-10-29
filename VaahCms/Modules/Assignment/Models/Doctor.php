@@ -262,19 +262,68 @@ class Doctor extends VaahModel
     public function scopeTimeFilter($query, $filter)
     {
 
+        // Extract timings from the filter
+        $timings = $filter['timings'] ?? [];
+
+
+
+        // Convert the input timings to 24-hour format
+        $convertedTimings = [];
+        foreach ($timings as $timing) {
+            list($start, $end) = explode('-', $timing);
+            $convertedStart = date("H:i", strtotime($start));
+            $convertedEnd = date("H:i", strtotime($end));
+            $convertedTimings[] = [$convertedStart, $convertedEnd];
+        }
+
+
+        // Build the query to fetch doctors
+        $query = Doctor::query();
+
+        // Handle the working hours filter if it exists
         if (isset($filter['working_hours_start']) && isset($filter['working_hours_end'])) {
             $filter['working_hours_start'] = Carbon::parse($filter['working_hours_start'])->setTimezone('Asia/Kolkata')->format('H:i:00');
             $filter['working_hours_end'] = Carbon::parse($filter['working_hours_end'])->setTimezone('Asia/Kolkata')->format('H:i:00');
             $workingHoursStart = $filter['working_hours_start'];
             $workingHoursEnd = $filter['working_hours_end'];
 
-            $query = $query->where(function ($q) use ($workingHoursStart, $workingHoursEnd) {
+            $query->where(function ($q) use ($workingHoursStart, $workingHoursEnd) {
                 $q->where('working_hours_start', '<=', $workingHoursEnd)
                     ->where('working_hours_end', '>=', $workingHoursStart);
             });
         }
 
-        return $query;
+        // Add conditions for the converted timings
+        foreach ($convertedTimings as $timing) {
+            [$start, $end] = $timing;
+
+            $query->orWhere(function($q) use ($start, $end) {
+                $q->where('working_hours_start', '<=', $end)
+                    ->where('working_hours_end', '>=', $start);
+            });
+        }
+
+        // Execute the query and get the doctors
+        $doctors = $query->get();
+
+        return $doctors;
+
+
+
+
+//        if (isset($filter['working_hours_start']) && isset($filter['working_hours_end'])) {
+//            $filter['working_hours_start'] = Carbon::parse($filter['working_hours_start'])->setTimezone('Asia/Kolkata')->format('H:i:00');
+//            $filter['working_hours_end'] = Carbon::parse($filter['working_hours_end'])->setTimezone('Asia/Kolkata')->format('H:i:00');
+//            $workingHoursStart = $filter['working_hours_start'];
+//            $workingHoursEnd = $filter['working_hours_end'];
+//
+//            $query = $query->where(function ($q) use ($workingHoursStart, $workingHoursEnd) {
+//                $q->where('working_hours_start', '<=', $workingHoursEnd)
+//                    ->where('working_hours_end', '>=', $workingHoursStart);
+//            });
+//        }
+//
+//        return $query;
 
     }
 
