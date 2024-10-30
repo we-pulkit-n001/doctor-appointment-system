@@ -137,9 +137,9 @@ onBeforeMount(() =>{
                         <b>Timings:</b>
                     </template>
                     <div>
-                        <div v-for="(interval, index) in store.$timings_display" :key="index" class="field-checkbox">
-                            <Checkbox
-                                :name="`timings_${index}`"
+                        <div v-for="(interval, index) in store.$timings_display" :key="index" class="field-radiobutton">
+                            <RadioButton
+                                :name="`timings`"
                                 :inputId="`timings_${index}`"
                                 :value="interval"
                                 v-model="store.query.filter.timings"

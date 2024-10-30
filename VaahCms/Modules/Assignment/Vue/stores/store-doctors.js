@@ -78,6 +78,7 @@ export const useDoctorStore = defineStore({
         specialization_count: [],
         max_price_display: null,
         $timings_display: [
+            'None',
             '12am-3am',
             '3am-6am',
             '6am-9am',
