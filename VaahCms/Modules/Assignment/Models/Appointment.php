@@ -173,10 +173,10 @@ class Appointment extends VaahModel
 
         $appointments = self::all();
 
-
+        $formattedDate = Carbon::parse($inputs['date'])->format('Y-m-d');
 
         foreach ($appointments as $appointment) {
-            if($inputs['time'] == $appointment['time'] && $doctor['id'] == $appointment['doctor_id']){
+            if($inputs['time'] == $appointment['time'] && $doctor['id'] == $appointment['doctor_id'] && $formattedDate == $appointment['date']){
                 $response['success'] = false;
                 $response['errors'][] = "Unfortunately,\nThe appointment time slot is already booked.\nPlease select a different time.";
                 return $response;
