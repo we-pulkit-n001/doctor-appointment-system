@@ -914,8 +914,6 @@ class Appointment extends VaahModel
             $existingWorkingHoursStart = Carbon::parse($doctor->working_hours_start)->setTimezone('Asia/Kolkata')->format('H:i:00');
             $existingWorkingHoursEnd = Carbon::parse($doctor->working_hours_end)->setTimezone('Asia/Kolkata')->format('H:i:00');
 
-
-
             if ($appointmentTime < $existingWorkingHoursStart || $appointmentTime > $existingWorkingHoursEnd) {
                 $errors['Doctor_is_not_available_at_the_selected_time'][] = 'Doctor is not available at the selected time';
                 continue;
@@ -944,10 +942,16 @@ class Appointment extends VaahModel
                     'doctor_id' => $doctor->id,
                     'date' => $record['date'],
                     'time' => $appointmentTime,
-                    'status' => $appointmentStatus
+                    'status' => $appointmentStatus,
+                    'is_active' => 1
                 ]);
 
-                $response['messages'][] = trans("vaahcms-general.saved_successfully");
+                $response = [
+                    'messages' => [trans("vaahcms-general.saved_successfully")],
+                    'error' => [] 
+                ];
+
+                $response['error'] = $errors;
 
                 return response()->json($response);
 

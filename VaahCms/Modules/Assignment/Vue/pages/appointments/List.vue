@@ -103,16 +103,21 @@ const finishUpload = () => {
 };
 
 const validateData = () => {
-    // Basic validation, you can add more advanced validation here
-    validationResult.value = { isValid: true, message: "All records are valid!" };
-
-    // Example of failing validation:
-    if (parsedData.value.some(row => !row[headerMappings.value.patientEmail] || !row[headerMappings.value.doctorEmail])) {
-        validationResult.value = {
-            isValid: false,
-            message: "Some records are missing important fields."
-        };
+    if(store.patient_not_defined_display.length > 0 ||
+        store.doctor_not_defined_display.length > 0 ||
+        store.time_not_defined_display.length > 0 ||
+        store.status_not_defined_display.length > 0 ||
+        store.patient_not_registered_display.length > 0 ||
+        store.doctor_not_registered_display.length > 0 ||
+        store.doctor_is_not_available_at_the_selected_time_display.length > 0 ||
+        store.requested_time_slot_is_not_available_display.length > 0)
+    {
+        validationResult.value = { isValid: false, message: "Some records are missing important fields." };
     }
+    else{
+        validationResult.value = { isValid: true, message: "All records are valid!" };
+    }
+
 };
 
 const generateMappedJson = () => {

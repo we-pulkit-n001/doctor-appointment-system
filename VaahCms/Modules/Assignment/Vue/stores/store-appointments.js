@@ -70,17 +70,17 @@ export const useAppointmentStore = defineStore({
         item_menu_state: null,
         form_menu_list: [],
 
-        patient_not_defined_display: null,
-        doctor_not_defined_display: null,
-        date_not_defined_display: null,
-        time_not_defined_display: null,
-        status_not_defined_display: null,
-        patient_not_registered_display: null,
-        doctor_not_registered_display: null,
-        doctor_is_not_available_at_the_selected_time_display: null,
-        requested_time_slot_is_not_available_display: null,
-        invalid_date_format_display: null,
-        invalid_time_format_display: null
+        patient_not_defined_display: [],
+        doctor_not_defined_display: [],
+        date_not_defined_display: [],
+        time_not_defined_display: [],
+        status_not_defined_display: [],
+        patient_not_registered_display: [],
+        doctor_not_registered_display: [],
+        doctor_is_not_available_at_the_selected_time_display: [],
+        requested_time_slot_is_not_available_display: [],
+        invalid_date_format_display: [],
+        invalid_time_format_display:[],
 
 
 
