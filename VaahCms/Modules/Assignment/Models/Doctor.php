@@ -321,16 +321,15 @@ class Doctor extends VaahModel
     public function scopeSearchFilter($query, $filter)
     {
 
-        if(!isset($filter['q']))
-        {
+        if (!isset($filter['q'])) {
             return $query;
         }
-        $search_array = explode(' ',$filter['q']);
-        foreach ($search_array as $search_item){
+
+        $search_array = explode(' ', $filter['q']);
+        foreach ($search_array as $search_item) {
             $query->where(function ($q1) use ($search_item) {
-                $q1->where('name', 'LIKE', '%' . $search_item . '%')
+                $q1->whereRaw("REPLACE(name, ' ', '') LIKE ?", ['%' . str_replace(' ', '', $search_item) . '%'])
                     ->orWhere('email', 'LIKE', '%' . $search_item . '%')
-//                    ->orWhere('id', 'LIKE', $search_item . '%')
                     ->orWhere('phone', 'LIKE', '%' . $search_item . '%');
             });
         }

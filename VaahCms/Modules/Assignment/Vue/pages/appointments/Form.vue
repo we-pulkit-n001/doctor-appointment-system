@@ -54,10 +54,25 @@ const minuteTemplate = (minute) => {
 };
 
 const consultationFees = ref('');
+const working_hours_start = ref('');
+const working_hours_end = ref('');
+const showWorkingHours = ref(false);
 
 const updateConsultationFees = () => {
     const selectedDoctor = store.assets.doctor.find(doctor => doctor.id === store.item.doctor_id);
     consultationFees.value = selectedDoctor ? selectedDoctor.consultation_fees : '';
+    working_hours_start.value = selectedDoctor ? selectedDoctor.working_hours_start : '';
+    working_hours_end.value = selectedDoctor ? selectedDoctor.working_hours_end : '';
+
+    showWorkingHours.value = !!selectedDoctor;
+
+};
+
+const convertToAMPM = (time) => {
+    const [hour, minute] = time.split(':').map(Number);
+    const ampm = hour >= 12 ? 'PM' : 'AM';
+    const formattedHour = hour % 12 || 12; // Convert hour to 12-hour format
+    return `${formattedHour}:${minute < 10 ? '0' + minute : minute} ${ampm}`;
 };
 
 
@@ -197,6 +212,10 @@ const updateConsultationFees = () => {
                                    required
                                    @change="updateConsultationFees"/>
                         <div class="required-field hidden"></div>
+
+                    </div>
+                    <div v-if="showWorkingHours">
+                        <h5>Working hours of selected doctor are from {{ convertToAMPM(working_hours_start) }} to {{ convertToAMPM(working_hours_end) }}</h5>
                     </div>
                 </VhField>
 
