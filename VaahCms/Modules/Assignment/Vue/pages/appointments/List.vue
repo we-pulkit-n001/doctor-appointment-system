@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, computed  } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { useRoute } from 'vue-router';
 import { useAppointmentStore } from '../../stores/store-appointments';
 import { useRootStore } from '../../stores/root';
@@ -30,12 +30,11 @@ const items = ref([
     { label: 'Upload' },
     { label: 'Mapping' },
     { label: 'Preview' },
-    { label: 'Result & Validation' }  // Step 4
+    { label: 'Result & Validation' }
 ]);
 
 const importAppointmentsData = (data) => {
-    parsedData.value = data; // Store parsed data for later
-    console.log(parsedData.value);
+    parsedData.value = data;
 };
 
 const handleFileUpload = async (event) => {
@@ -75,10 +74,8 @@ const nextStep = () => {
         return;
     }
 
-    // Generate and log JSON when clicking "Next" after preview (Step 2).
     if (active.value === 2) {
         const jsonData = generateMappedJson();
-        // You can store this jsonData in a variable or pass it to the backend
         store.importAppointmentsData(jsonData);
     }
 
@@ -98,39 +95,34 @@ const prevStep = () => {
 };
 
 const finishUpload = () => {
-    console.log("Upload completed with mappings:", headerMappings.value);
     closeDialog();
 };
 
 const validateData = () => {
-    if(store.patient_not_defined_display.length > 0 ||
-        store.doctor_not_defined_display.length > 0 ||
-        store.time_not_defined_display.length > 0 ||
-        store.status_not_defined_display.length > 0 ||
-        store.patient_not_registered_display.length > 0 ||
-        store.doctor_not_registered_display.length > 0 ||
-        store.doctor_is_not_available_at_the_selected_time_display.length > 0 ||
-        store.requested_time_slot_is_not_available_display.length > 0)
-    {
-        validationResult.value = { isValid: false, message: "Some records are missing important fields." };
-    }
-    else{
-        validationResult.value = { isValid: true, message: "All records are valid!" };
-    }
+    const invalidConditions = [
+        'patient_not_defined_display',
+        'doctor_not_defined_display',
+        'time_not_defined_display',
+        'status_not_defined_display',
+        'patient_not_registered_display',
+        'doctor_not_registered_display',
+        'doctor_is_not_available_at_the_selected_time_display',
+        'requested_time_slot_is_not_available_display'
+    ];
 
+    validationResult.value = invalidConditions.some(condition => store[condition].length > 0)
+        ? { isValid: false, message: "Some records are missing important fields." }
+        : { isValid: true, message: "All records are valid!" };
 };
 
 const generateMappedJson = () => {
-    const mappedJson = parsedData.value.map(row => ({
+    return parsedData.value.map(row => ({
         "patient_email": row[headerMappings.value.patientEmail.value],
         "doctor_email": row[headerMappings.value.doctorEmail.value],
         "date": row[headerMappings.value.date.value],
         "time": row[headerMappings.value.time.value],
         "status": row[headerMappings.value.status.value]
     }));
-
-    console.log("Generated JSON Data: ", mappedJson);
-    return mappedJson;
 };
 
 const openDialog = () => {
@@ -144,30 +136,35 @@ const closeDialog = () => {
     uploadedFileName.value = '';
     fileUploaded.value = false;
     headers.value = [];
-    parsedData.value = []; // Clear parsed data on close
+    parsedData.value = [];
     Object.keys(headerMappings.value).forEach(key => headerMappings.value[key] = '');
     validationResult.value = { isValid: false, message: '' };
 };
 
 const isFinishDisabled = computed(() => {
-    return store.patient_not_defined_display.length > 0 ||
-        store.doctor_not_defined_display.length > 0 ||
-        store.time_not_defined_display.length > 0 ||
-        store.status_not_defined_display.length > 0 ||
-        store.patient_not_registered_display.length > 0 ||
-        store.doctor_not_registered_display.length > 0 ||
-        store.doctor_is_not_available_at_the_selected_time_display.length > 0 ||
-        store.requested_time_slot_is_not_available_display.length > 0;
+    const invalidConditions = [
+        'patient_not_defined_display',
+        'doctor_not_defined_display',
+        'time_not_defined_display',
+        'status_not_defined_display',
+        'patient_not_registered_display',
+        'doctor_not_registered_display',
+        'doctor_is_not_available_at_the_selected_time_display',
+        'requested_time_slot_is_not_available_display'
+    ];
+    return invalidConditions.some(condition => store[condition].length > 0);
 });
 
 onMounted(async () => {
     document.title = 'Appointments - Assignment';
-    await store.onLoad(route);
-    await store.watchRoutes(route);
-    await store.watchStates();
-    await store.getAssets();
-    await store.getList();
-    await store.getListCreateMenu();
+    await Promise.all([
+        store.onLoad(route),
+        store.watchRoutes(route),
+        store.watchStates(),
+        store.getAssets(),
+        store.getList(),
+        store.getListCreateMenu()
+    ]);
 });
 </script>
 
@@ -282,7 +279,6 @@ onMounted(async () => {
                     </table>
                 </template>
 
-
                 <template v-if="active === 3">
                     <h3>Result & Validation Step</h3>
                     <p>Validation Results:</p>
@@ -307,8 +303,6 @@ onMounted(async () => {
                         </ul>
                     </div>
                 </template>
-
-
             </div>
 
             <div class="dialog-buttons">
@@ -356,13 +350,13 @@ onMounted(async () => {
 
 .file-upload-row {
     display: flex;
-    flex-direction: column; /* Stack elements vertically */
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    margin-top: 30px; /* Maintain increased margin at the top */
-    padding: 40px; /* Keep the increased padding */
-    min-height: 200px; /* Set a minimum height to make the box taller */
-    border: 2px dashed #888; /* Dashed border around content */
+    margin-top: 30px;
+    padding: 40px;
+    min-height: 200px;
+    border: 2px dashed #888;
     border-radius: 5px;
 }
 
@@ -394,6 +388,7 @@ onMounted(async () => {
 }
 
 table {
+
     width: 100%;
     border-collapse: collapse;
     margin-top: 20px;
@@ -429,7 +424,6 @@ th {
 }
 
 h3 {
-    margin-top: 20px; /* Add space above the heading */
+    margin-top: 20px;
 }
-
 </style>

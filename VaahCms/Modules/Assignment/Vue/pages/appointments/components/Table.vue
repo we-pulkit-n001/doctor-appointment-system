@@ -187,17 +187,13 @@ const convertTo12HourFormat = (time24) => {
 
             <!--adding status field-->
 
-            <Column field="status" header="Status"
-                    class="overflow-wrap-anywhere"
-                    :sortable="true">
-
+            <Column field="status" header="Status" class="overflow-wrap-anywhere" :sortable="true">
                 <template #body="prop">
-                    <Badge v-if="prop.data.deleted_at"
-                           value="Trashed"
-                           severity="danger"></Badge>
-                    {{prop.data.status}}
+                    <Badge v-if="prop.data.deleted_at" value="Trashed" severity="danger"></Badge>
+                    <span :class="{'status-badge-dark-green': prop.data.status === 'Booked', 'status-badge-red': prop.data.status === 'Cancelled'}">
+            {{ prop.data.status }}
+        </span>
                 </template>
-
             </Column>
 
             <!--adding status field-->
@@ -321,44 +317,66 @@ const convertTo12HourFormat = (time24) => {
 <style scoped>
 .card-container-mobile {
     display: flex;
-    flex-wrap: wrap; /* Allow cards to wrap to the next line */
-    justify-content: center; /* Center the cards */
-    gap: 1rem; /* Space between cards */
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
 }
 
 .card-mobile {
-    border: 1px solid #e0e0e0; /* Light border for the card */
-    border-radius: 8px; /* Rounded corners */
-    padding: 1rem; /* Inner spacing */
-    width: 100%; /* Full width for mobile */
-    max-width: 300px; /* Limit the card width */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-    transition: transform 0.2s; /* Smooth scaling effect */
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 1rem;
+    width: 100%;
+    max-width: 300px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
 }
 
 .card-mobile:hover {
-    transform: scale(1.02); /* Slightly enlarge on hover */
+    transform: scale(1.02);
 }
 
 .card-header-mobile {
     display: flex;
-    justify-content: space-between; /* Space between title and badge */
+    justify-content: space-between;
     align-items: center;
 }
 
 .card-body p {
-    margin: 0.5rem 0; /* Spacing between paragraphs */
+    margin: 0.5rem 0;
 }
 
 .card-footer {
     display: flex;
-    justify-content: flex-end; /* Aligns all footer content to the right */
-    margin-top: 1rem; /* Space above the buttons */
+    justify-content: flex-end;
+    margin-top: 1rem;
 }
 
 .button-group {
-    display: flex; /* Align buttons in a line */
-    gap: 0.5rem; /* Space between buttons */
+    display: flex;
+    gap: 0.5rem;
 }
 
+.status-badge-dark-green {
+    color: #fff;
+    background-color: #1eae53;
+    padding: 0.2rem 0.5rem;
+    border-radius: 15px;
+    font-weight: bold;
+    display: inline-block;
+    width: 100px;
+    text-align: center;
+}
+
+.status-badge-red {
+    color: #fff;
+    background-color: #ef4444;
+    padding: 0.2rem 0.5rem;
+    border-radius: 15px;
+    font-weight: bold;
+    display: inline-block;
+    width: 100px;
+    text-align: center;
+}
 </style>
+
