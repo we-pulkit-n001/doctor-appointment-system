@@ -155,6 +155,12 @@ const isFinishDisabled = computed(() => {
     return invalidConditions.some(condition => store[condition].length > 0);
 });
 
+const downloadSampleCSV = () => {
+    console.log("Inside download");
+    store.downloadSampleCSV();
+}
+
+
 onMounted(async () => {
     document.title = 'Appointments - Assignment';
     await Promise.all([
@@ -231,7 +237,12 @@ onMounted(async () => {
                             Uploaded File: {{ uploadedFileName }}
                         </div>
                     </div>
+                    <span @click="downloadSampleCSV" class="download-sample-link" style="cursor: pointer; color: blue; text-decoration: underline;">
+                        Download Sample CSV
+                    </span>
+
                 </template>
+
 
                 <template v-if="active === 1">
                     <h3>Mapping Step</h3>

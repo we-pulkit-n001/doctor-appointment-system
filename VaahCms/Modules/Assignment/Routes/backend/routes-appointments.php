@@ -89,6 +89,12 @@ function () {
     Route::post('/import', [AppointmentsController::class, 'importAppointmentsData'])
         ->name('vh.backend.assignment.appointments.import.action');
 
+    /**
+     * Export Sample CSV for Appointments
+     */
+    Route::get('/appointments/download', [AppointmentsController::class, 'downloadSampleCSV'])
+        ->name('vh.backend.assignment.appointments.export.sample.action');
+
     //---------------------------------------------------------
 
 });

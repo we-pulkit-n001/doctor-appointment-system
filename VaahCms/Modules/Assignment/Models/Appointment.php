@@ -948,7 +948,7 @@ class Appointment extends VaahModel
 
                 $response = [
                     'messages' => [trans("vaahcms-general.saved_successfully")],
-                    'error' => [] 
+                    'error' => []
                 ];
 
                 $response['error'] = $errors;
@@ -971,6 +971,10 @@ class Appointment extends VaahModel
         ]);
     }
 
+    public static function downloadSampleCSV()
+    {
+//        dd("here");
+    }
 
     //-------------------------------------------------
     //-------------------------------------------------

@@ -1012,7 +1012,29 @@ export const useAppointmentStore = defineStore({
                 this.requested_time_slot_is_not_available_display = res.data.error.Requested_time_slot_is_not_available,
                 this.invalid_date_format_display = res.data.error.invalid_date_format,
                 this.invalid_time_format_display = res.data.error.invalid_time_format
-        }
+        },
+        async downloadSampleCSV() {
+            let file_data = null;
+            try {
+                await vaah().ajax(
+                    this.ajax_url.concat('/appointments/download'),
+                    (data, res) => {
+                        file_data = res.data;
+                    }
+                );
+                const blob = new Blob([file_data]);
+                const url = window.URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.setAttribute('download', 'sample_appointments.csv');
+                document.body.appendChild(link);
+                link.click();
+                link.remove();
+                window.URL.revokeObjectURL(url);
+            } catch (error) {
+                console.error('Error occurred while downloading the file:', error);
+            }
+        },
         //---------------------------------------------------------------------
     }
 });
