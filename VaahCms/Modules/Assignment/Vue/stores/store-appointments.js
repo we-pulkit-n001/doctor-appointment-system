@@ -82,7 +82,8 @@ export const useAppointmentStore = defineStore({
         invalid_date_format_display: [],
         invalid_time_format_display:[],
 
-
+        chartOptions: {},
+        chartSeries: [],
 
 
     }),
@@ -1036,6 +1037,52 @@ export const useAppointmentStore = defineStore({
             }
         },
         //---------------------------------------------------------------------
+        async fetchCustomersCountData() {
+            const options = {
+                method: 'GET',
+            };
+            await vaah().ajax(
+                this.ajax_url + '/charts/data',
+                this.fetchCustomersCountDataAfter,
+                options
+            );
+        },
+        //---------------------------------------------------
+        fetchCustomersCountDataAfter(data,res){
+            if (!data || !Array.isArray(data.chart_series)) {
+                return;
+            }
+            const seriesData = data.chart_series.map(series => ({
+                name: series.name ,
+                data: Array.isArray(series.data) ? series.data : [],
+            }));
+            this.updateChartSeries(seriesData);
+            const updatedOptions = {
+                ...res.data.chart_options, // Merge existing options
+                title: {
+                    ...res.data.chart_options.title, // Retain existing title settings if they exist
+                    // If you want to add or modify sections like title,yaxis, grid, etc., you can do it here
+                    text: 'Doctors and Patient Count', // Set the new title
+                    // You can also add other title properties if needed
+                },
+            };
+            this.updateChartOptions(updatedOptions);
+
+        },
+        //---------------------------------------------------
+        updateChartOptions(newOptions) {
+            console.log("inside");
+
+            this.chartOptions = newOptions;
+            console.log(this.chartOptions);
+        },
+        //---------------------------------------------------
+        updateChartSeries(newSeries) {
+            // Ensure chartSeries is updated reactively
+            this.chartSeries = [...newSeries]; // Shallow copy to trigger reactivity
+
+        },
+        //---------------------------------------------------
     }
 });
 

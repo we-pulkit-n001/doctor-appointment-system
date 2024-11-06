@@ -16,6 +16,7 @@ import ToastService from 'primevue/toastservice';
 import Tooltip from 'primevue/tooltip';
 import Dialog from 'primevue/dialog';
 import VueMobileDetection from 'vue-mobile-detection';
+import ApexChart from 'vue3-apexcharts';
 
 // -------------/PrimeVue Imports
 
@@ -75,7 +76,10 @@ app.component('Menu', Menu);
 app.component('ProgressBar', ProgressBar);
 app.component('Toast', Toast);
 app.component('Dialog', Dialog);
+app.component('ApexChart', ApexChart);
 app.use(VueMobileDetection);
+
+
 // -------------/PrimeVue Use
 
 // -------------CRUD PrimeVue Use

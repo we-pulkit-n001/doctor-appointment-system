@@ -971,6 +971,86 @@ class Appointment extends VaahModel
         ]);
     }
 
+//    test code
+
+    public static function fetchCustomersCountData(Request $request)
+    {
+//        test code
+
+        $registered_doctors = Doctor::count();
+        $total_patients = Patient::count();
+
+
+
+//        $data = [
+//            [
+//                'name' => 'Registered Doctors',
+//                'data' => [$registered_doctors],
+//            ],
+//            [
+//                'name' => 'Overall Patients Registered',
+//                'data' => [$total_patients],
+//            ],
+//        ];
+
+        $data = [
+            [
+                'name' => 'Patients and doctors',
+                'data' => [
+                    $registered_doctors, // Values for registered doctors
+                    $total_patients,     // Values for total patients
+                ],
+            ],
+        ];
+
+        $labels = ['Registered Doctors', 'Overall Patients Registered'];
+
+        // Fetch customer count data, e.g., from the database
+        return [
+            'data' => [
+                'chart_series' => $data,
+            ],
+            'chart_options' => [
+                'chart' => [
+                    'id' => 'dynamic-chart',
+                    'background' => '#fff',
+                    'toolbar' => ['show' => true],
+                    'zoom' => ['enabled' => false],
+                ],
+                'xaxis' => [
+                    'type' => 'category',
+                    'categories' => $labels,
+                ],
+                'yaxis' => [
+                    'title' => [
+                        'text' => '',
+                        'color' => '#008FFB',
+                    ],
+                ],
+                'title' => [
+                    'text' => 'Customers Count Bar Chart',
+                    'align' => 'center',
+                ],
+                'legend' => [
+                    'position' => 'top',
+                    'horizontalAlign' => 'center',
+                    'onItemClick' => [
+                        'toggleDataSeries' => true,
+                    ],
+                ],
+
+            ],
+        ];
+
+//        test code
+
+    }
+
+//    test code
+    //-------------------------------------------------------------------------------------------------------
+
+
+
     public static function downloadSampleCSV()
     {
 //        dd("here");

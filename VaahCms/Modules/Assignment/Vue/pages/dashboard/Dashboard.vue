@@ -4,6 +4,8 @@ import { vaah } from '../../vaahvue/pinia/vaah';
 import { useAppointmentStore } from '../../stores/store-appointments';
 import { useRoute } from 'vue-router';
 
+import CustomersCountBarChart from './components/store/CustomersCountBarChart.vue';
+
 const store = useAppointmentStore();
 const route = useRoute();
 
@@ -34,6 +36,9 @@ onMounted(async () => {
 
     doughnutChartData.value = setDoughnutChartData();
     doughnutChartOptions.value = setDoughnutChartOptions();
+
+    store.fetchCustomersCountData(); // Calls the method to fetch data
+
 });
 
 const setChartData = () => {
@@ -223,6 +228,22 @@ document.title = 'Assignment';
             </div>
         </div>
     </div>
+
+<!--    test code-->
+
+    <div>
+        <CustomersCountBarChart
+            type="bar"
+            :chartOptions="store.chartOptions"
+            :chartSeries="store.chartSeries"
+            height=300 width=600
+            title="Customer Count Bar Chart"
+            titleAlign="center"
+        />
+    </div>
+
+<!--    test code-->
+
 </template>
 
 <style scoped>

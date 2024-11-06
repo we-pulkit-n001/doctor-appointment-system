@@ -95,6 +95,11 @@ function () {
     Route::get('/appointments/download', [AppointmentsController::class, 'downloadSampleCSV'])
         ->name('vh.backend.assignment.appointments.export.sample.action');
 
+    /**
+     * Vaah Docs Chart
+     */
+    Route::get('/charts/data', [AppointmentsController::class, 'fetchCustomersCountData']);
+
     //---------------------------------------------------------
 
 });
