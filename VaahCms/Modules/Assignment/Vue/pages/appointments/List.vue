@@ -156,7 +156,6 @@ const isFinishDisabled = computed(() => {
 });
 
 const downloadSampleCSV = () => {
-    console.log("Inside download");
     store.downloadSampleCSV();
 }
 
@@ -237,12 +236,12 @@ onMounted(async () => {
                             Uploaded File: {{ uploadedFileName }}
                         </div>
                     </div>
+                </template>
+                <div class="sample-download-container">
                     <span @click="downloadSampleCSV" class="download-sample-link" style="cursor: pointer; color: blue; text-decoration: underline;">
                         Download Sample CSV
                     </span>
-
-                </template>
-
+                </div>
 
                 <template v-if="active === 1">
                     <h3>Mapping Step</h3>
@@ -437,4 +436,11 @@ th {
 h3 {
     margin-top: 20px;
 }
+
+.sample-download-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
 </style>

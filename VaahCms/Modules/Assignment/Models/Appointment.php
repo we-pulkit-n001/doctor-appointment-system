@@ -14,6 +14,7 @@ use WebReinvent\VaahCms\Models\User;
 use WebReinvent\VaahCms\Libraries\VaahSeeder;
 use WebReinvent\VaahCms\Libraries\VaahMail;
 use App\Export\ExportAppointmentsData;
+use App\Export\ExportSampleCSV;
 
 class Appointment extends VaahModel
 {
@@ -837,6 +838,8 @@ class Appointment extends VaahModel
 
     public static function exportAppointmentsData()
     {
+        dd("here");
+
         return Excel::download(new ExportAppointmentsData,'appointments.csv');
     }
 
@@ -975,23 +978,8 @@ class Appointment extends VaahModel
 
     public static function fetchCustomersCountData(Request $request)
     {
-//        test code
-
         $registered_doctors = Doctor::count();
         $total_patients = Patient::count();
-
-
-
-//        $data = [
-//            [
-//                'name' => 'Registered Doctors',
-//                'data' => [$registered_doctors],
-//            ],
-//            [
-//                'name' => 'Overall Patients Registered',
-//                'data' => [$total_patients],
-//            ],
-//        ];
 
         $data = [
             [
@@ -1005,7 +993,6 @@ class Appointment extends VaahModel
 
         $labels = ['Registered Doctors', 'Overall Patients Registered'];
 
-        // Fetch customer count data, e.g., from the database
         return [
             'data' => [
                 'chart_series' => $data,
@@ -1041,19 +1028,15 @@ class Appointment extends VaahModel
 
             ],
         ];
-
-//        test code
-
     }
 
-//    test code
     //-------------------------------------------------------------------------------------------------------
 
 
 
     public static function downloadSampleCSV()
     {
-//        dd("here");
+        return Excel::download(new ExportSampleCSV,'sample-appointments.csv');
     }
 
     //-------------------------------------------------
